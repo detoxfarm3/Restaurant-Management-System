@@ -7,7 +7,12 @@ module.exports = Uris = {
     VIEW_USER: base('/view/:id'),
     EDIT_USER: base('/edit/:id'),
     CREATE_PRODUCT: base('/product/create'),
-    CREATE_SELL: base('/sell/create'),
+    SELL: {
+        BASE: '/sell',
+        CREATE: '/sell/create',
+        VIEW: '/sell/view/:id',
+        EDIT: '/sell/edit/:id',
+    }
 }
 
 function base(str) {

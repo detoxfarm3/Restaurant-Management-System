@@ -9,13 +9,13 @@ module.exports = React.createClass({
             body: "body",
             footer: "footer",
             isOpen: true,
-            onClose: function () {},
+            onClose: function () {
+            },
         };
     },
     getInitialState: function () {
         var $this = this;
-        return {
-        };
+        return {};
     },
     render: function () {
         var $this = this;
@@ -38,7 +38,10 @@ module.exports = React.createClass({
                                         onClick={onClose}>
                                     <span aria-hidden="true">&times;</span>
                                 </button>
-                                <h4 className="modal-title" id="myModalLabel">{$this.props.title}</h4>
+                                {
+                                    typeof $this.props.title == "string" ?
+                                        <h4 className="modal-title" id="myModalLabel"></h4> : $this.props.title
+                                }
                             </div>
                             <div className="modal-body">
                                 {$this.props.body}

@@ -13,7 +13,9 @@ var MyEvents = {
     PRODUCT_ID_CHANGED: "PRODUCT_ID_CHANGED",
     QUNATITY_CHANGED: "QUNATITY_CHANGED",
     UNIT_ID_CHANGED: "UNIT_ID_CHANGED",
-    UNIT_PRICE_CHANGED: 'UNIT_PRICE_CHANGED'
+    UNIT_PRICE_CHANGED: 'UNIT_PRICE_CHANGED',
+    SUBMIT_SUCCESSFULL: 'SUBMIT_SUCCESSFULL',
+    SUBMIT_FAILED: 'SUBMIT_FAILED'
 }
 
 var CreateSell;
@@ -102,6 +104,10 @@ module.exports = CreateSell = React.createClass({
 
         ee.on(MyEvents.UNIT_PRICE_CHANGED, function (unit) {
             $this.updateTotal(unit);
+        });
+        ee.on(MyEvents.SUBMIT_SUCCESSFULL, function (sell) {
+            $this.showOrderSuccess(sell);
+            $this.clear($this.addNew);
         });
     },
     componentWillUnmount: function () {
@@ -244,19 +250,19 @@ module.exports = CreateSell = React.createClass({
             </div>
         );
     },
+    clear: function (callback) {
+        var $this = this;
+        $this.setState({
+            sell: {
+                sellUnits: []
+            }
+        }, callback);
+    },
     submit: function (sell) {
         var $this = this;
         console.log(sell);
-        $this.setState({
-            modal: {
-                title: 'Order Success',
-                body: JSON.stringify(sell),
-                isOpen: true,
-                onClose: function () {
-                    $this.setState({modal: {isOpen: false}});
-                }
-            }
-        });
+
+        ee.emit(MyEvents.SUBMIT_SUCCESSFULL, sell);
     },
     deleteSellUnit: function (unit) {
         var $this = this;
@@ -363,5 +369,72 @@ module.exports = CreateSell = React.createClass({
             <button className="btn btn-primary btn-lg" style={{fontWeight: 'bold'}}
                     onClick={modal.onClose}>Ok</button>
         );
+    },
+    onSubmitFailed: function (e) {
+
+    },
+    showOrderSuccess: function (sell) {
+        var $this = this;
+        var sellUnits = sell.sellUnits;
+        sell.orderId = 1;
+
+        var totalCounter = {quantity: 0, total: 0};
+        var serial = 1;
+        sellUnits = Stream(sellUnits)
+            .peek(function (unit) {
+                totalCounter.quantity = totalCounter.quantity + (parseInt(unit.quantity) || 0);
+                totalCounter.total = totalCounter.total + (parseInt(unit.total) || 0);
+            })
+            .map(function (unit) {
+                return lib.merge2(unit, {
+                    serial: serial++,
+                    productId: ($this.props.products[unit.productId] || {}).name,
+                    unitId: ($this.props.units[unit.unitId] || {}).name
+                });
+            })
+            .toArray()
+        ;
+
+        sellUnits.push({
+            productId: <strong>Total</strong>,
+            quantity: <strong>{totalCounter.quantity}</strong>,
+            total: <strong>{totalCounter.total}</strong>,
+        });
+
+
+        $this.setState({
+            modal: {
+                title: (
+                    <h4 className="modal-title text-primary" id="myModalLabel">
+                        Order Successfull. Order ID: <strong
+                        style={{fontWeight: 'bold', fontSize: '20px'}}> {sell.orderId} </strong></h4>
+                ),
+                body: (
+                    <div className="row">
+                        <div className="col-md-12">
+
+                            <BootstrapTable data={sellUnits} striped={true} hover={true}>
+
+                                <TableHeaderColumn isKey={true} dataField="serial">#</TableHeaderColumn>
+
+                                <TableHeaderColumn dataField="productId">Product</TableHeaderColumn>
+                                <TableHeaderColumn dataField="quantity">Quantity</TableHeaderColumn>
+
+                                <TableHeaderColumn dataField="unitId">Unit</TableHeaderColumn>
+                                <TableHeaderColumn dataField="unitPrice">Unit Price</TableHeaderColumn>
+
+                                <TableHeaderColumn dataField="total">Total</TableHeaderColumn>
+
+                            </BootstrapTable>
+
+                        </div>
+                    </div>
+                ),
+                isOpen: true,
+                onClose: function () {
+                    $this.setState({modal: {isOpen: false}});
+                }
+            }
+        });
     }
 })

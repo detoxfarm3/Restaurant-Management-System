@@ -1,12 +1,10 @@
 "use strict";
 var React = require('react');
 
-var ViewSell;
-module.exports = ViewSell = React.createClass({
+var SellApp;
+module.exports = SellApp = React.createClass({
     getDefaultProps: function () {
-        return {
-            id: null
-        };
+        return {};
     },
     render: function () {
         var $this = this;
@@ -16,7 +14,7 @@ module.exports = ViewSell = React.createClass({
             <div className="row">
                 <div className="col-md-12">
 
-                    ViewSell: {$this.props.params.id}
+                    {this.props.children}
 
                 </div>
             </div>

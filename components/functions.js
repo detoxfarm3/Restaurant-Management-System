@@ -168,12 +168,8 @@ exports.removeEmptyChilds = function removeEmptyChilds(array) {
     return newArray;
 }
 
-exports.toTitle = function (fieldNames) {
-    fieldNames = fieldNames || [];
-
-}
-
 exports.parameterize = function parameterize(uriTemplate, prms) {
+    prms = prms || {};
     uriTemplate = uriTemplate || "";
 
     var uri = uriTemplate.split('/').map(function (part) {
@@ -186,16 +182,4 @@ exports.parameterize = function parameterize(uriTemplate, prms) {
         ;
 
     return uri;
-}
-
-exports.hashUri = function relativise(baseUri, uriPath, params) {
-    baseUri = baseUri || "";
-    uriPath = uriPath || "";
-
-    baseUri = baseUri.endsWith('/') ? baseUri.substring(0, baseUri.length - 1) : baseUri;
-
-
-    uriPath = uriPath.startsWith('/') ? uriPath : '/' + uriPath;
-
-    return '#' + exports.parameterize(baseUri + uriPath, params);
 }

@@ -1,7 +1,6 @@
 "use strict";
 import React from 'react'
 var SingleProductViewShort = require('./SingleProductViewShort');
-var ProductList = require('./ProductList');
 
 var ListProduct;
 module.exports = ListProduct = React.createClass({
@@ -26,7 +25,9 @@ module.exports = ListProduct = React.createClass({
 
                 </div>
 
-                <ProductList products={$this.state.products}/>
+                <div className="panel-body" style={{paddingTop: '0'}}>
+                    <ProductList products={$this.state.products}/>
+                </div>
             </div>
         );
     }

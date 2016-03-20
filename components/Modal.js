@@ -11,6 +11,7 @@ module.exports = React.createClass({
             isOpen: true,
             onClose: function () {
             },
+            bodyStyle: {}
         };
     },
     getInitialState: function () {
@@ -40,10 +41,12 @@ module.exports = React.createClass({
                                 </button>
                                 {
                                     typeof $this.props.title == "string" ?
-                                        <h4 className="modal-title" id="myModalLabel"></h4> : $this.props.title
+                                        <h4 className="modal-title" id="myModalLabel">
+                                            {$this.props.title}
+                                        </h4> : $this.props.title
                                 }
                             </div>
-                            <div className="modal-body">
+                            <div className="modal-body" style={$this.props.bodyStyle}>
                                 {$this.props.body}
                             </div>
                             <div className="modal-footer">

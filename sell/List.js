@@ -1,12 +1,24 @@
 "use strict";
 import React from 'react'
+import { browserHistory } from 'react-router';
 
-import {BootstrapTable, TableHeaderColumn} from 'react-bootstrap-table';
+var SellHeader = require('./SellHeader');
+var OrderItemsTable = require('./OrderItemsTable');
+var Tabs = require('react-bootstrap').Tabs;
+var Tab = require('react-bootstrap').Tab;
+
+var Uris = require('../Uris');
 var lib = require('../components/functions');
-var Stream = require('streamjs');
 
 var ListSells;
 module.exports = ListSells = React.createClass({
+    getDefaultProps: function () {
+        return {
+            params: {
+                tab: 1
+            }
+        };
+    },
     getInitialState: function () {
         return {
             sells: [
@@ -307,38 +319,26 @@ module.exports = ListSells = React.createClass({
 
         return (
             <div className="panel panel-primary">
-                <div className="panel-heading">
-                    <h3 className="panel-title">Order History</h3>
-                </div>
                 <div className="panel-body">
+
+                    {console.log("prms.tab", $this.props.params.tab)}
+
+                    <Tabs activeKey={$this.props.params.tab} onSelect={$this.switchToTab}>
+                        <Tab eventKey={1} title="Today">
+                            <div>Tab 1 content</div>
+                        </Tab>
+                        <Tab eventKey={2} title="This Weak">
+                            <div>Tab 2 content</div>
+                        </Tab>
+                        <Tab eventKey={3} title="This Month">
+                            <div>Tab 3 content</div>
+                        </Tab>
+                    </Tabs>
+
                     {
                         sells.map(function (sell) {
-                            var dlStyle = {marginBottom: '5px'};
+
                             var sellUnits = sell.sellUnits || [];
-
-
-                            var totalCounter = {quantity: 0, total: 0};
-                            var serial = 1;
-                            sellUnits = Stream(sellUnits)
-                                .peek(function (unit) {
-                                    totalCounter.quantity = totalCounter.quantity + (parseInt(unit.quantity) || 0);
-                                    totalCounter.total = totalCounter.total + (parseInt(unit.total) || 0);
-                                })
-                                .map(function (unit) {
-                                    return lib.merge2(unit, {
-                                        serial: serial++,
-                                        productId: unit.product.name,
-                                        unitId: unit.sellingUnit.name
-                                    });
-                                })
-                                .toArray()
-                            ;
-
-                            sellUnits.push({
-                                productId: <strong>Total</strong>,
-                                quantity: <strong>{totalCounter.quantity}</strong>,
-                                total: <strong>{totalCounter.total}</strong>,
-                            });
 
                             return (
 
@@ -348,53 +348,28 @@ module.exports = ListSells = React.createClass({
                                         <div className="alert alert-success" style={{marginBottom: '0px'}}>
 
                                             <div className="row">
-                                                <div className="col-md-6">
+                                                <div className="col-md-10">
 
-                                                    <dl className="dl-horizontal" style={dlStyle}>
-                                                        <dt>Transaction ID:</dt>
-                                                        <dd>{sell.transactionId}</dd>
-                                                    </dl>
+                                                    <SellHeader sell={sell}/>
 
                                                 </div>
 
-                                                <div className="col-md-6">
+                                                <div className="col-md-2">
 
-                                                    <dl className="dl-horizontal" style={dlStyle}>
-                                                        <dt>Order ID:</dt>
-                                                        <dd>{sell.orderId}</dd>
-                                                    </dl>
+                                                    <div className="btn-group pull-right">
+                                                        <button type="button"
+                                                                className="btn btn-default dropdown-toggle"
+                                                                data-toggle="dropdown" aria-haspopup="true"
+                                                                aria-expanded="false">
+                                                            <span
+                                                                className="caret"></span></button>
+                                                        <ul className="dropdown-menu">
+                                                            <li><a href="#">View Order</a></li>
+                                                            <li role="separator" className="divider"></li>
+                                                            <li><a href="#">Edit Order</a></li>
+                                                        </ul>
+                                                    </div>
 
-                                                </div>
-
-                                                <div className="col-md-6">
-
-                                                    <dl className="dl-horizontal" style={dlStyle}>
-                                                        <dt>Created By:</dt>
-                                                        <dd>{sell.createdBy.name}</dd>
-                                                    </dl>
-
-                                                </div>
-
-                                                <div className="col-md-6">
-
-                                                    <dl className="dl-horizontal" style={dlStyle}>
-                                                        <dt>Sell Date:</dt>
-                                                        <dd>{sell.sellDate}</dd>
-                                                    </dl>
-
-                                                </div>
-
-                                            </div>
-
-                                            <div className="row">
-                                                <div className="col-md-12">
-                                                    <button className="btn btn-primary pull-right">
-                                                        View Details
-                                                    </button>
-                                                    <button className="btn btn-warning pull-right"
-                                                            style={{marginRight: '5px'}}>
-                                                        Edit
-                                                    </button>
                                                 </div>
                                             </div>
 
@@ -403,21 +378,7 @@ module.exports = ListSells = React.createClass({
                                         <div className="row">
                                             <div className="col-md-12">
 
-                                                <BootstrapTable data={sellUnits} striped={true} hover={true}>
-
-                                                    <TableHeaderColumn isKey={true}
-                                                                       dataField="serial">#</TableHeaderColumn>
-
-                                                    <TableHeaderColumn dataField="productId">Product</TableHeaderColumn>
-                                                    <TableHeaderColumn dataField="quantity">Quantity</TableHeaderColumn>
-
-                                                    <TableHeaderColumn dataField="unitId">Unit</TableHeaderColumn>
-                                                    <TableHeaderColumn dataField="unitPrice">Unit
-                                                        Price</TableHeaderColumn>
-
-                                                    <TableHeaderColumn dataField="total">Total</TableHeaderColumn>
-
-                                                </BootstrapTable>
+                                                <OrderItemsTable sellUnits={sellUnits}/>
 
                                             </div>
                                         </div>
@@ -430,5 +391,9 @@ module.exports = ListSells = React.createClass({
                 </div>
             </div>
         );
+    },
+    switchToTab: function (tab) {
+        console.log("tab", tab);
+        browserHistory.push(Uris.toAbsoluteUri(lib.parameterize(Uris.SELL.BASE, {tab: tab})));
     }
 })

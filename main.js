@@ -1,17 +1,20 @@
 "use strict";
 
+var Globalize = require('./Globalize');
+
 var App = require('./App');
+var React = require('react');
 var ReactDom = require('react-dom');
+import { Router, Route, hashHistory, IndexRoute } from 'react-router'
+var ReactBootstrap = require('react-bootstrap')
+
 var document = require('./components/document');
 
-import { Router, Route, hashHistory, IndexRoute } from 'react-router'
-
+var UserApp = require('./user');
 var ListUsers = require('./user/ListUsers');
 var CreateUser = require('./user/CreateUser');
 var EditUser = require('./user/EditUser');
 var ViewUser = require('./user/ViewUser');
-
-var CreateProduct = require('./product/Create');
 
 var SellApp = require('./sell');
 var CreateSell = require('./sell/Create');
@@ -19,8 +22,13 @@ var ListSell = require('./sell/List');
 var ViewSell = require('./sell/View');
 var EditSell = require('./sell/Edit');
 
+var ProductApp = require('./product');
+var CreateProduct = require('./product/Create');
+var ListProduct = require('./product/List');
+var ViewProduct = require('./product/View');
+var EditProduct = require('./product/Edit');
+
 var Uris = require('./Uris');
-var Config = require('./Config');
 
 //Create and initialize app when eventbus initialization complete.
 
@@ -28,18 +36,28 @@ document.addEventListener("EVENT_BUS_CONNECTED", function () {
 
     ReactDom.render(
         <Router history={hashHistory}>
-            <Route path={Config.BASE_URI} component={App}>
+            <Route path={Uris.BASE_URI} component={App}>
                 <IndexRoute component={ListUsers}/>
-                <Route path={Uris.CREATE_USER} component={CreateUser}/>
-                <Route path={Uris.EDIT_USER} component={EditUser}/>
-                <Route path={Uris.VIEW_USER} component={ViewUser}/>
-                <Route path={Uris.CREATE_PRODUCT} component={CreateProduct}/>
+
+                <Route path={Uris.USER.BASE} component={UserApp}>
+                    <IndexRoute component={ListUsers}/>
+                    <Route path={Uris.USER.CREATE} component={CreateUser}/>
+                    <Route path={Uris.USER.VIEW} component={ViewUser}/>
+                    <Route path={Uris.USER.EDIT} component={EditUser}/>
+                </Route>
 
                 <Route path={Uris.SELL.BASE} component={SellApp}>
                     <IndexRoute component={ListSell}/>
                     <Route path={Uris.SELL.CREATE} component={CreateSell}/>
                     <Route path={Uris.SELL.VIEW} component={ViewSell}/>
                     <Route path={Uris.SELL.EDIT} component={EditSell}/>
+                </Route>
+
+                <Route path={Uris.PRODUCT.BASE} component={ProductApp}>
+                    <IndexRoute component={ListProduct}/>
+                    <Route path={Uris.PRODUCT.CREATE} component={CreateProduct}/>
+                    <Route path={Uris.PRODUCT.VIEW} component={ViewProduct}/>
+                    <Route path={Uris.PRODUCT.EDIT} component={EditProduct}/>
                 </Route>
 
             </Route>

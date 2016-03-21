@@ -20,6 +20,8 @@ module.exports = ProductList = React.createClass({
                         <TableHeaderColumn isKey={true} dataField="id">ID</TableHeaderColumn>
                         <TableHeaderColumn dataField="name">Name</TableHeaderColumn>
                         <TableHeaderColumn dataField="price">Price</TableHeaderColumn>
+                        <TableHeaderColumn dataField="unitWisePrice" dataFormat={$this.formatUnitWisePrice}>
+                            Unit Wise Price</TableHeaderColumn>
                         <TableHeaderColumn dataField="manufacturerPrice">Manufacturer Price</TableHeaderColumn>
                         <TableHeaderColumn dataField="stockQuantity">Stock Quantity</TableHeaderColumn>
                         <TableHeaderColumn dataField="available">Available</TableHeaderColumn>
@@ -30,6 +32,34 @@ module.exports = ProductList = React.createClass({
 
                 </div>
             </div>
+        );
+    },
+    formatUnitWisePrice: function (unitWisePrice) {
+        unitWisePrice = unitWisePrice || [];
+
+        unitWisePrice = [
+            {id: 1, unit: {id: 1, name: 'U-1'}, price: 512},
+            {
+                id: 2,
+                unit: {id: 2, name: 'U-2'},
+                price: 7552
+            }];
+
+        return (
+            <table className="table table-condensed" style={{margin: 0}}>
+                <tbody>
+                {
+                    unitWisePrice.map(function (uw) {
+                        return (
+                            <tr key={uw.id}>
+                                <th>{(uw.unit || {}).name}</th>
+                                <td>{uw.price}</td>
+                            </tr>
+                        );
+                    })
+                }
+                </tbody>
+            </table>
         );
     },
     formatAction: function (ac, product) {

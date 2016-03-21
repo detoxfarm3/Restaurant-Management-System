@@ -1,6 +1,7 @@
 "use strict";
 import React from 'react'
 var SingleProductViewShort = require('./SingleProductViewShort');
+var UnitWisePrice = require('./UnitWisePrice');
 
 var ViewProduct;
 module.exports = ViewProduct = React.createClass({
@@ -12,31 +13,57 @@ module.exports = ViewProduct = React.createClass({
     render: function () {
         var $this = this;
         return (
-            <div className="panel panel-default">
-                <div className="panel-heading">
 
-                    <div className="row">
+            <div className="row">
+                <div className="col-md-12">
 
-                        <div className="col-md-11">
-                            <h3 className="panel-title">Product Details</h3>
-                        </div>
+                    <div className="panel panel-default">
+                        <div className="panel-heading">
 
-                        <div className="col-md-1">
-                            <div className="btn-group btn-group-justified">
+                            <div className="row">
+
+                                <div className="col-md-11">
+                                    <h3 className="panel-title">Product Details</h3>
+                                </div>
+
+                                <div className="col-md-1">
+                                    <div className="btn-group btn-group-justified">
 
                                 <span className="btn btn-primary"
                                       onClick={$this.createProduct}>Edit</span>
 
+                                    </div>
+
+                                </div>
                             </div>
 
+                        </div>
+
+                        <div className="panel-body" style={{paddingTop: '0'}}>
+                            <SingleProductViewShort product={$this.state.product}/>
                         </div>
                     </div>
 
                 </div>
 
-                <div className="panel-body" style={{paddingTop: '0'}}>
-                    <SingleProductViewShort product={$this.state.product}/>
+
+                <div className="panel panel-default">
+                    <div className="panel-heading">
+
+                        <div className="row">
+
+                            <div className="col-md-11">
+                                <h3 className="panel-title">Unit Wise Price</h3>
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                    <UnitWisePrice unitWisePrice={$this.state.product.unitWisePrice}/>
+
                 </div>
+
             </div>
         );
     }

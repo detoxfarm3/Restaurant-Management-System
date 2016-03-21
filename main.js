@@ -28,6 +28,15 @@ var ListProduct = require('./product/List');
 var ViewProduct = require('./product/View');
 var EditProduct = require('./product/Edit');
 
+var UnitApp = require('./unit');
+var ListUnit = require('./unit/List');
+
+var InventoryApp = require('./inventory');
+var CreateInventory = require('./inventory/Create');
+var ListInventory = require('./inventory/List');
+var ViewInventory = require('./inventory/View');
+var EditInventory = require('./inventory/Edit');
+
 var Uris = require('./Uris');
 
 //Create and initialize app when eventbus initialization complete.
@@ -58,6 +67,17 @@ document.addEventListener("EVENT_BUS_CONNECTED", function () {
                     <Route path={Uris.PRODUCT.CREATE} component={CreateProduct}/>
                     <Route path={Uris.PRODUCT.VIEW} component={ViewProduct}/>
                     <Route path={Uris.PRODUCT.EDIT} component={EditProduct}/>
+                </Route>
+
+                <Route path={Uris.UNIT.BASE} component={UnitApp}>
+                    <IndexRoute component={ListUnit}/>
+                </Route>
+
+                <Route path={Uris.INVENTORY.BASE} component={InventoryApp}>
+                    <IndexRoute component={ListInventory}/>
+                    <Route path={Uris.INVENTORY.CREATE} component={CreateInventory}/>
+                    <Route path={Uris.INVENTORY.VIEW} component={ViewInventory}/>
+                    <Route path={Uris.INVENTORY.EDIT} component={EditInventory}/>
                 </Route>
 
             </Route>

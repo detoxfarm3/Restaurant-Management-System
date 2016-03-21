@@ -183,3 +183,7 @@ exports.parameterize = function parameterize(uriTemplate, prms) {
 
     return uri;
 }
+
+exports.escapeRegexCharacters = function escapeRegexCharacters(str) {
+    return str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+}

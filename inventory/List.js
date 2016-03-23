@@ -76,9 +76,9 @@ module.exports = ListInventories = React.createClass({
 
                 <span className="btn btn-primary" style={{marginRight: '5px'}} title="Add product to this inventory."
                       onClick={function () {
-                            $this.addRemoveProducts(inventory);
+                            $this.addRemoveEditProducts(inventory);
                       }}>
-                    Add/Remove Products
+                    Add/Remove/Edit Products
                 </span>
 
                 <a className="btn btn-success" style={{marginRight: '5px'}} title="View this inventory.">
@@ -95,7 +95,9 @@ module.exports = ListInventories = React.createClass({
             </div>
         );
     },
-    addRemoveProducts: function (inventory) {
+    addRemoveEditProducts: function (inventory) {
+        var $this = this;
+
     },
     deleteInventory: function (inventory) {
         var $this = this;

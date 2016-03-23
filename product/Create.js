@@ -143,27 +143,6 @@ module.exports = CreateProduct = React.createClass({
                         <div className="panel-heading">
                             <div className="row">
                                 <div className="col-md-6">
-                                    <h3 className="panel-title">Inventory</h3>
-                                </div>
-                                <div className="col-md-6">
-                                    <span className="btn btn-success pull-right"
-                                          onClick={$this.createNewUnit}
-                                          style={{marginRight: '5px'}}>Create New Inventory</span>
-                                </div>
-                            </div>
-                        </div>
-
-
-                        <ProductsInventoryEditable units={units} inventories={product.inventories}
-                                                   onChange={$this.onInventoriesChange}
-                                                   removeItem={$this.removeItem}/>
-
-                    </div>
-
-                    <div className="panel panel-default">
-                        <div className="panel-heading">
-                            <div className="row">
-                                <div className="col-md-6">
                                     <h3 className="panel-title">Price</h3>
                                 </div>
                                 <div className="col-md-6">

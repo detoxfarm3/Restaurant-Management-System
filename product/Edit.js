@@ -6,16 +6,44 @@ var ProductsUnitWisePriceEditable = require('./ProductsUnitWisePriceEditable');
 var lib = require('../components/functions');
 var ProductsUnitWisePrice = require('./ProductsUnitWisePrice');
 var NewUnitDialog = require('./../unit/NewUnitDialog');
+var ProductsInventoryEditable = require('./ProductsInventoryEditable');
 
 var CreateProduct;
 module.exports = CreateProduct = React.createClass({
     getInitialState: function () {
         return {
-            product: {unitWisePrice: []},
+            product: {
+                price: [],
+                inventories: [
+                    {
+                        id: Math.random(),
+                        inventory: {id: 1, name: 'Inv-2'},
+                        quantity: 545,
+                        available: 545,
+                        unitId: 1
+                    },
+                    {
+                        id: Math.random(),
+                        inventory: {id: 1, name: 'Inv-2'},
+                        quantity: 545,
+                        available: 545,
+                        unitId: 1
+                    },
+                    {
+                        id: Math.random(),
+                        inventory: {id: 1, name: 'Inv-2'},
+                        quantity: 545,
+                        available: 545,
+                        unitId: 1
+                    }
+                ]
+            },
             createModal: function () {
                 return {title: '', body: '', isOpen: false};
             },
-            productsUnitWisePriceEditable: {}
+            productsUnitWisePriceEditable: {},
+            units: [{id: 1, name: 'Lb'}, {id: 2, name: 'Kg'}, {id: 3, name: 'Ltr'}],
+            inventories: [{id: 1, name: 'Lb'}, {id: 2, name: 'Kg'}, {id: 3, name: 'Ltr'}],
         };
     },
     render: function () {
@@ -23,6 +51,8 @@ module.exports = CreateProduct = React.createClass({
         var product = $this.state.product || {};
         var createModal = $this.state.createModal;
         var modal = !!createModal ? createModal() || {} : {};
+        var units = $this.state.units || [];
+        var inventories = $this.state.inventories;
         return (
             <div className="row">
                 <div className="col-md-12">
@@ -33,7 +63,7 @@ module.exports = CreateProduct = React.createClass({
 
                                 <div className="col-md-9">
                                     <h3 className="panel-title">
-                                        Edit Product
+                                        Create Product
                                     </h3>
                                 </div>
 
@@ -43,7 +73,7 @@ module.exports = CreateProduct = React.createClass({
                                         <span className="btn btn-danger">Clear</span>
 
                                 <span className="btn btn-primary"
-                                      onClick={$this.createProduct}>Update</span>
+                                      onClick={$this.createProduct}>Create</span>
 
                                     </div>
 
@@ -69,30 +99,31 @@ module.exports = CreateProduct = React.createClass({
                                     </div>
 
                                     <div className="form-group col-md-6">
-                                        <label htmlFor="price">Price</label>
-                                        <input type="number" className="form-control" id="price" placeholder="Price"
-                                               name="price" value={product.price}/>
-                                    </div>
-
-                                    <div className="form-group col-md-6">
                                         <label htmlFor="manufacturerPrice">Manufacturer Price</label>
                                         <input type="number" className="form-control" id="manufacturerPrice"
                                                placeholder="Manufacturer Price"
-                                               name="manufacturerPrice" value={product.manufacturerPrice}/>
+                                               name="manufacturerPrice"
+                                               value={(product.manufacturerPrice || {}).amount}/>
                                     </div>
 
                                     <div className="form-group col-md-6">
-                                        <label htmlFor="stockQuantity">Stock Quantity</label>
-                                        <input type="number" className="form-control" id="stockQuantity"
-                                               placeholder="Stock Quantity"
-                                               name="stockQuantity" value={product.stockQuantity}/>
-                                    </div>
+                                        <label htmlFor="manufacturerPriceUnit">Manufacturer Price Unit</label>
 
-                                    <div className="form-group col-md-6">
-                                        <label htmlFor="available">Available</label>
-                                        <input type="number" className="form-control" id="available"
-                                               placeholder="Available"
-                                               name="available" value={product.available}/>
+                                        <select className="form-control"
+                                                id="manufacturerPriceUnit" name="manufacturerPriceUnit"
+                                                value={((product.manufacturerPrice || {}).unit || {}).id}>
+                                            <option id={0}>Select Unit</option>
+
+                                            {
+                                                units.map(function (unit) {
+                                                    return (
+                                                        <option key={unit.id} id={unit.id}>{unit.name}</option>
+                                                    );
+                                                })
+                                            }
+
+                                        </select>
+
                                     </div>
 
                                     <div className="form-group col-md-12">
@@ -112,7 +143,7 @@ module.exports = CreateProduct = React.createClass({
                         <div className="panel-heading">
                             <div className="row">
                                 <div className="col-md-6">
-                                    <h3 className="panel-title">Product's unit wise price</h3>
+                                    <h3 className="panel-title">Price</h3>
                                 </div>
                                 <div className="col-md-6">
                                     <span className="btn btn-danger pull-right"
@@ -123,7 +154,7 @@ module.exports = CreateProduct = React.createClass({
                                 </div>
                             </div>
                         </div>
-                        <ProductsUnitWisePriceEditable productsUnitWisePrice={product.unitWisePrice}
+                        <ProductsUnitWisePriceEditable productsUnitWisePrice={product.price}
                                                        onInit={function (editable) {
                                                             $this.setState({productsUnitWisePriceEditable: editable});
                                                        }}
@@ -139,9 +170,31 @@ module.exports = CreateProduct = React.createClass({
             </div>
         );
     },
+    removeItem: function (item, inventories) {
+        var $this = this;
+        $this.setState({
+            product: lib.merge2($this.state.product, {
+                inventories: inventories.filter(function (inv) {
+                    return inv !== item;
+                })
+            })
+        });
+    },
+    onInventoriesChange: function (e, invRel, inventories) {
+        var $this = this;
+        invRel[e.target.name] = e.target.value;
+
+        $this.setState({
+            product: lib.merge2($this.state.product, {
+                inventories: inventories
+            })
+        });
+
+        console.log('invRel', JSON.stringify(invRel));
+    },
     onNewUnitInit: function (newUnitDialog) {
         var $this = this;
-        $this.newInventoryDialog = newUnitDialog;
+        $this.newUnitDialog = newUnitDialog;
     },
     addMoreUnitWisePrice: function () {
         this.state.productsUnitWisePriceEditable.addMoreUnitWisePrice();
@@ -162,18 +215,12 @@ module.exports = CreateProduct = React.createClass({
                 return {
                     isOpen: true,
                     onClose: onClose,
-                    title: 'Product update Successful.',
+                    title: 'Product Creation Successful.',
                     body: (
                         <div className="row">
-                            <div className="col-md-12">
-                                <SingleProductViewShort product={$this.state.product}/>
-                            </div>
 
                             <div className="col-md-12">
-                                <div className="panel panel-default">
-                                    <div className="panel-heading">Unit Wise Prie</div>
-                                    <ProductsUnitWisePrice unitWisePrice={$this.state.product.unitWisePrice}/>
-                                </div>
+                                <SingleProductViewShort product={$this.state.product}/>
                             </div>
 
                         </div>
@@ -181,6 +228,7 @@ module.exports = CreateProduct = React.createClass({
                     footer: (
                         <div>
                             <div className="btn btn-primary" onClick={onClose}>Ok</div>
+                            <a href="#" className="btn btn-success pull-left">Edit</a>
                             <a href="#" className="btn btn-success pull-left">View Details</a>
                         </div>
                     ),
@@ -191,14 +239,14 @@ module.exports = CreateProduct = React.createClass({
     },
     createNewUnit: function () {
         var $this = this;
-        $this.newInventoryDialog.createNewInventory();
+        $this.newUnitDialog.createNewUnit();
     },
     onProductsUnitWisePriceChange: function (productsUnitWisePrice) {
         var $this = this;
         $this.setState({
             product: lib.merge2($this.state.product, {
-                unitWisePrice: productsUnitWisePrice
+                price: productsUnitWisePrice
             })
         });
     },
-});
+})

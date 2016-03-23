@@ -5,7 +5,9 @@ var InventorySummary = require('./InventorySummary');
 var ViewInventory;
 module.exports = ViewInventory = React.createClass({
     getDefaultProps: function () {
-        return {};
+        return {
+            params: {}
+        };
     },
     getInitialState: function () {
         return {
@@ -42,6 +44,7 @@ module.exports = ViewInventory = React.createClass({
     render: function () {
         var $this = this;
         var inventory = $this.state.inventory || {};
+        console.log($this.props.params);
         return (
 
             <div classNameName="row">
@@ -59,7 +62,7 @@ module.exports = ViewInventory = React.createClass({
 
                                         <span className="btn btn-primary">Edit Inventory</span>
 
-                                        <span className="btn btn-success">Add/Remove Products</span>
+                                        <span className="btn btn-success">Add/Remove/Edit Products</span>
 
                                     </div>
 

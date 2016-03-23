@@ -60,11 +60,11 @@ module.exports = ListUnits = React.createClass({
         );
     },
     onNewUnitDialogInit: function (ref) {
-        this.newUnitDialog = ref;
+        this.newInventoryDialog = ref;
     },
     createNewUnit: function () {
         var $this = this;
-        $this.newUnitDialog.createNewUnit();
+        $this.newInventoryDialog.createNewInventory();
     },
     formatAction: function (ac, unit) {
         var $this = this;

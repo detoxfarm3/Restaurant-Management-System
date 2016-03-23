@@ -4,7 +4,7 @@ var Modal = require('../components/Modal');
 var SingleProductViewShort = require('./SingleProductViewShort');
 var ProductsUnitWisePriceEditable = require('./ProductsUnitWisePriceEditable');
 var lib = require('../components/functions');
-var UnitWisePrice = require('./UnitWisePrice');
+var ProductsUnitWisePrice = require('./ProductsUnitWisePrice');
 var NewUnitDialog = require('./../unit/NewUnitDialog');
 
 var CreateProduct;
@@ -141,7 +141,7 @@ module.exports = CreateProduct = React.createClass({
     },
     onNewUnitInit: function (newUnitDialog) {
         var $this = this;
-        $this.newUnitDialog = newUnitDialog;
+        $this.newInventoryDialog = newUnitDialog;
     },
     addMoreUnitWisePrice: function () {
         this.state.productsUnitWisePriceEditable.addMoreUnitWisePrice();
@@ -172,7 +172,7 @@ module.exports = CreateProduct = React.createClass({
                             <div className="col-md-12">
                                 <div className="panel panel-default">
                                     <div className="panel-heading">Unit Wise Prie</div>
-                                    <UnitWisePrice unitWisePrice={$this.state.product.unitWisePrice}/>
+                                    <ProductsUnitWisePrice unitWisePrice={$this.state.product.unitWisePrice}/>
                                 </div>
                             </div>
 
@@ -191,7 +191,7 @@ module.exports = CreateProduct = React.createClass({
     },
     createNewUnit: function () {
         var $this = this;
-        $this.newUnitDialog.createNewUnit();
+        $this.newInventoryDialog.createNewInventory();
     },
     onProductsUnitWisePriceChange: function (productsUnitWisePrice) {
         var $this = this;

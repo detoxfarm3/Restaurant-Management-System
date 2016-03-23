@@ -35,9 +35,7 @@ module.exports = Uris = {
         BASE: '/field/index/:tab',
     },
     INVENTORY: {
-        CREATE: '/inventory/create',
         VIEW: '/inventory/view/:id',
-        EDIT: '/inventory/edit/:id',
         BASE: '/inventory/index',
     },
     toAbsoluteUri: toAbsoluteUri

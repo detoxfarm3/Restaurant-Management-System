@@ -1,16 +1,16 @@
 "use strict";
 var React = require('react');
 
-var UnitWisePrice;
-module.exports = UnitWisePrice = React.createClass({
+var ProductsUnitWisePrice;
+module.exports = ProductsUnitWisePrice = React.createClass({
     getDefaultProps: function () {
         return {
-            unitWisePrice: []
+            productsUnitWisePrice: []
         };
     },
     render: function () {
         var $this = this;
-        var unitWisePrice = $this.props.unitWisePrice || [];
+        var unitWisePrice = $this.props.productsUnitWisePrice || [];
         unitWisePrice = [
             {id: 1, unit: {id: 1, name: 'U-1'}, price: 512},
             {

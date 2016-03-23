@@ -32,10 +32,8 @@ var UnitApp = require('./unit');
 var ListUnit = require('./unit/List');
 
 var InventoryApp = require('./inventory');
-var CreateInventory = require('./inventory/Create');
 var ListInventory = require('./inventory/List');
 var ViewInventory = require('./inventory/View');
-var EditInventory = require('./inventory/Edit');
 
 var Uris = require('./Uris');
 
@@ -75,9 +73,7 @@ document.addEventListener("EVENT_BUS_CONNECTED", function () {
 
                 <Route path={Uris.INVENTORY.BASE} component={InventoryApp}>
                     <IndexRoute component={ListInventory}/>
-                    <Route path={Uris.INVENTORY.CREATE} component={CreateInventory}/>
                     <Route path={Uris.INVENTORY.VIEW} component={ViewInventory}/>
-                    <Route path={Uris.INVENTORY.EDIT} component={EditInventory}/>
                 </Route>
 
             </Route>

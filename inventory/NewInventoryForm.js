@@ -1,18 +1,18 @@
 import Autosuggest from 'react-autosuggest';
 var React = require('react');
-var UnitAutoComplete = require('./../inventory/InventoryAutoComplete');
+var InventoryAutoComplete = require('./InventoryAutoComplete');
 
-var NewUnitForm = React.createClass({
+var NewInventoryForm = React.createClass({
     getDefaultProps: function () {
         return {
-            unit: {},
+            inventory: {},
             onChange: function () {
             }
         };
     },
     render: function () {
         var $this = this;
-        var unit = $this.props.unit || {};
+        var inventory = $this.props.inventory || {};
         var onChange = $this.props.onChange || function () {
             };
 
@@ -22,7 +22,7 @@ var NewUnitForm = React.createClass({
                     <div className="col-md-12">
                         <div className="form-group">
                             <label htmlFor="name">Name</label>
-                            <UnitAutoComplete id="name" name="name" value={unit.name}
+                            <InventoryAutoComplete id="name" name="name" value={inventory.name}
                                               onChange={onChange}/>
                         </div>
                     </div>
@@ -30,7 +30,7 @@ var NewUnitForm = React.createClass({
                 <div className="form-group">
                     <label htmlFor="remarks">Remarks</label>
                     <textarea id="remarks" className="form-control" placeholder="Remarks"
-                              name="remarks" value={unit.remarks}
+                              name="remarks" value={inventory.remarks}
                               onChange={onChange}/>
                 </div>
             </form>
@@ -38,4 +38,4 @@ var NewUnitForm = React.createClass({
     }
 });
 
-module.exports = NewUnitForm;
+module.exports = NewInventoryForm;

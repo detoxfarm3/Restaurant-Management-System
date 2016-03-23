@@ -1,10 +1,14 @@
 "use strict";
 
 import React from 'react';
+var RoleList = require('./RoleList');
 
-class UserApp extends React.Component {
+class ListRole extends React.Component {
     constructor(props) {
         super(props);
+        this.state = {
+            roles: []
+        };
     }
 
     render() {
@@ -15,7 +19,7 @@ class UserApp extends React.Component {
             <div className="row">
                 <div className="col-md-12">
 
-                    {$this.props.children}
+                    <RoleList roles={$this.state.roles}/>
 
                 </div>
             </div>
@@ -23,4 +27,4 @@ class UserApp extends React.Component {
     }
 }
 
-module.exports = UserApp;
+module.exports = ListRole;

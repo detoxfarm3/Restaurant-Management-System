@@ -1,10 +1,14 @@
 "use strict";
 
 import React from 'react';
+var AuthorityList = require('./AuthorityList');
 
-class UserApp extends React.Component {
+class ListAuthority extends React.Component {
     constructor(props) {
         super(props);
+        this.state = {
+            authorities: []
+        };
     }
 
     render() {
@@ -15,7 +19,7 @@ class UserApp extends React.Component {
             <div className="row">
                 <div className="col-md-12">
 
-                    {$this.props.children}
+                    <AuthorityList authorities={this.state.authorities}/>
 
                 </div>
             </div>
@@ -23,4 +27,4 @@ class UserApp extends React.Component {
     }
 }
 
-module.exports = UserApp;
+module.exports = ListAuthority;

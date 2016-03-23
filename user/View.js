@@ -1,7 +1,7 @@
 "use strict";
 import React from 'react'
 var eb = require('../components/EventBus');
-var Events = require('../Events');
+var Events = require('./Events');
 var ViewUser;
 module.exports = ViewUser = React.createClass({
     getDefaultProps: function () {

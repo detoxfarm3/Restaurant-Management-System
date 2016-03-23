@@ -11,10 +11,10 @@ var ReactBootstrap = require('react-bootstrap')
 var document = require('./components/document');
 
 var UserApp = require('./user');
-var ListUsers = require('./user/ListUsers');
-var CreateUser = require('./user/CreateUser');
-var EditUser = require('./user/EditUser');
-var ViewUser = require('./user/ViewUser');
+var ListUsers = require('./user/List');
+var CreateUser = require('./user/Create');
+var EditUser = require('./user/Edit');
+var ViewUser = require('./user/View');
 
 var SellApp = require('./sell');
 var CreateSell = require('./sell/Create');

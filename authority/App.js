@@ -2,7 +2,7 @@
 
 import React from 'react';
 
-class UserApp extends React.Component {
+class Authority extends React.Component {
     constructor(props) {
         super(props);
     }
@@ -23,4 +23,4 @@ class UserApp extends React.Component {
     }
 }
 
-module.exports = UserApp;
+module.exports = Authority;

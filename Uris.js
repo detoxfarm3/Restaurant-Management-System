@@ -11,7 +11,7 @@ module.exports = Uris = {
         CREATE: '/user/create',
         VIEW: '/user/view/:id',
         EDIT: '/user/edit/:id',
-        BASE: '/user/index/:tab',
+        BASE: '/user/index',
     },
     SELL: {
         CREATE: '/sell/create',
@@ -23,7 +23,7 @@ module.exports = Uris = {
         CREATE: '/product/create',
         VIEW: '/product/view/:id',
         EDIT: '/product/edit/:id',
-        BASE: '/product/index/:tab',
+        BASE: '/product/index',
     },
     UNIT: {
         BASE: '/unit/index',
@@ -32,7 +32,7 @@ module.exports = Uris = {
         CREATE: '/field/create',
         VIEW: '/field/view/:id',
         EDIT: '/field/edit/:id',
-        BASE: '/field/index/:tab',
+        BASE: '/field/index',
     },
     INVENTORY: {
         VIEW: '/inventory/view/:id',
@@ -43,5 +43,6 @@ module.exports = Uris = {
 }
 
 function toAbsoluteUri(str) {
-    return 'users-home#' + str;
+    str = str || "";
+    return 'users-home#' + str.replace('(', '').replace(')', '');
 }

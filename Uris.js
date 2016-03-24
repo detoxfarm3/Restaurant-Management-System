@@ -35,6 +35,7 @@ module.exports = Uris = {
         BASE: '/field/index',
     },
     INVENTORY: {
+        CREATE: '/inventory/create',
         VIEW: '/inventory/view/:id',
         BASE: '/inventory/index',
         ADD_REMOVE_EDIT_PRODUCTS: '/inventory/:id/add-remove-edit-products',

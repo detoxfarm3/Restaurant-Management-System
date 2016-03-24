@@ -58267,7 +58267,7 @@ var _Nav3 = _interopRequireDefault(_Nav2);
 
 exports.Nav = _Nav3['default'];
 
-var _Navbar2 = require('./Navbar');
+var _Navbar2 = require('./navbar/Navbar');
 
 var _Navbar3 = _interopRequireDefault(_Navbar2);
 

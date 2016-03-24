@@ -36,6 +36,8 @@ var ListInventory = require('./inventory/List');
 var ViewInventory = require('./inventory/View');
 var AddRemoveEditProducts = require('./inventory/AddRemoveEditProducts');
 
+var DashboardPage = require('./DashboardPage');
+
 var Uris = require('./Uris');
 
 //Create and initialize app when eventbus initialization complete.
@@ -45,7 +47,8 @@ document.addEventListener("EVENT_BUS_CONNECTED", function () {
     ReactDom.render(
         <Router history={hashHistory}>
             <Route path={Uris.BASE_URI} component={App}>
-                <IndexRoute component={ListUsers}/>
+
+                <IndexRoute component={DashboardPage}/>
 
                 <Route path={Uris.USER.BASE} component={UserApp}>
                     <IndexRoute component={ListUsers}/>

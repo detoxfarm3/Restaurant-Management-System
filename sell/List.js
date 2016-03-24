@@ -4,8 +4,6 @@ import { browserHistory } from 'react-router';
 
 var SellHeader = require('./SellHeader');
 var OrderItemsTable = require('./OrderItemsTable');
-var Tabs = require('react-bootstrap').Tabs;
-var Tab = require('react-bootstrap').Tab;
 
 var Uris = require('../Uris');
 var lib = require('../components/functions');
@@ -320,20 +318,6 @@ module.exports = ListSells = React.createClass({
         return (
             <div className="panel panel-primary">
                 <div className="panel-body">
-
-                    {console.log("prms.tab", $this.props.params.tab)}
-
-                    <Tabs activeKey={$this.props.params.tab} onSelect={$this.switchToTab}>
-                        <Tab eventKey={1} title="Today">
-                            <div>Tab 1 content</div>
-                        </Tab>
-                        <Tab eventKey={2} title="This Weak">
-                            <div>Tab 2 content</div>
-                        </Tab>
-                        <Tab eventKey={3} title="This Month">
-                            <div>Tab 3 content</div>
-                        </Tab>
-                    </Tabs>
 
                     {
                         sells.map(function (sell) {

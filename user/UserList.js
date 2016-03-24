@@ -7,7 +7,6 @@ class UserList extends React.Component {
     constructor(props) {
         super(props);
         this.formatAction.bind(this);
-        this.formatAuthorities.bind(this);
     }
 
     render() {
@@ -32,9 +31,6 @@ class UserList extends React.Component {
                 <TableHeaderColumn dataField="name">Name</TableHeaderColumn>
 
                 <TableHeaderColumn dataField="phone">Phone</TableHeaderColumn>
-                <TableHeaderColumn dataField="authorities"
-                                   dataFormat={$this.formatAuthorities}
-                                   editable={false}>Authorities</TableHeaderColumn>
 
                 <TableHeaderColumn dataField="address">Address</TableHeaderColumn>
                 <TableHeaderColumn dataField="remarks">Remarks</TableHeaderColumn>
@@ -50,19 +46,10 @@ class UserList extends React.Component {
 
     }
 
-    formatAuthorities(authorities, user) {
-        var $this = this;
-        return (
-
-            <AuthoritiesListViewEmbed authorities={authorities}/>
-        );
-    }
-
     formatAction(action, user) {
         var $this = this;
         return (
             <div>
-                <span className="btn btn-success" style={{marginRight: '10px'}}>Edit Authorities</span>
                 <span className="btn btn-danger">
                     <span className="glyphicon glyphicon-remove" aria-hidden="true"></span>
                 </span>

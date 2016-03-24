@@ -20,7 +20,9 @@
     "react-select": "~1.0.0-beta11",
     "react-widgets": "~3.2.0",
     "vertx3-eventbus-client": "~3.2.1",
-    "react-autosuggest": "~3.6.0"
+    "react-autosuggest": "~3.6.0",
+    "react-sidebar": "~2.1.1",
+    "react-burger-menu": "~1.5.7"
   },
   "devDependencies": {},
   "scripts": {

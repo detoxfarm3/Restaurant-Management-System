@@ -6,7 +6,7 @@ var SellHeader = require('./SellHeader');
 var OrderItemsTable = require('./OrderItemsTable');
 
 var Uris = require('../Uris');
-var lib = require('../components/functions');
+var lib = require('../../components/functions');
 
 var ListSells;
 module.exports = ListSells = React.createClass({

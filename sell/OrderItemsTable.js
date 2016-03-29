@@ -1,6 +1,6 @@
 var React = require('react');
 import {BootstrapTable, TableHeaderColumn} from 'react-bootstrap-table';
-var lib = require('../components/functions');
+var lib = require('.././functions');
 var Stream = require('streamjs');
 
 var OrderItemsTable;

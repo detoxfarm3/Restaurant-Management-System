@@ -1,8 +1,8 @@
 "use strict";
 import React from 'react'
-var Modal = require('../components/Modal');
+var Modal = require('.././Modal');
 var NewInventoryForm = require('./NewInventoryForm');
-var lib = require('../components/functions');
+var lib = require('.././functions');
 
 var NewInventoryDialog;
 module.exports = NewInventoryDialog = React.createClass({

@@ -4,9 +4,6 @@ var Uris;
 
 module.exports = Uris = {
     BASE_URI: "/",
-    API: {
-        BASE_URI: "/",
-    },
     USER: {
         CREATE: '/user/create',
         VIEW: '/user/view/:id',

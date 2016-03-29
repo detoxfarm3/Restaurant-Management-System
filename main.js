@@ -8,7 +8,7 @@ var ReactDom = require('react-dom');
 import { Router, Route, hashHistory, IndexRoute } from 'react-router'
 var ReactBootstrap = require('react-bootstrap')
 
-var document = require('./components/document');
+var document = require('././document');
 
 var UserApp = require('./user');
 var ListUsers = require('./user/List');
@@ -86,4 +86,5 @@ document.addEventListener("EVENT_BUS_CONNECTED", function () {
 });
 
 //Create the EventBus
-require('./components/EventBus');
+window.ebb = require('././EventBus');
+window.Events = require('./ServerEvents');

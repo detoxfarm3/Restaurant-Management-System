@@ -1,7 +1,7 @@
 "use strict"
 import React from 'react';
 var UserList = require('./UserList');
-var Modal = require('../components/Modal');
+var Modal = require('../../components/Modal');
 var CreateNewUserForm = require('./CreateNewUserForm');
 
 class ListUser extends React.Component {

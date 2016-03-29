@@ -27,6 +27,18 @@ var NewUnitForm = React.createClass({
                         </div>
                     </div>
                 </div>
+
+                <div className="row">
+                    <div className="col-md-12">
+                        <div className="form-group">
+                            <label htmlFor="fullName">Full Name</label>
+                            <input type="text" className="form-control" placeholder="Full Name"
+                                   id="fullName" name="fullName" value={unit.fullName}
+                                   onChange={onChange}/>
+                        </div>
+                    </div>
+                </div>
+
                 <div className="form-group">
                     <label htmlFor="remarks">Remarks</label>
                     <textarea id="remarks" className="form-control" placeholder="Remarks"

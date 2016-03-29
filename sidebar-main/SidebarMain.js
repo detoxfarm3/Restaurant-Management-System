@@ -17,7 +17,7 @@ class SidebarMain extends React.Component {
             zIndex: 2,
             top: 0,
             left: 0,
-            width: isOpen ? '20%' : '0',
+            width: isOpen ? '250px' : '0',
             display: isOpen ? 'block' : 'none',
             border: '1px solid black',
             height: '100%',

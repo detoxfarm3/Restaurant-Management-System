@@ -1,6 +1,6 @@
 "use strict";
 import React from 'react'
-var eb = require('../components/EventBus');
+var eb = require('.././EventBus');
 var Events = require('./Events');
 var ViewUser;
 module.exports = ViewUser = React.createClass({

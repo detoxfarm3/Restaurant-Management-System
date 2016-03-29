@@ -2,7 +2,15 @@
 import {BootstrapTable, TableHeaderColumn} from 'react-bootstrap-table';
 var React = require('react');
 
+var eb = require('.././EventBus');
+var ServerEvents = require('../ServerEvents');
+
 var NewUnitDialog = require('./NewUnitDialog');
+
+var unitService = require('./UnitService');
+
+var ee = require('../EventEmitter');
+var Events = require('../Events');
 
 var ListUnits;
 module.exports = ListUnits = React.createClass({
@@ -18,6 +26,25 @@ module.exports = ListUnits = React.createClass({
                 {id: '4', name: 's', remarks: 'rr'},
             ]
         };
+    },
+    componentDidMount: function () {
+        var $this = this;
+
+        $this.findAllUnits();
+
+        ee.on(Events.UNIT_CREATED, $this.onUnitChanged);
+
+        ee.on(Events.UNIT_UPDATED, $this.onUnitChanged);
+
+        ee.on(Events.UNIT_DELETED, $this.onUnitChanged);
+    },
+    componentWillUnmount: function () {
+        var $this = this;
+        ee.removeListener(Events.UNIT_CREATED, $this.onUnitChanged);
+
+        ee.removeListener(Events.UNIT_UPDATED, $this.onUnitChanged);
+
+        ee.removeListener(Events.UNIT_DELETED, $this.onUnitChanged);
     },
     render: function () {
         var $this = this;
@@ -46,6 +73,7 @@ module.exports = ListUnits = React.createClass({
                         <BootstrapTable data={units} cellEdit={$this.cellEditProp()}>
                             <TableHeaderColumn dataField="id" isKey={true}>ID</TableHeaderColumn>
                             <TableHeaderColumn dataField="name">Name</TableHeaderColumn>
+                            <TableHeaderColumn dataField="fullName">Full Name</TableHeaderColumn>
                             <TableHeaderColumn dataField="remarks">Remarks</TableHeaderColumn>
                             <TableHeaderColumn dataField="action" editable={false}
                                                dataFormat={$this.formatAction}>Action</TableHeaderColumn>
@@ -59,12 +87,26 @@ module.exports = ListUnits = React.createClass({
             </div>
         );
     },
+    onUnitChanged: function () {
+        var $this = this;
+        $this.findAllUnits();
+    },
+    findAllUnits: function (params) {
+        var $this = this;
+        unitService.findAllUnits(params)
+            .then(function (rsp) {
+                $this.setState({
+                    units: rsp.data
+                });
+            })
+        ;
+    },
     onNewUnitDialogInit: function (ref) {
-        this.newInventoryDialog = ref;
+        this.newUnitDialog = ref;
     },
     createNewUnit: function () {
         var $this = this;
-        $this.newInventoryDialog.createNewInventory();
+        $this.newUnitDialog.createNewUnit();
     },
     formatAction: function (ac, unit) {
         var $this = this;
@@ -79,11 +121,8 @@ module.exports = ListUnits = React.createClass({
     },
     deleteUnit: function (unit) {
         var $this = this;
-        $this.setState({
-            units: $this.state.units.filter(function (u) {
-                return u != unit;
-            })
-        });
+
+        unitService.delete(unit.id);
     },
     cellEditProp: function () {
         var $this = this;
@@ -95,5 +134,6 @@ module.exports = ListUnits = React.createClass({
     },
     onAfterSaveCell: function (row, cellName, cellValue) {
         var $this = this;
+        unitService.update(row);
     }
 });

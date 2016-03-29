@@ -1,0 +1,1 @@
+browserify -t [ babelify --presets [ react es2015 ] ] main.js -o /home/shahadat/IdeaProjects/call_center/src/main/resources/my-public/js/bundle.js

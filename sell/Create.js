@@ -1,6 +1,6 @@
 var React = require('react');
 var CreateSellGrid = require('./CreateSellGrid');
-var Modal = require('../components/Modal');
+var Modal = require('../../components/Modal');
 var CreateSellHeader = require('./CreateSellHeader');
 var SellPreview = require('./SellPreview');
 

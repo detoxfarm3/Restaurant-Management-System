@@ -1,5 +1,5 @@
 var React = require('react');
-var lib = require('../components/functions');
+var lib = require('.././functions');
 var Autosuggest = require('react-autosuggest');
 
 class InventoryAutoComplete extends React.Component {

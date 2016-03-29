@@ -1,0 +1,9 @@
+var Events = {
+    FIND_ALL_UNITS: "UM.FIND_ALL_UNITS",
+    FIND_UNIT: "UM.FIND_UNIT",
+    CREATE_UNIT: "UM.CREATE_UNIT",
+    UPDATE_UNIT: "UM.UPDATE_UNIT",
+    DELETE_UNIT: "UM.DELETE_UNIT"
+};
+
+module.exports = Events;

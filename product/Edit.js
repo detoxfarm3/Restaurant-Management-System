@@ -1,9 +1,9 @@
 "use strict";
 import React from 'react'
-var Modal = require('../components/Modal');
+var Modal = require('.././Modal');
 var SingleProductViewShort = require('./SingleProductViewShort');
 var ProductsUnitWisePriceEditable = require('./ProductsUnitWisePriceEditable');
-var lib = require('../components/functions');
+var lib = require('.././functions');
 var ProductsUnitWisePrice = require('./ProductsUnitWisePrice');
 var NewUnitDialog = require('./../unit/NewUnitDialog');
 var ProductsInventoryEditable = require('./ProductsInventoryEditable');

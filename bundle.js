@@ -3,7 +3,7 @@
 
 var React = require('react');
 
-var eb = require('./components/EventBus');
+var eb = require('././EventBus');
 
 var App;
 module.exports = App = React.createClass({
@@ -29211,7 +29211,7 @@ var ReactDom = require('react-dom');
 
 var ReactBootstrap = require('react-bootstrap');
 
-var document = require('./components/document');
+var document = require('././document');
 
 var ListUsers = require('./user/List');
 var CreateUser = require('./user/Create');
@@ -29257,7 +29257,7 @@ document.addEventListener("EVENT_BUS_CONNECTED", function () {
 });
 
 //Create the EventBus
-require('./components/EventBus');
+require('././EventBus');
 
 },{"./App":1,"./Config":2,"./Globalize":5,"./Uris":6,"./components/EventBus":7,"./components/document":9,"./product/Create":799,"./sell":800,"./sell/Create":801,"./sell/Edit":804,"./sell/List":806,"./sell/View":810,"./user/CreateUser":1270,"./user/EditUser":1271,"./user/ListUsers":1272,"./user/ViewUser":1273,"react":735,"react-bootstrap":265,"react-dom":438,"react-router":466}],169:[function(require,module,exports){
 module.exports={

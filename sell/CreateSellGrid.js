@@ -2,7 +2,7 @@
 import React from 'react'
 import {BootstrapTable, TableHeaderColumn} from 'react-bootstrap-table';  // in ECMAScript 6
 var Stream = require('streamjs');
-var lib = require('../components/functions');
+var lib = require('../../components/functions');
 
 var EventEmitter = require("events").EventEmitter;
 var ee = new EventEmitter();

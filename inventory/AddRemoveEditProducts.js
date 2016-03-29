@@ -1,7 +1,7 @@
 "use strict";
 import {BootstrapTable, TableHeaderColumn} from 'react-bootstrap-table';
 var React = require('react');
-var Modal = require('../components/Modal');
+var Modal = require('.././Modal');
 var AddRemoveEditForm = require('./AddRemoveEditForm');
 var AddAnotherProductForm = require('./AddAnotherProductForm');
 

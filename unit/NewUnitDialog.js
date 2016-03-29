@@ -1,8 +1,10 @@
 "use strict";
 import React from 'react'
-var Modal = require('../components/Modal');
+var Modal = require('../../components/Modal');
 var NewUnitForm = require('./NewUnitForm');
-var lib = require('../components/functions');
+var lib = require('.././functions');
+
+var unitService = require('./UnitService');
 
 var NewUnitDialog;
 module.exports = NewUnitDialog = React.createClass({
@@ -34,23 +36,25 @@ module.exports = NewUnitDialog = React.createClass({
                    footer={modal.footer} bodyStyle={modal.bodyStyle}/>
         );
     },
-    createNewUnit: function () {
-        var $this = this;
 
-        function closeModal() {
-            $this.setState({
-                createModal: function () {
-                    return {isOpen: false};
-                },
-                unit: {}
-            });
-        }
+    closeModal: function () {
+        var $this = this;
+        $this.setState({
+            createModal: function () {
+                return {isOpen: false};
+            },
+            unit: {}
+        });
+    },
+
+    createNewUnit: function () {
+        var $this = this
 
         $this.setState({
             createModal: function () {
                 return {
                     isOpen: true,
-                    onClose: closeModal,
+                    onClose: $this.closeModal,
                     title: 'Create New Unit.',
                     body: (
                         <div className="row">
@@ -66,7 +70,7 @@ module.exports = NewUnitDialog = React.createClass({
                     footer: (
                         <div>
                             <span className="btn btn-primary pull-right" onClick={$this.submit}>Ok</span>
-                            <span className="btn btn-danger pull-right" onClick={closeModal}
+                            <span className="btn btn-danger pull-right" onClick={$this.closeModal}
                                   style={{marginRight: '5px'}}>Cancel</span>
                         </div>
                     ),
@@ -75,9 +79,13 @@ module.exports = NewUnitDialog = React.createClass({
             }
         });
     },
+
     submit: function () {
         var $this = this;
+        unitService.create($this.state.unit);
+        $this.closeModal();
     },
+
     onUnitChange: function onUnitChange(e) {
         var $this = this;
         var unit = lib.copy($this.state.unit);

@@ -14,8 +14,7 @@ class UnitService {
 
             eb.send(ServerEvents.FIND_ALL_UNITS, params, null, function (err, msg) {
                 if (!!err || !!msg.failureCode) {
-                    console.error(err);
-                    reject(err);
+                    reject(err || msg);
                     return;
                 }
 
@@ -31,8 +30,7 @@ class UnitService {
 
             eb.send(ServerEvents.FIND_UNIT, id, null, function (err, msg) {
                 if (!!err || !!msg.failureCode) {
-                    console.error(err);
-                    reject(err);
+                    reject(err || msg);
                     return;
                 }
 
@@ -48,8 +46,7 @@ class UnitService {
 
             eb.send(ServerEvents.CREATE_UNIT, unit, null, function (err, msg) {
                 if (!!err || !!msg.failureCode) {
-                    console.error(err);
-                    reject(err);
+                    reject(err || msg);
                     return;
                 }
 
@@ -67,8 +64,7 @@ class UnitService {
 
             eb.send(ServerEvents.UPDATE_UNIT, unit, null, function (err, msg) {
                 if (!!err || !!msg.failureCode) {
-                    console.error(err);
-                    reject(err);
+                    reject(err || msg);
                     return;
                 }
 
@@ -87,8 +83,7 @@ class UnitService {
 
             eb.send(ServerEvents.DELETE_UNIT, id, null, function (err, msg) {
                 if (!!err || !!msg.failureCode) {
-                    console.error(err);
-                    reject(err);
+                    reject(err || msg);
                     return;
                 }
 

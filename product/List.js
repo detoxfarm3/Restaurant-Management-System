@@ -2,6 +2,7 @@
 import React from 'react'
 var SingleProductViewShort = require('./SingleProductViewShort');
 var ProductList = require('./ProductList');
+var Uris = require('../Uris');
 
 var ListProduct;
 module.exports = ListProduct = React.createClass({
@@ -136,7 +137,8 @@ module.exports = ListProduct = React.createClass({
 
                         <div className="col-md-2">
 
-                            <span className="btn btn-primary pull-right">New Product</span>
+                            <a className="btn btn-primary pull-right"
+                               href={Uris.toAbsoluteUri(Uris.PRODUCT.CREATE)}>New Product</a>
 
                         </div>
 

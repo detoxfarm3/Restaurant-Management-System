@@ -17,14 +17,25 @@ var CreateSell;
 module.exports = CreateSell = React.createClass({
     getInitialState: function () {
         return {
-            products: {
+            productsById: {
                 1: {
                     id: 1,
                     name: 'Biriani'
-                },
+                }
+                ,
                 2: {
                     id: 2,
                     name: 'Kaccchi'
+                }
+                ,
+                3: {
+                    id: 3,
+                    name: 'Misti'
+                }
+                ,
+                4: {
+                    id: 4,
+                    name: 'Doi'
                 }
             },
             units: {
@@ -52,15 +63,19 @@ module.exports = CreateSell = React.createClass({
                 sellUnits: [
                     {
                         no: 1,
+                        productId: 1,
                     },
                     {
                         no: 2,
+                        productId: 2,
                     },
                     {
                         no: 3,
+                        productId: 3,
                     },
                     {
                         no: 4,
+                        productId: 4,
                     }
                 ]
             },
@@ -96,6 +111,10 @@ module.exports = CreateSell = React.createClass({
         var $this = this;
         var modal = $this.state.modal;
         var sell = $this.state.sell;
+        var sellUnitsByProductId = (sell.sellUnits || []).reduce(function (obj, unit) {
+            obj[unit.productId] = unit;
+            return obj;
+        }, {});
 
         return (
 
@@ -130,15 +149,21 @@ module.exports = CreateSell = React.createClass({
 
                     <div className="panel panel-default">
 
-                        <button className="btn btn-primary"
-                                style={{padding: '7px', width: '100px', margin: '2px', marginBottom: '5px', marginRight: '5px'}}
-                                onClick={function () {$this.addNew();}}>
-                            <span className="glyphicon glyphicon-plus" aria-hidden="true"></span>
+                        <button className="btn btn-primary pull-right"
+                                style={{fontWeight: 'bold'}}
+                                onClick={function () {$this.submit(sell);}}>
+                            Create
                         </button>
 
-                        <CreateSellGrid units={$this.props.units} products={$this.props.products}
+                        <button className="btn btn-danger pull-right"
+                                style={{fontWeight: 'bold'}}
+                                onClick={$this.clearAllUnits}>
+                            Clear All
+                        </button>
+
+                        <CreateSellGrid unitsById={$this.props.units} productsById={$this.state.productsById}
                                         productsUnitWisePrice={$this.props.productsUnitWisePrice}
-                                        sellUnits={sell.sellUnits}
+                                        sellUnitsByProductId={sellUnitsByProductId}
                                         onChange={$this.onSaleUnitsChange} onInit={$this.onCreateSellGridInit}/>
 
                         <Modal title={modal.title} body={modal.body}
@@ -173,17 +198,16 @@ module.exports = CreateSell = React.createClass({
     onCreateSellGridInit: function (createSellGrid) {
         this.createSellGrid = createSellGrid;
     },
-    onSaleUnitsChange: function (newSellUnits, prevSellUnits, unit) {
+    clearAllUnits: function () {
+        this.createSellGrid.clearAllUnits();
+    },
+    onSaleUnitsChange: function (newSellUnitsByProductId, prevSellUnitsByProductId, unit) {
         var $this = this;
         $this.setState({
             sell: {
-                sellUnits: newSellUnits
+                sellUnits: Object.keys(newSellUnitsByProductId).map(id => newSellUnitsByProductId[id])
             }
         });
-    },
-    addNew: function () {
-        var $this = this;
-        $this.createSellGrid.addNew();
     },
     submit: function (sell) {
         var $this = this;

@@ -1,6 +1,6 @@
 "use strict";
 import React from 'react'
-import {BootstrapTable, TableHeaderColumn} from 'react-bootstrap-table';  // in ECMAScript 6
+import {BootstrapTable, TableHeaderColumn} from 'react-bootstrap-table';
 var Stream = require('streamjs');
 var lib = require('../../components/functions');
 
@@ -18,17 +18,8 @@ var CreateSellGrid;
 module.exports = CreateSellGrid = React.createClass({
     getDefaultProps: function () {
         return {
-            products: {
-                1: {
-                    id: 1,
-                    name: 'Biriani'
-                },
-                2: {
-                    id: 2,
-                    name: 'Kaccchi'
-                }
-            },
-            units: {
+            productsById: {},
+            unitsById: {
                 1: {
                     id: 1,
                     name: 'Cup'
@@ -49,7 +40,7 @@ module.exports = CreateSellGrid = React.createClass({
                     2: 50
                 }
             },
-            sellUnits: [
+            sellUnitsByProductId: [
                 {
                     no: 1,
                 },
@@ -84,7 +75,7 @@ module.exports = CreateSellGrid = React.createClass({
                 unit.unitId = '';
             }
             $this.updateUnitPrice(unit);
-            $this.props.onChange($this.props.sellUnits, $this.props.sellUnits, unit);
+            $this.props.onChange($this.props.sellUnitsByProductId, $this.props.sellUnitsByProductId, unit);
         });
 
         ee.on(MyEvents.UNIT_ID_CHANGED, function (unit) {
@@ -103,93 +94,83 @@ module.exports = CreateSellGrid = React.createClass({
     },
     render: function () {
         var $this = this;
-        var sellUnits = $this.props.sellUnits;
+        var sellUnitsByProductId = $this.props.sellUnitsByProductId;
 
-        var products = $this.props.products;
+        var productsById = $this.props.productsById;
         var productsUnitWisePrice = $this.props.productsUnitWisePrice;
-        var units = $this.props.units;
+        var unitsById = $this.props.unitsById;
 
         var totalCounter = {quantity: 0, total: 0};
         var serial = 1;
-        sellUnits = Stream(sellUnits)
-            .peek(function (unit) {
-                totalCounter.quantity = totalCounter.quantity + (parseInt(unit.quantity) || 0);
-                totalCounter.total = totalCounter.total + (parseInt(unit.total) || 0);
-            })
-            .map(function (unit) {
-                return lib.merge2(unit, {
-                    serial: serial++,
-                    productId: (
-                        <select className="form-control" style={{width: '180px'}}
-                                name="productId" value={unit.productId}
-                                onChange={function (e) {
-                                    $this.onChange(e, unit);
-                                }}>
-
-                            <option key={0} value="">Product</option>
-
-                            {
-                                Object.keys(products || {}).map(function (productId) {
-                                    var product = products[productId];
-                                    return (<option key={product.id} value={product.id}>{product.name}</option>);
-                                })
-                            }
-                        </select>
-                    ),
-                    quantity: (
-                        <input className="form-control" type="number" style={{width: '100px'}}
-                               name="quantity" value={unit.quantity}
-                               onChange={function (e) {
+        var sUnits = Stream(Object.keys(productsById))
+                .map(function (productId) {
+                    return sellUnitsByProductId[productId] || {
+                            no: Math.random(),
+                            productId: productId
+                        };
+                })
+                .peek(function (unit) {
+                    totalCounter.quantity = totalCounter.quantity + (parseInt(unit.quantity) || 0);
+                    totalCounter.total = totalCounter.total + (parseInt(unit.total) || 0);
+                })
+                .map(function (unit) {
+                    return lib.merge2(unit, {
+                        serial: serial++,
+                        productId: (productsById[unit.productId] || {}).name,
+                        quantity: (
+                            <input className="form-control" type="number" style={{width: '100px'}}
+                                   name="quantity" value={unit.quantity}
+                                   onChange={function (e) {
                                     $this.onChange(e, unit);
                                }}
-                            />
-                    ),
-                    unitId: (
-                        <select className="form-control" style={{width: '120px'}}
-                                name="unitId" value={unit.unitId}
-                                onChange={function (e) {
+                                />
+                        ),
+                        unitId: (
+                            <select className="form-control" style={{width: '120px'}}
+                                    name="unitId" value={unit.unitId}
+                                    onChange={function (e) {
                                         $this.onChange(e, unit);
                                      }}>
-                            <option key={0} value="">Unit</option>
+                                <option key={0} value="">Unit</option>
 
-                            {
-                                Object.keys(productsUnitWisePrice[unit.productId] || {}).map(function (unitId) {
+                                {
+                                    Object.keys(productsUnitWisePrice[unit.productId] || {}).map(function (unitId) {
 
-                                    var unit = units[unitId];
-                                    return (<option key={unit.id} value={unit.id}>{unit.name}</option>);
-                                })
-                            }
+                                        var unit = unitsById[unitId];
+                                        return (<option key={unit.id} value={unit.id}>{unit.name}</option>);
+                                    })
+                                }
 
-                        </select>
-                    ),
-                    unitPrice: (
-                        <input className="form-control" type="number" style={{width: '120px'}}
-                               name="unitPrice" value={unit.unitPrice}
-                               onChange={function (e) {
+                            </select>
+                        ),
+                        unitPrice: (
+                            <input className="form-control" type="number" style={{width: '120px'}}
+                                   name="unitPrice" value={unit.unitPrice}
+                                   onChange={function (e) {
                                     $this.onChange(e, unit);
                                }}
-                            />
-                    ),
-                    total: (
-                        <input className="form-control" type="number" style={{width: '120px'}}
-                               name="total" value={unit.total}
-                               onChange={function (e) {
+                                />
+                        ),
+                        total: (
+                            <input className="form-control" type="number" style={{width: '120px'}}
+                                   name="total" value={unit.total}
+                                   onChange={function (e) {
                                     $this.onChange(e, unit);
                                }}
-                            />
-                    ),
-                    action: (
-                        <button className="btn btn-danger"
-                                onClick={function (e) {
-                                    $this.deleteSellUnit(unit);
-                                }}><span className="glyphicon glyphicon-remove" aria-hidden="true"></span></button>
-                    )
-                });
-            })
-            .toArray()
-        ;
+                                />
+                        ),
+                        action: (
+                            <button className="btn btn-danger"
+                                    onClick={function (e) {
+                                    $this.crearUnit(unit);
+                                }}>Clear</button>
+                        )
+                    });
+                })
+                .toArray()
+            ;
 
-        sellUnits.push({
+        sUnits.push({
             productId: <strong>Total</strong>,
             quantity: <strong>{totalCounter.quantity}</strong>,
             total: <strong>{totalCounter.total}</strong>,
@@ -197,7 +178,7 @@ module.exports = CreateSellGrid = React.createClass({
 
         return (
 
-            <BootstrapTable data={sellUnits} striped={true} hover={true}>
+            <BootstrapTable data={sUnits} striped={true} hover={true}>
 
                 <TableHeaderColumn isKey={true} dataField="serial">#</TableHeaderColumn>
 
@@ -215,62 +196,67 @@ module.exports = CreateSellGrid = React.createClass({
 
         );
     },
-    clear: function () {
+    clearAllUnits: function () {
         var $this = this;
-        $this.props.onChange([], $this.props.sellUnits);
+
+        var sellUnitsByProductId = $this.props.sellUnitsByProductId;
+        var map = {};
+
+        Object.keys(sellUnitsByProductId).forEach(productId => {
+            map[productId] = lib.merge2(sellUnitsByProductId[productId], {
+                quantity: undefined,
+                total: undefined,
+            });
+        });
+
+        $this.props.onChange(map, sellUnitsByProductId);
     },
-    deleteSellUnit: function (unit) {
+    crearUnit: function (unit) {
         var $this = this;
-        var sellUnits = $this.props.sellUnits;
-        var index = sellUnits.indexOf(unit);
-        if (index > -1) {
-            sellUnits.splice(index, 1);
-            $this.props.onChange(sellUnits, $this.props.sellUnits, unit);
-        }
+        var sellUnitsByProductId = $this.props.sellUnitsByProductId;
+
+        unit.quantity = undefined;
+        unit.total = undefined;
+
+        $this.props.onChange(sellUnitsByProductId, $this.props.sellUnitsByProductId, unit);
     },
     updateUnitPrice: function (unit) {
         var $this = this;
         var productsUnitWisePrice = $this.props.productsUnitWisePrice;
 
         unit.unitPrice = (productsUnitWisePrice[unit.productId] || {})[unit.unitId]
-        $this.props.onChange($this.props.sellUnits, $this.props.sellUnits, unit);
+        $this.props.onChange($this.props.sellUnitsByProductId, $this.props.sellUnitsByProductId, unit);
         ee.emit(MyEvents.UNIT_PRICE_CHANGED, unit);
     },
     updateTotal: function (unit) {
         var $this = this;
         unit.total = unit.quantity * unit.unitPrice;
-        $this.props.onChange($this.props.sellUnits, $this.props.sellUnits, unit);
+        $this.props.onChange($this.props.sellUnitsByProductId, $this.props.sellUnitsByProductId, unit);
     },
     addNew: function (sellUnit) {
         var $this = this;
-        var sellUnits = $this.props.sellUnits;
+        var sellUnitsByProductId = $this.props.sellUnitsByProductId;
 
         sellUnit = sellUnit || {};
 
-        if (!!sellUnit.no && sellUnits.findIndex(function (unit) {
+        if (!!sellUnit.no && sellUnitsByProductId.findIndex(function (unit) {
                 return sellUnit.no == unit.no;
             }) < 0) {
             sellUnit = $this.validateSaleUnit(sellUnit);
 
 
-            sellUnits.push(sellUnit);
+            sellUnitsByProductId.push(sellUnit);
 
-            $this.props.onChange(sellUnits, $this.props.sellUnits, sellUnit);
+            $this.props.onChange(sellUnitsByProductId, $this.props.sellUnitsByProductId, sellUnit);
 
             return sellUnit;
         }
+        ;
+        sellUnit.no = Math.random();
 
-        var newNo = Stream(sellUnits)
-                    .map(function (js) {
-                        return js.no;
-                    })
-                    .max().orElse(0) + 1
-            ;
-        sellUnit.no = newNo;
+        sellUnitsByProductId.push($this.validateSaleUnit(sellUnit));
 
-        sellUnits.push($this.validateSaleUnit(sellUnit));
-
-        $this.props.onChange(sellUnits, $this.props.sellUnits, sellUnit);
+        $this.props.onChange(sellUnitsByProductId, $this.props.sellUnitsByProductId, sellUnit);
 
         return sellUnit;
     },
@@ -305,6 +291,6 @@ module.exports = CreateSellGrid = React.createClass({
             ee.emit(MyEvents.UNIT_PRICE_CHANGED, unit);
         }
 
-        $this.props.onChange($this.props.sellUnits, $this.props.sellUnits, unit);
+        $this.props.onChange($this.props.sellUnitsByProductId, $this.props.sellUnitsByProductId, unit);
     },
 });

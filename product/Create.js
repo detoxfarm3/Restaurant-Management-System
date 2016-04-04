@@ -8,36 +8,38 @@ var ProductsUnitWisePrice = require('./ProductsUnitWisePrice');
 var NewUnitDialog = require('./../unit/NewUnitDialog');
 var ProductsInventoryEditable = require('./ProductsInventoryEditable');
 
+var productService = require('./ProductService');
+var Uris = require('../Uris');
+
 var CreateProduct;
 module.exports = CreateProduct = React.createClass({
     getInitialState: function () {
         return {
-            product: {
-                price: [],
-                inventories: [
-                    {
-                        id: Math.random(),
-                        inventory: {id: 1, name: 'Inv-2'},
-                        quantity: 545,
-                        available: 545,
-                        unitId: 1
-                    },
-                    {
-                        id: Math.random(),
-                        inventory: {id: 1, name: 'Inv-2'},
-                        quantity: 545,
-                        available: 545,
-                        unitId: 1
-                    },
-                    {
-                        id: Math.random(),
-                        inventory: {id: 1, name: 'Inv-2'},
-                        quantity: 545,
-                        available: 545,
-                        unitId: 1
-                    }
-                ]
-            },
+            product: {},
+            prices: [],
+            productInventories: [
+                {
+                    id: Math.random(),
+                    inventory: {id: 1, name: 'Inv-2'},
+                    quantity: 545,
+                    available: 545,
+                    unitId: 1
+                },
+                {
+                    id: Math.random(),
+                    inventory: {id: 1, name: 'Inv-2'},
+                    quantity: 545,
+                    available: 545,
+                    unitId: 1
+                },
+                {
+                    id: Math.random(),
+                    inventory: {id: 1, name: 'Inv-2'},
+                    quantity: 545,
+                    available: 545,
+                    unitId: 1
+                }
+            ],
             createModal: function () {
                 return {title: '', body: '', isOpen: false};
             },
@@ -49,6 +51,9 @@ module.exports = CreateProduct = React.createClass({
     render: function () {
         var $this = this;
         var product = $this.state.product || {};
+        var prices = $this.state.prices || [];
+        var productInventories = $this.state.productInventories || [];
+
         var createModal = $this.state.createModal;
         var modal = !!createModal ? createModal() || {} : {};
         var units = $this.state.units || [];
@@ -89,13 +94,13 @@ module.exports = CreateProduct = React.createClass({
                                     <div className="form-group col-md-6">
                                         <label htmlFor="name">Name</label>
                                         <input type="text" className="form-control" id="name" placeholder="Name"
-                                               name="name" value={product.name}/>
+                                               name="name" value={product.name} onChange={$this.onProductChange}/>
                                     </div>
 
                                     <div className="form-group col-md-6">
                                         <label htmlFor="sku">SKU</label>
                                         <input type="text" className="form-control" id="sku" placeholder="SKU"
-                                               name="sku" value={product.sku}/>
+                                               name="sku" value={product.sku} onChange={$this.onProductChange}/>
                                     </div>
 
                                     <div className="form-group col-md-6">
@@ -103,21 +108,23 @@ module.exports = CreateProduct = React.createClass({
                                         <input type="number" className="form-control" id="manufacturerPrice"
                                                placeholder="Manufacturer Price"
                                                name="manufacturerPrice"
-                                               value={(product.manufacturerPrice || {}).amount}/>
+                                               value={product.manufacturerPrice}
+                                               onChange={$this.onProductChange}/>
                                     </div>
 
                                     <div className="form-group col-md-6">
-                                        <label htmlFor="manufacturerPriceUnit">Manufacturer Price Unit</label>
+                                        <label htmlFor="manufacturerPriceUnitId">Manufacturer Price Unit</label>
 
                                         <select className="form-control"
-                                                id="manufacturerPriceUnit" name="manufacturerPriceUnit"
-                                                value={((product.manufacturerPrice || {}).unit || {}).id}>
-                                            <option id={0}>Select Unit</option>
+                                                id="manufacturerPriceUnitId" name="manufacturerPriceUnitId"
+                                                value={product.manufacturerPriceUnitId}
+                                                onChange={$this.onProductChange}>
+                                            <option id={0} value={0}>Select Unit</option>
 
                                             {
                                                 units.map(function (unit) {
                                                     return (
-                                                        <option key={unit.id} id={unit.id}>{unit.name}</option>
+                                                        <option key={unit.id} value={unit.id}>{unit.name}</option>
                                                     );
                                                 })
                                             }
@@ -154,7 +161,7 @@ module.exports = CreateProduct = React.createClass({
                                 </div>
                             </div>
                         </div>
-                        <ProductsUnitWisePriceEditable productsUnitWisePrice={product.price}
+                        <ProductsUnitWisePriceEditable productsUnitWisePrice={prices}
                                                        onInit={function (editable) {
                                                             $this.setState({productsUnitWisePriceEditable: editable});
                                                        }}
@@ -169,6 +176,13 @@ module.exports = CreateProduct = React.createClass({
                 </div>
             </div>
         );
+    },
+    onProductChange: function (e) {
+        var $this = this;
+
+        var product = $this.state.product || {};
+        product[e.target.name] = e.target.value;
+        $this.setState({product: product});
     },
     removeItem: function (item, inventories) {
         var $this = this;
@@ -202,6 +216,20 @@ module.exports = CreateProduct = React.createClass({
     createProduct: function () {
         var $this = this;
 
+        console.log('product', JSON.stringify($this.state.product));
+
+        productService
+            .create(lib.merge2($this.state.product, {
+                prices: $this.state.prices
+            }))
+            .then(productService.find)
+            .then($this.showSuccessDialog)
+        ;
+    },
+
+    showSuccessDialog: function (product) {
+        var $this = this;
+
         function onClose() {
             $this.setState({
                 createModal: function () {
@@ -220,7 +248,7 @@ module.exports = CreateProduct = React.createClass({
                         <div className="row">
 
                             <div className="col-md-12">
-                                <SingleProductViewShort product={$this.state.product}/>
+                                <SingleProductViewShort product={product}/>
                             </div>
 
                         </div>
@@ -228,8 +256,10 @@ module.exports = CreateProduct = React.createClass({
                     footer: (
                         <div>
                             <div className="btn btn-primary" onClick={onClose}>Ok</div>
-                            <a href="#" className="btn btn-success pull-left">Edit</a>
-                            <a href="#" className="btn btn-success pull-left">View Details</a>
+                            <a href={Uris.toAbsoluteUri(Uris.PRODUCT.EDIT, {id: product.id})}
+                               className="btn btn-success pull-left">Edit</a>
+                            <a href={Uris.toAbsoluteUri(Uris.PRODUCT.VIEW, {id: product.id})}
+                               className="btn btn-success pull-left">View Details</a>
                         </div>
                     ),
                     bodyStyle: {paddingTop: 0}
@@ -244,9 +274,7 @@ module.exports = CreateProduct = React.createClass({
     onProductsUnitWisePriceChange: function (productsUnitWisePrice) {
         var $this = this;
         $this.setState({
-            product: lib.merge2($this.state.product, {
-                price: productsUnitWisePrice
-            })
+            prices: productsUnitWisePrice
         });
     },
 })

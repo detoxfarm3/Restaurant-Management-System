@@ -1,5 +1,7 @@
 "use strict";
 
+var lib = require('../components/functions');
+
 var Uris;
 
 module.exports = Uris = {
@@ -40,7 +42,11 @@ module.exports = Uris = {
     toAbsoluteUri: toAbsoluteUri
 }
 
-function toAbsoluteUri(str) {
+function toAbsoluteUri(str, params) {
+
     str = str || "";
+
+    str = lib.parameterize(str, params);
+
     return 'users-home#' + str.replace('(', '').replace(')', '');
 }

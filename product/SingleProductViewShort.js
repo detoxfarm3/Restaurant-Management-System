@@ -52,7 +52,7 @@ module.exports = SingleProductViewShort = React.createClass({
                     unit: {id: 1, name: 'Lg'}
                 }
             ],
-            price: [
+            prices: [
                 {
                     id: 1, unit: {id: 1, name: 'U-1'}, amount: 512
                 },
@@ -87,7 +87,7 @@ module.exports = SingleProductViewShort = React.createClass({
                     <th>Price:</th>
                     <td colSpan="3" style={{padding: 0}}>
 
-                        <PriceView price={product.price}/>
+                        <PriceView prices={product.prices}/>
 
                     </td>
                 </tr>

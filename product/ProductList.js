@@ -54,7 +54,7 @@ module.exports = ProductList = React.createClass({
         price = price || [];
 
         return (
-            <PriceView price={price}/>
+            <PriceView prices={price}/>
         );
     },
     formatAction: function (ac, product) {

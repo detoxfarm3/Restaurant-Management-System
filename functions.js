@@ -117,7 +117,7 @@ exports.merge2 = function merge2(object1, object2) {
 }
 
 exports.exclude = function exclude(obj1, arrayOfKeys) {
-    var obj = copy(obj1);
+    var obj = exports.copy(obj1);
     for (var x in arrayOfKeys) {
         delete obj[arrayOfKeys[x]];
     }

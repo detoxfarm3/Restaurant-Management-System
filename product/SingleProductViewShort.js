@@ -16,60 +16,6 @@ module.exports = SingleProductViewShort = React.createClass({
         var $this = this;
         var product = $this.props.product;
 
-        product = {
-            id: 1,
-            name: 'Janji',
-            manufacturerPrice: {amount: 5564, unit: {id: 45, name: 'Kg'}},
-            inventories: [
-                {
-                    inventory: {id: 1, name: 'In-1'},
-                    quantity: 545,
-                    available: 545,
-                    unit: {id: 1, name: 'Lg'}
-                },
-                {
-                    inventory: {id: 2, name: 'In-1'},
-                    quantity: 545,
-                    available: 545,
-                    unit: {id: 1, name: 'Lg'}
-                },
-                {
-                    inventory: {id: 3, name: 'In-1'},
-                    quantity: 545,
-                    available: 545,
-                    unit: {id: 1, name: 'Lg'}
-                },
-                {
-                    inventory: {id: 4, name: 'In-1'},
-                    quantity: 545,
-                    available: 545,
-                    unit: {id: 1, name: 'Lg'}
-                },
-                {
-                    inventory: {id: 5, name: 'In-1'},
-                    quantity: 545,
-                    available: 545,
-                    unit: {id: 1, name: 'Lg'}
-                }
-            ],
-            prices: [
-                {
-                    id: 1, unit: {id: 1, name: 'U-1'}, amount: 512
-                },
-                {
-                    id: 2,
-                    unit: {id: 2, name: 'U-2'},
-                    amount: 7552
-                },
-                {
-                    id: 3,
-                    unit: {id: 2, name: 'U-2'},
-                    amount: 7552
-                }
-            ]
-        };
-
-        product.remarks = "REMRLALS";
         return (
             <table className="table table-condensed">
                 <tbody>

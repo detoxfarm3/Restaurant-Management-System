@@ -3,17 +3,17 @@ var React = require('react');
 var PriceView = React.createClass({
     getDefaultProps: function () {
         return {
-            price: []
+            prices: []
         };
     },
     render: function () {
         var $this = this;
-        var price = $this.props.price;
+        var prices = $this.props.prices || [];
         return (
             <table className="table table-condensed" style={{margin: 0}}>
                 <tbody>
                 {
-                    (price || []).map(function (p) {
+                    (prices).map(function (p) {
                         return (!p || !p.amount) ? '' : (
                             <tr key={Math.random()}>
                                 <th>{p.amount}</th>

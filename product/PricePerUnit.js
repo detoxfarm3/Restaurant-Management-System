@@ -11,7 +11,7 @@ var PricePerUnit = React.createClass({
         var $this = this;
         var price = $this.props.price;
         var unit = $this.props.unit;
-        return !price ? '' : (
+        return !price ? <span></span> : (
             <span style={$this.props.style || {}}>{price} / {unit}</span>
         );
     }

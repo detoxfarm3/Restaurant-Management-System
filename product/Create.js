@@ -9,6 +9,7 @@ var NewUnitDialog = require('./../unit/NewUnitDialog');
 var ProductsInventoryEditable = require('./ProductsInventoryEditable');
 
 var productService = require('./ProductService');
+var unitService = require('../unit/UnitService');
 var Uris = require('../Uris');
 
 var CreateProduct;
@@ -47,6 +48,15 @@ module.exports = CreateProduct = React.createClass({
             units: [{id: 1, name: 'Lb'}, {id: 2, name: 'Kg'}, {id: 3, name: 'Ltr'}],
             inventories: [{id: 1, name: 'Lb'}, {id: 2, name: 'Kg'}, {id: 3, name: 'Ltr'}],
         };
+    },
+    componentDidMount: function () {
+        var $this = this;
+        unitService.findAllUnits()
+            .then(rsp => $this.setState({units: rsp.data}))
+        ;
+    },
+    componentWillUnmount: function () {
+
     },
     render: function () {
         var $this = this;
@@ -162,6 +172,7 @@ module.exports = CreateProduct = React.createClass({
                             </div>
                         </div>
                         <ProductsUnitWisePriceEditable productsUnitWisePrice={prices}
+                                                       units={units}
                                                        onInit={function (editable) {
                                                             $this.setState({productsUnitWisePriceEditable: editable});
                                                        }}

@@ -3,15 +3,38 @@ import React from 'react'
 var SingleProductViewShort = require('./SingleProductViewShort');
 var ProductsUnitWisePrice = require('./ProductsUnitWisePrice');
 
+var productService = require('./ProductService');
+
+var Uris = require('../Uris');
+
 var ViewProduct;
 module.exports = ViewProduct = React.createClass({
+    getDefaultProps: function () {
+        return {
+            id: 0
+        };
+    },
     getInitialState: function () {
         return {
             product: {}
         };
     },
+    componentDidMount: function () {
+        var $this = this;
+
+        if (!!$this.props.params.id) {
+            productService.find($this.props.params.id)
+                .then(product => {
+                    console.log("PRODUCT_VIEW: ", product);
+                    $this.setState({product: product});
+                });
+        }
+    },
+    componentWillUnmount: function () {
+    },
     render: function () {
         var $this = this;
+        var id = $this.props.params.id;
         return (
 
             <div className="row">
@@ -29,8 +52,9 @@ module.exports = ViewProduct = React.createClass({
                                 <div className="col-md-1">
                                     <div className="btn-group btn-group-justified">
 
-                                <span className="btn btn-primary"
-                                      onClick={$this.createProduct}>Edit</span>
+                                        <a href={Uris.toAbsoluteUri(Uris.PRODUCT.EDIT, {id: id})}
+                                           className="btn btn-primary"
+                                           onClick={$this.createProduct}>Edit</a>
 
                                     </div>
 

@@ -19,6 +19,8 @@ class ProductService {
 
                 resolve(msg.body);
 
+                console.log(ServerEvents.FIND_ALL_PRODUCTS, msg.body);
+
             });
         });
     }
@@ -34,6 +36,25 @@ class ProductService {
                 }
 
                 resolve(msg.body);
+
+                console.log(ServerEvents.FIND_PRODUCT, msg.body);
+            });
+        });
+    }
+
+    findDecomposed(id) {
+        return new Promise(function (resolve, reject) {
+            eb.send(ServerEvents.FIND_PRODUCT_DECOMPOSED, id, null, function (err, msg) {
+                if (!!err || !!msg.failureCode || !!(msg.body || {}).responseCode) {
+                    reject(err || msg);
+
+                    console.log("Error " + ServerEvents.FIND_PRODUCT_DECOMPOSED, err || msg);
+                    return;
+                }
+
+                resolve(msg.body);
+
+                console.log(ServerEvents.FIND_PRODUCT_DECOMPOSED, msg.body);
             });
         });
     }

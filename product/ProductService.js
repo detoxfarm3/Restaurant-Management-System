@@ -6,8 +6,12 @@ var Events = require('./Events');
 var Promise = require('bluebird');
 
 class ProductService {
+
     findAll(params) {
         return new Promise(function (resolve, reject) {
+
+            console.log("SEND." + ServerEvents.CREATE_PRODUCT, JSON.stringify(product));
+
             eb.send(ServerEvents.FIND_ALL_PRODUCTS, params, null, function (err, msg) {
 
                 if (!!err || !!msg.failureCode || !!(msg.body || {}).responseCode) {
@@ -80,6 +84,9 @@ class ProductService {
 
     update(product) {
         return new Promise(function (resolve, reject) {
+
+            console.log("SEND." + ServerEvents.UPDATE_PRODUCT, JSON.stringify(product));
+
             eb.send(ServerEvents.UPDATE_PRODUCT, product, null, function (err, msg) {
                 if (!!err || !!msg.failureCode || !!(msg.body || {}).responseCode) {
                     reject(err || msg);

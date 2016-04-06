@@ -4,6 +4,8 @@ var Modal = require('.././Modal');
 var NewInventoryForm = require('./NewInventoryForm');
 var lib = require('.././functions');
 
+var inventoryService = require('./InventoryService');
+
 var NewInventoryDialog;
 module.exports = NewInventoryDialog = React.createClass({
     getDefaultProps: function () {
@@ -34,23 +36,26 @@ module.exports = NewInventoryDialog = React.createClass({
                    footer={modal.footer} bodyStyle={modal.bodyStyle}/>
         );
     },
+
+    closeModal: function () {
+        var $this = this;
+        
+        $this.setState({
+            createModal: function () {
+                return {isOpen: false};
+            },
+            inventory: {}
+        });
+    },
+
     createNewInventory: function () {
         var $this = this;
-
-        function closeModal() {
-            $this.setState({
-                createModal: function () {
-                    return {isOpen: false};
-                },
-                inventory: {}
-            });
-        }
 
         $this.setState({
             createModal: function () {
                 return {
                     isOpen: true,
-                    onClose: closeModal,
+                    onClose: $this.closeModal,
                     title: 'Create New Inventory.',
                     body: (
                         <div className="row">
@@ -66,7 +71,7 @@ module.exports = NewInventoryDialog = React.createClass({
                     footer: (
                         <div>
                             <span className="btn btn-primary pull-right" onClick={$this.submit}>Ok</span>
-                            <span className="btn btn-danger pull-right" onClick={closeModal}
+                            <span className="btn btn-danger pull-right" onClick={$this.closeModal}
                                   style={{marginRight: '5px'}}>Cancel</span>
                         </div>
                     ),
@@ -77,6 +82,11 @@ module.exports = NewInventoryDialog = React.createClass({
     },
     submit: function () {
         var $this = this;
+        inventoryService.create($this.state.inventory)
+            .then(() => {
+                $this.closeModal();
+            })
+        ;
     },
     onInventoryChange: function onInventoryChange(e) {
         var $this = this;

@@ -25,7 +25,7 @@ var AddAnotherProductForm = React.createClass({
         var $this = this;
         var product = $this.props.product;
         return (
-            <form>
+            <form onSubmit={$this.props.onSubmit}>
 
                 <div className="row">
                     <div className="col-md-12">
@@ -34,14 +34,16 @@ var AddAnotherProductForm = React.createClass({
 
                             <Select id="productId" name="productId" value={product.productId}
                                     initialOption={{id: 0, name: 'Select Product'}}
-                                    options={$this.props.products}/>
+                                    options={$this.props.products || []}
+                                    onChange={$this.props.onChange}/>
                         </div>
                     </div>
                     <div className="col-md-6">
                         <div className="form-group">
                             <label htmlFor="quantity">Quantity</label>
                             <input type="number" className="form-control" placeholder="Quantity"
-                                   id="quantity" name="quantity" value={product.quantity}/>
+                                   id="quantity" name="quantity" value={product.quantity}
+                                   onChange={$this.props.onChange}/>
                         </div>
                     </div>
                     <div className="col-md-6">
@@ -49,7 +51,8 @@ var AddAnotherProductForm = React.createClass({
                             <label htmlFor="unitId">Unit</label>
                             <Select id="unitId" name="unitId" value={product.unitId}
                                     initialOption={{id: 0, name: 'Select Unit'}}
-                                    options={$this.props.units}/>
+                                    options={$this.props.units || []}
+                                    onChange={$this.props.onChange}/>
                         </div>
                     </div>
                 </div>

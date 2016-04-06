@@ -10,7 +10,7 @@ var ProductsInventoryView = React.createClass({
         var $this = this;
         var inventories = $this.props.inventories || [];
 
-        return !inventories.length ? 'No Inventories' : (
+        return !inventories.length ? <span></span> : (
             <table className="table table-condensed" style={{margin: 0}}>
                 <thead>
                 <tr>

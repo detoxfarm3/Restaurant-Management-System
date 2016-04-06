@@ -4,6 +4,11 @@ var React = require('react');
 
 var NewInventoryDialog = require('./NewInventoryDialog');
 
+var inventoryService = require("./InventoryService");
+var ee = require('../EventEmitter');
+var Events = require('./Events');
+var Uris = require('../Uris');
+
 var ListInventories;
 module.exports = ListInventories = React.createClass({
     getDefaultProps: function () {
@@ -18,6 +23,27 @@ module.exports = ListInventories = React.createClass({
                 {id: '4', name: 's', remarks: 'rr', totalProducts: 147},
             ]
         };
+    },
+    componentDidMount: function () {
+        var $this = this;
+
+        $this.listeners = [];
+        var update = () => {
+            inventoryService.findAll()
+                .then(rsp => $this.setState({inventories: rsp.data}))
+            ;
+        };
+
+        $this.listeners.push({event: Events.INVENTORY_CREATED, listener: update});
+        ee.on(Events.INVENTORY_CREATED, update);
+
+        inventoryService.findAll()
+            .then(rsp => $this.setState({inventories: rsp.data}))
+        ;
+    },
+    componentWillUnmount: function () {
+        var $this = this;
+        $this.listeners.forEach(lis => ee.removeListener(lis.event, lis.listener));
     },
     render: function () {
         var $this = this;
@@ -74,38 +100,35 @@ module.exports = ListInventories = React.createClass({
         return (
             <div>
 
-                <span className="btn btn-primary" style={{marginRight: '5px'}} title="Add product to this inventory."
-                      onClick={function () {
-                            $this.addRemoveEditProducts(inventory);
-                      }}>
+                <a href={Uris.toAbsoluteUri(Uris.INVENTORY.ADD_REMOVE_EDIT_PRODUCTS, {id: inventory.id})}
+                      className="btn btn-primary" style={{marginRight: '5px'}}
+                      title="Add product to this inventory.">
                     Add/Remove/Edit Products
-                </span>
+                </a>
 
-                <a className="btn btn-success" style={{marginRight: '5px'}} title="View this inventory.">
+                <a href={Uris.toAbsoluteUri(Uris.INVENTORY.VIEW, {id: inventory.id})}
+                   className="btn btn-success"
+                   style={{marginRight: '5px'}} title="View this inventory.">
                     View
                 </a>
 
                 <span className="btn btn-danger" title="Delete this inventory."
-                      onClick={function () {
-                            $this.deleteInventory(inventory);
-                      }}>
+                      onClick={() => $this.deleteInventory(inventory.id)}>
                     <span className="glyphicon glyphicon-remove" aria-hidden="true"></span>
                 </span>
 
             </div>
         );
     },
-    addRemoveEditProducts: function (inventory) {
+    deleteInventory: function (id) {
         var $this = this;
-
-    },
-    deleteInventory: function (inventory) {
-        var $this = this;
-        $this.setState({
-            inventories: $this.state.inventories.filter(function (u) {
-                return u != inventory;
+        inventoryService.delete(id)
+            .then(() => {
+                inventoryService.findAll()
+                    .then(rsp => $this.setState({inventories: rsp.data}))
+                ;
             })
-        });
+        ;
     },
     cellEditProp: function () {
         var $this = this;
@@ -115,7 +138,14 @@ module.exports = ListInventories = React.createClass({
             afterSaveCell: $this.onAfterSaveCell
         };
     },
-    onAfterSaveCell: function (row, cellName, cellValue) {
+    onAfterSaveCell: function (inventory) {
         var $this = this;
+        inventoryService.update(inventory)
+            .then(() => {
+                inventoryService.findAll()
+                    .then(rsp => $this.setState({inventories: rsp.data}))
+                ;
+            })
+        ;
     }
 });

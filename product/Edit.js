@@ -153,7 +153,8 @@ module.exports = CreateProduct = React.createClass({
                                     <div className="form-group col-md-12">
                                         <label htmlFor="remarks">Remarks</label>
                                         <textarea className="form-control" id="remarks" placeholder="Remarks"
-                                                  name="remarks" value={product.remarks}/>
+                                                  name="remarks" value={product.remarks}
+                                                  onChange={$this.onProductChange}/>
                                     </div>
 
                                 </div>

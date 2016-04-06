@@ -31,18 +31,24 @@ var AddRemoveEditForm = React.createClass({
 
                     <div className="input-group">
 
-                        <input type="text" className="form-control" id="quantity" placeholder={placeholder}
+                        <input type="text" className="form-control" id="quantity"
+                               style={{width: '130px'}}
+                               placeholder={placeholder}
                                name="quantity" value={quantity} onChange={$this.props.onChange}/>
 
                     </div>
 
-                    <div className="input-group">
+                    {
+                        !$this.props.units ? null : (
+                            <div className="input-group">
 
-                        <Select initialOption={{id: 0, name: 'Select Unit'}}
-                                name="unitId" value={$this.props.unitId}
-                                options={$this.props.units}/>
+                                <Select initialOption={{id: 0, name: 'Select Unit'}}
+                                        name="unitId" value={$this.props.unitId}
+                                        options={$this.props.units}/>
 
-                    </div>
+                            </div>
+                        )
+                    }
 
                 </div>
                 {

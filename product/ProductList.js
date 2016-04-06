@@ -4,6 +4,7 @@ var React = require('react');
 var ProductsInventoryView = require('./ProductsInventoryView');
 var PriceView = require('./PriceView');
 var PricePerUnit = require('./PricePerUnit');
+var Uris = require('../Uris');
 
 var ProductList;
 module.exports = ProductList = React.createClass({
@@ -21,7 +22,7 @@ module.exports = ProductList = React.createClass({
                     <BootstrapTable data={products} striped={true} hover={true}>
                         <TableHeaderColumn isKey={true} dataField="id">ID</TableHeaderColumn>
                         <TableHeaderColumn dataField="name">Name</TableHeaderColumn>
-                        <TableHeaderColumn dataField="price"
+                        <TableHeaderColumn dataField="prices"
                                            dataFormat={$this.formatPrice}>Price</TableHeaderColumn>
                         <TableHeaderColumn dataField="manufacturerPrice" dataFormat={$this.formatManufacturerPrice}>Manufacturer
                             Price</TableHeaderColumn>
@@ -50,18 +51,18 @@ module.exports = ProductList = React.createClass({
     formatInventory: function (inventory) {
         return (inventory || {}).name;
     },
-    formatPrice: function (price) {
-        price = price || [];
+    formatPrice: function (prices) {
+        prices = prices || [];
 
         return (
-            <PriceView prices={price}/>
+            <PriceView prices={prices}/>
         );
     },
     formatAction: function (ac, product) {
         return (
-            <div className="btn-group btn-group-sm">
-                <span className="btn btn-primary">View</span>
-                <span className="btn btn-warning">Edit</span>
+            <div className="">
+                <a href={Uris.toAbsoluteUri(Uris.PRODUCT.VIEW, {id: product.id})} className="btn btn-sm btn-primary">View</a>
+                <a href={Uris.toAbsoluteUri(Uris.PRODUCT.EDIT, {id: product.id})} className="btn btn-sm btn-warning">Edit</a>
             </div>
         );
     }

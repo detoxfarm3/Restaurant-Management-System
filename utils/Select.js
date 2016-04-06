@@ -14,7 +14,8 @@ var Select = React.createClass({
         var initialOption = $this.props.initialOption;
         var options = $this.props.options || [];
         return (
-            <select id={$this.props.id} className={className} name={$this.props.name} value={$this.props.value}
+            <select id={$this.props.id} className={className} name={$this.props.name}
+                    value={$this.props.value || initialOption.id}
                     onChange={$this.props.onChange}>
                 {
                     !initialOption ? null : (

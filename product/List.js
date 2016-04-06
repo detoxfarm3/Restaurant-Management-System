@@ -3,6 +3,7 @@ import React from 'react'
 var SingleProductViewShort = require('./SingleProductViewShort');
 var ProductList = require('./ProductList');
 var Uris = require('../Uris');
+var productService = require('./ProductService');
 
 var ListProduct;
 module.exports = ListProduct = React.createClass({
@@ -121,6 +122,18 @@ module.exports = ListProduct = React.createClass({
                 }
             ]
         };
+    },
+    componentDidMount: function () {
+        var $this = this;
+        productService.findAll()
+            .then(rsp => {
+                $this.setState({products: rsp.data});
+            })
+        ;
+
+    },
+    componentWillUnmount: function () {
+        var $this = this;
     },
     render: function () {
         var $this = this;

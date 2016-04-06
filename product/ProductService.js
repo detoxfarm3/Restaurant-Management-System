@@ -10,8 +10,6 @@ class ProductService {
     findAll(params) {
         return new Promise(function (resolve, reject) {
 
-            console.log("SEND." + ServerEvents.CREATE_PRODUCT, JSON.stringify(product));
-
             eb.send(ServerEvents.FIND_ALL_PRODUCTS, params, null, function (err, msg) {
 
                 if (!!err || !!msg.failureCode || !!(msg.body || {}).responseCode) {
@@ -23,7 +21,27 @@ class ProductService {
 
                 resolve(msg.body);
 
-                console.log(ServerEvents.FIND_ALL_PRODUCTS, msg.body);
+                console.log(ServerEvents.FIND_ALL_PRODUCTS, JSON.stringify(msg.body));
+
+            });
+        });
+    }
+
+    findAllDecomposed(params) {
+        return new Promise(function (resolve, reject) {
+
+            eb.send(ServerEvents.FIND_ALL_PRODUCTS_DECOMPOSED, params, null, function (err, msg) {
+
+                if (!!err || !!msg.failureCode || !!(msg.body || {}).responseCode) {
+                    reject(err || msg);
+
+                    console.log("Error " + ServerEvents.FIND_ALL_PRODUCTS_DECOMPOSED, err || msg);
+                    return;
+                }
+
+                resolve(msg.body);
+
+                console.log(ServerEvents.FIND_ALL_PRODUCTS_DECOMPOSED, JSON.stringify(msg.body));
 
             });
         });
@@ -65,6 +83,9 @@ class ProductService {
 
     create(product) {
         return new Promise(function (resolve, reject) {
+
+            console.log("SEND." + ServerEvents.CREATE_PRODUCT, JSON.stringify(product));
+
             eb.send(ServerEvents.CREATE_PRODUCT, product, null, function (err, msg) {
                 if (!!err || !!msg.failureCode || !!(msg.body || {}).responseCode) {
                     reject(err || msg);
@@ -104,6 +125,9 @@ class ProductService {
 
     delete(id) {
         return new Promise(function (resolve, reject) {
+
+            console.log("SEND." + ServerEvents.DELETE_PRODUCT, id);
+
             eb.send(ServerEvents.DELETE_PRODUCT, id, null, function (err, msg) {
                 if (!!err || !!msg.failureCode || !!(msg.body || {}).responseCode) {
                     reject(err || msg);

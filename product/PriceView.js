@@ -16,8 +16,7 @@ var PriceView = React.createClass({
                     (prices).map(function (p) {
                         return (!p || !p.amount) ? '' : (
                             <tr key={Math.random()}>
-                                <th>{p.amount}</th>
-                                <th> / {(p.unit || {}).name}</th>
+                                <td>{p.amount} / {(p.unit || {}).name}</td>
                             </tr>
                         );
                     })

@@ -6,6 +6,25 @@ var Events = require('./Events');
 var Promise = require('bluebird');
 
 class InventoryService {
+    findAllProducts(id) {
+        return new Promise(function (resolve, reject) {
+            eb.send(ServerEvents.FIND_ALL_INVENTORY_PRODUCTS, id, null, function (err, msg) {
+
+                if (!!err || !!msg.failureCode || !!(msg.body || {}).responseCode) {
+                    reject(err || msg);
+
+                    console.log("Error " + ServerEvents.FIND_ALL_INVENTORY_PRODUCTS, err || msg);
+                    return;
+                }
+
+                resolve(msg.body);
+
+                console.log(ServerEvents.FIND_ALL_INVENTORY_PRODUCTS, msg);
+
+            });
+        });
+    }
+
     findAll(params) {
         return new Promise(function (resolve, reject) {
             eb.send(ServerEvents.FIND_ALL_INVENTORIES, params, null, function (err, msg) {
@@ -87,6 +106,48 @@ class InventoryService {
                 resolve(msg.body);
 
                 ee.emit(Events.INVENTORY_DELETED, msg.body);
+            });
+        });
+    }
+
+    insertProduct(inventoryProduct, id) {
+
+        inventoryProduct['inventoryId'] = id || inventoryProduct['inventoryId'];
+
+        console.log("SEND." + ServerEvents.INSERT_INVENTORY_PRODUCT, inventoryProduct);
+
+        return new Promise(function (resolve, reject) {
+            eb.send(ServerEvents.INSERT_INVENTORY_PRODUCT, inventoryProduct, null, function (err, msg) {
+                if (!!err || !!msg.failureCode || !!(msg.body || {}).responseCode) {
+                    reject(err || msg);
+
+                    console.log("Error " + ServerEvents.INVENTORY_PRODUCT_INSERTED, err || msg);
+                    return;
+                }
+
+                resolve(msg.body);
+
+                ee.emit(Events.INVENTORY_PRODUCT_INSERTED, msg.body);
+            });
+        });
+    }
+
+    deleteProduct(inventoryProductId) {
+
+        console.log("SEND." + ServerEvents.DELETE_INVENTORY_PRODUCT, inventoryProductId);
+
+        return new Promise(function (resolve, reject) {
+            eb.send(ServerEvents.DELETE_INVENTORY_PRODUCT, inventoryProductId, null, function (err, msg) {
+                if (!!err || !!msg.failureCode || !!(msg.body || {}).responseCode) {
+                    reject(err || msg);
+
+                    console.log("Error " + ServerEvents.DELETE_INVENTORY_PRODUCT, err || msg);
+                    return;
+                }
+
+                resolve(msg.body);
+
+                ee.emit(Events.DELETE_INVENTORY_PRODUCT, msg.body);
             });
         });
     }

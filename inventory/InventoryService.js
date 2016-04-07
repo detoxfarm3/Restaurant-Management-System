@@ -6,6 +6,7 @@ var Events = require('./Events');
 var Promise = require('bluebird');
 
 class InventoryService {
+
     findAllProducts(id) {
         return new Promise(function (resolve, reject) {
             eb.send(ServerEvents.FIND_ALL_INVENTORY_PRODUCTS, id, null, function (err, msg) {
@@ -147,7 +148,77 @@ class InventoryService {
 
                 resolve(msg.body);
 
-                ee.emit(Events.DELETE_INVENTORY_PRODUCT, msg.body);
+                ee.emit(Events.INVENTORY_PRODUCT_DELETED, msg.body);
+            });
+        });
+    }
+
+    addProduct(id, quantity) {
+
+        var payload = {id, quantity};
+
+        console.log("SEND." + ServerEvents.ADD_PRODUCT_TO_INVENTORY, payload);
+
+        return new Promise(function (resolve, reject) {
+            eb.send(ServerEvents.ADD_PRODUCT_TO_INVENTORY, payload, null, function (err, msg) {
+                if (!!err || !!msg.failureCode || !!(msg.body || {}).responseCode) {
+                    reject(err || msg);
+
+                    console.log("Error " + ServerEvents.ADD_PRODUCT_TO_INVENTORY, err || msg);
+                    return;
+                }
+
+                resolve(msg.body);
+
+                ee.emit(Events.PRODUCT_ADDED_TO_INVENTORY, msg.body);
+            });
+        });
+    }
+
+    removeProduct(id, quantity) {
+
+        var payload = {id, quantity};
+
+        console.log("SEND." + ServerEvents.REMOVE_PRODUCT_FROM_INVENTORY, payload);
+
+        return new Promise(function (resolve, reject) {
+
+            eb.send(ServerEvents.REMOVE_PRODUCT_FROM_INVENTORY, payload, null, function (err, msg) {
+
+                if (!!err || !!msg.failureCode || !!(msg.body || {}).responseCode) {
+                    reject(err || msg);
+
+                    console.log("Error " + ServerEvents.REMOVE_PRODUCT_FROM_INVENTORY, err || msg);
+                    return;
+                }
+
+                resolve(msg.body);
+
+                ee.emit(Events.PRODUCT_REMOVED_FROM_INVENTORY, msg.body);
+            });
+        });
+    }
+
+    editProductQuantity(id, quantity, unitId) {
+
+        var payload = {id, quantity, unitId};
+
+        console.log("SEND." + ServerEvents.EDIT_INVENTORY_PRODUCT_QUANTITY, payload);
+
+        return new Promise(function (resolve, reject) {
+
+            eb.send(ServerEvents.EDIT_INVENTORY_PRODUCT_QUANTITY, payload, null, function (err, msg) {
+
+                if (!!err || !!msg.failureCode || !!(msg.body || {}).responseCode) {
+                    reject(err || msg);
+
+                    console.log("Error " + ServerEvents.EDIT_INVENTORY_PRODUCT_QUANTITY, err || msg);
+                    return;
+                }
+
+                resolve(msg.body);
+
+                ee.emit(Events.EDIT_INVENTORY_PRODUCT_QUANTITY, msg.body);
             });
         });
     }

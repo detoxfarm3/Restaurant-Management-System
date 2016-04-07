@@ -1,9 +1,26 @@
 "use strict";
-import React from 'react'
 
-var CreateUser;
-module.exports = CreateUser = React.createClass({
-    render: function () {
-        return <div>Create User</div>
+import React from 'react';
+
+class CreateUser extends React.Component {
+    constructor(props) {
+        super(props);
     }
-})
+
+    render() {
+        var $this = this;
+
+        return (
+
+            <div className="row">
+                <div className="col-md-12">
+
+                    {$this.props.children}
+
+                </div>
+            </div>
+        );
+    }
+}
+
+module.exports = CreateUser;

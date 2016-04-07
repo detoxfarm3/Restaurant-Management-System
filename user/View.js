@@ -1,7 +1,7 @@
 "use strict";
 import React from 'react'
 var eb = require('.././EventBus');
-var Events = require('./Events');
+var ServerEvents = require('./ServerEvents');
 var ViewUser;
 module.exports = ViewUser = React.createClass({
     getDefaultProps: function () {
@@ -16,7 +16,7 @@ module.exports = ViewUser = React.createClass({
     },
     componentDidMount: function () {
         var $this = this;
-        eb.send(Events.FIND_USER, $this.props.id, {}, function (err, msg) {
+        eb.send(ServerEvents.FIND_USER, $this.props.id, {}, function (err, msg) {
             if (!!msg.failureCode) {
                 console.error(msg.message);
                 return;

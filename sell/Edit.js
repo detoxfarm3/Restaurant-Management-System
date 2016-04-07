@@ -1,12 +1,19 @@
-"use strict";
 var React = require('react');
 var CreateSellGrid = require('./CreateSellGrid');
 var Modal = require('../../components/Modal');
+var CreateSellHeader = require('./CreateSellHeader');
 var SellPreview = require('./SellPreview');
-var EditableSellHeader = require('./EditableSellHeader');
 
 var EventEmitter = require("events").EventEmitter;
 var ee = new EventEmitter();
+
+var unitService = require('../unit/UnitService');
+var productService = require('../product/ProductService');
+var sellService = require('./SellService');
+
+var lib = require('../../components/functions');
+
+var Uris = require('../Uris');
 
 var Events = {
     SUBMIT_REQUESTED: 'SUBMIT_REQUESTED',
@@ -18,17 +25,28 @@ var EditSell;
 module.exports = EditSell = React.createClass({
     getInitialState: function () {
         return {
-            products: {
+            productsById: {
                 1: {
                     id: 1,
                     name: 'Biriani'
-                },
+                }
+                ,
                 2: {
                     id: 2,
                     name: 'Kaccchi'
                 }
+                ,
+                3: {
+                    id: 3,
+                    name: 'Misti'
+                }
+                ,
+                4: {
+                    id: 4,
+                    name: 'Doi'
+                }
             },
-            units: {
+            unitsById: {
                 1: {
                     id: 1,
                     name: 'Cup'
@@ -50,44 +68,99 @@ module.exports = EditSell = React.createClass({
                 }
             },
             sell: {
-                sellUnits: [
-                    {
-                        no: 1,
-                    },
-                    {
-                        no: 2,
-                    },
-                    {
-                        no: 3,
-                    },
-                    {
-                        no: 4,
-                    }
-                ]
+                consumerName: '',
+                consumerMobile: '',
+                sellDate: new Date(),
+                remarks: ''
             },
+            sellUnitsByProductId: {},
             modal: {
                 body: '',
                 footer: '',
                 title: '',
                 isOpen: false,
             },
-            ssq: false,
         };
     },
     componentDidMount: function () {
+
         var $this = this;
+        console.log("MOUNTING: SELL_CREATE");
         ee.on(Events.SUBMIT_REQUESTED, function (sell) {
             console.log(sell);
-            ee.emit(Events.SUBMIT_SUCCESSFULL);
+            sellService.update(sell)
+                .then(sellService.find)
+                .then($this.showOrderSuccess)
+            ;
         });
 
-        ee.on(Events.SUBMIT_SUCCESSFULL, function (sell) {
-            $this.showOrderSuccess(sell || {sellUnits: []});
-        });
+        var productPromise1 = productService.findAllDecomposed()
+                .then(rsp => {
+                    var sellUnits = rsp.data.map(function (product) {
+                        return {no: Math.random(), productId: product.id};
+                    });
+                    return {
+                        products: rsp.data,
+                        productsById: rsp.data.reduce(function (map, product) {
+                            map[product.id] = product;
+                            return map;
+                        }, {}),
+                        sellUnitsByProductId: sellUnits.reduce((map, sellUnit) => {
+                            map[sellUnit.productId] = sellUnit;
+                            return map;
+                        }, {})
+                    };
+                })
+            ;
 
-        ee.on(Events.SUBMIT_FAILED, function (e) {
+        var productPromise2 = productService.unitWisePrice()
+                .then(unitWisePrice => {
+                    return {productsUnitWisePrice: unitWisePrice};
+                })
+            ;
 
-        });
+        var unitPromise = unitService.findAllUnits()
+                .then(rsp => {
+                    return {
+                        units: rsp.data,
+                        unitsById: rsp.data.reduce(function (map, unit) {
+                            map[unit.id] = unit;
+                            return map;
+                        }, {})
+                    };
+                })
+            ;
+
+        var sellPromise = sellService.find($this.props.params.id)
+                .then(sell => {
+                    return {
+                        sell: sell,
+                        sellUnitsByProductId: sell.sellUnits.reduce(function (map, cur) {
+                            map[cur.productId] = cur;
+                            return map;
+                        }, {})
+                    };
+                })
+            ;
+
+        Promise.all([productPromise1, productPromise2, unitPromise, sellPromise])
+            .then((states) => {
+
+                var st0 = states[0].sellUnitsByProductId;
+                var st3 = states[3].sellUnitsByProductId;
+
+                states[0].sellUnitsByProductId = states[3].sellUnitsByProductId = lib.merge2(st0, st3);
+
+                var state = states.reduce((newState, state) => {
+                    for (var x in state) {
+                        newState[x] = state[x];
+                    }
+                    return newState;
+                }, {});
+
+                $this.setState(state);
+            })
+        ;
     },
     componentWillUnmount: function () {
         ee.removeAllListeners();
@@ -96,8 +169,10 @@ module.exports = EditSell = React.createClass({
         var $this = this;
         var modal = $this.state.modal;
         var sell = $this.state.sell;
+        var sellUnitsByProductId = $this.state.sellUnitsByProductId;
 
         return (
+
             <div className="row">
                 <div className="col-md-12">
 
@@ -113,7 +188,7 @@ module.exports = EditSell = React.createClass({
                                 <div className="col-md-2">
                                     <button className="btn btn-primary btn-block pull-right"
                                             style={{fontWeight: 'bold'}}
-                                            onClick={function () {$this.submit(sell);}}>
+                                            onClick={$this.submit}>
                                         Update
                                     </button>
                                 </div>
@@ -122,27 +197,47 @@ module.exports = EditSell = React.createClass({
                         </div>
                         <div className="panel-body">
 
-                            <EditableSellHeader sell={sell}/>
+                            <CreateSellHeader sell={sell} onChange={$this.onSellChange}/>
 
                         </div>
                     </div>
 
                     <div className="panel panel-default">
 
-                        <button className="btn btn-primary"
-                                style={{padding: '7px', width: '100px', margin: '2px', marginBottom: '5px', marginRight: '5px'}}
-                                onClick={function () {$this.addNew();}}>
-                            <span className="glyphicon glyphicon-plus" aria-hidden="true"></span>
-                        </button>
+                        <div className="panel-heading">
 
-                        <CreateSellGrid units={$this.props.units} products={$this.props.products}
-                                        productsUnitWisePrice={$this.props.productsUnitWisePrice}
-                                        sellUnits={sell.sellUnits}
+                            <div className="row">
+                                <div className="col-md-9">
+                                    Products
+                                </div>
+                                <div className="col-md-3">
+
+                                    <button className="btn btn-primary pull-right"
+                                            style={{fontWeight: 'bold'}}
+                                            onClick={$this.submit}>
+                                        Update
+                                    </button>
+
+                                    <button className="btn btn-danger pull-right"
+                                            style={{fontWeight: 'bold', marginRight: '10px'}}
+                                            onClick={$this.clearAllUnits}>
+                                        Clear All
+                                    </button>
+
+                                </div>
+                            </div>
+
+                        </div>
+
+                        <CreateSellGrid unitsById={$this.state.unitsById} productsById={$this.state.productsById}
+                                        productsUnitWisePrice={$this.state.productsUnitWisePrice}
+                                        sellUnitsByProductId={sellUnitsByProductId}
                                         onChange={$this.onSaleUnitsChange} onInit={$this.onCreateSellGridInit}/>
 
                         <Modal title={modal.title} body={modal.body}
+                               bodyStyle={{paddingBottom: '0', paddingTop: 0}}
                                footer={modal.footer || $this.defaultModalFooter(modal)}
-                               isOpen={modal.isOpen} onClose={modal.onClose}/>
+                               isOpen={modal.isOpen} onClose={$this.closeModal}/>
                     </div>
 
 
@@ -157,7 +252,8 @@ module.exports = EditSell = React.createClass({
                                            style={{textAlign: 'left'}}>Remarks:</label>
 
                                     <div className="col-sm-10">
-                                        <textarea className="form-control" rows="3" placeholder="Remarks"></textarea>
+                                        <textarea className="form-control" rows="3" placeholder="Remarks"
+                                                  name="remarks" value={sell.remarks} onChange={$this.onSellChange}/>
                                     </div>
                                 </div>
                             </form>
@@ -169,23 +265,30 @@ module.exports = EditSell = React.createClass({
             </div>
         );
     },
+    onSellChange: function (e) {
+        var $this = this;
+        var sell = $this.state.sell || {};
+        sell[e.target.name] = e.target.value;
+        $this.setState({sell: sell});
+    },
     onCreateSellGridInit: function (createSellGrid) {
         this.createSellGrid = createSellGrid;
     },
-    onSaleUnitsChange: function (newSellUnits, prevSellUnits, unit) {
+    clearAllUnits: function () {
+        this.createSellGrid.clearAllUnits();
+    },
+    onSaleUnitsChange: function (newSellUnitsByProductId) {
         var $this = this;
         $this.setState({
-            sell: {
-                sellUnits: newSellUnits
-            }
+            sellUnitsByProductId: newSellUnitsByProductId,
         });
     },
-    addNew: function () {
+    submit: function (e) {
         var $this = this;
-        $this.createSellGrid.addNew();
-    },
-    submit: function (sell) {
-        var $this = this;
+        var sell = $this.state.sell;
+
+        sell.sellUnits = Object.keys($this.state.sellUnitsByProductId).map(id => $this.state.sellUnitsByProductId[id]);
+
         ee.emit(Events.SUBMIT_REQUESTED, sell);
     },
     onSubmitFailed: function (e) {
@@ -199,23 +302,45 @@ module.exports = EditSell = React.createClass({
             modal: {
                 title: (
                     <h4 className="modal-title text-primary" id="myModalLabel">
-                        Order updated successfully. Order ID: <strong
+                        Order created successfully. Order ID: <strong
                         style={{fontWeight: 'bold', fontSize: '20px'}}> {sell.orderId} </strong></h4>
                 ),
                 body: (
                     <SellPreview sell={sell}/>
                 ),
+                footer: (
+                    <div className="row">
+                        <div className="col-md-10">
+
+                            <a href={Uris.toAbsoluteUri(Uris.SELL.VIEW, {id: sell.id})}
+                               className="btn btn-success pull-left" style={{fontWeight: 'bold'}}>View
+                            </a>
+
+                            <a href={Uris.toAbsoluteUri(Uris.SELL.EDIT, {id: sell.id})}
+                               className="btn btn-warning pull-left" style={{fontWeight: 'bold'}}>Edit
+                            </a>
+
+                        </div>
+                        <div className="col-md-2">
+                            <button className="btn btn-primary btn-lg" style={{fontWeight: 'bold'}}
+                                    onClick={$this.closeModal}>Ok
+                            </button>
+                        </div>
+                    </div>
+                ),
                 isOpen: true,
-                onClose: function () {
-                    $this.setState({modal: {isOpen: false}});
-                }
             }
         });
     },
+    closeModal: function () {
+        var $this = this;
+        $this.setState({modal: {isOpen: false}});
+    },
     defaultModalFooter: function (modal) {
+        var $this = this;
         return (
             <button className="btn btn-primary btn-lg" style={{fontWeight: 'bold'}}
-                    onClick={modal.onClose}>Ok</button>
+                    onClick={$this.closeModal}>Ok</button>
         );
     },
 });

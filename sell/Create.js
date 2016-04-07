@@ -7,6 +7,14 @@ var SellPreview = require('./SellPreview');
 var EventEmitter = require("events").EventEmitter;
 var ee = new EventEmitter();
 
+var unitService = require('../unit/UnitService');
+var productService = require('../product/ProductService');
+var sellService = require('./SellService');
+
+var lib = require('../../components/functions');
+
+var Uris = require('../Uris');
+
 var Events = {
     SUBMIT_REQUESTED: 'SUBMIT_REQUESTED',
     SUBMIT_SUCCESSFULL: 'SUBMIT_SUCCESSFULL',
@@ -38,7 +46,7 @@ module.exports = CreateSell = React.createClass({
                     name: 'Doi'
                 }
             },
-            units: {
+            unitsById: {
                 1: {
                     id: 1,
                     name: 'Cup'
@@ -60,49 +68,82 @@ module.exports = CreateSell = React.createClass({
                 }
             },
             sell: {
-                sellUnits: [
-                    {
-                        no: 1,
-                        productId: 1,
-                    },
-                    {
-                        no: 2,
-                        productId: 2,
-                    },
-                    {
-                        no: 3,
-                        productId: 3,
-                    },
-                    {
-                        no: 4,
-                        productId: 4,
-                    }
-                ]
+                consumerName: '',
+                consumerMobile: '',
+                sellDate: new Date(),
+                remarks: ''
             },
+            sellUnitsByProductId: {},
             modal: {
                 body: '',
                 footer: '',
                 title: '',
                 isOpen: false,
             },
-            ssq: false,
         };
     },
     componentDidMount: function () {
+
         var $this = this;
         console.log("MOUNTING: SELL_CREATE");
         ee.on(Events.SUBMIT_REQUESTED, function (sell) {
             console.log(sell);
-            ee.emit(Events.SUBMIT_SUCCESSFULL);
+            sellService.create(sell)
+                .then(sellService.find)
+                .then($this.showOrderSuccess)
+            ;
         });
 
-        ee.on(Events.SUBMIT_SUCCESSFULL, function (sell) {
-            $this.showOrderSuccess(sell || {sellUnits: []});
-        });
+        var productPromise1 = productService.findAllDecomposed()
+                .then(rsp => {
+                    var sellUnits = rsp.data.map(function (product) {
+                        return {no: Math.random(), productId: product.id};
+                    });
+                    return {
+                        products: rsp.data,
+                        productsById: rsp.data.reduce(function (map, product) {
+                            map[product.id] = product;
+                            return map;
+                        }, {}),
+                        sellUnitsByProductId: sellUnits.reduce((map, sellUnit) => {
+                            map[sellUnit.productId] = sellUnit;
+                            return map;
+                        }, {})
+                    };
+                })
+            ;
 
-        ee.on(Events.SUBMIT_FAILED, function (e) {
+        var productPromise2 = productService.unitWisePrice()
+                .then(unitWisePrice => {
+                    return {productsUnitWisePrice: unitWisePrice};
+                })
+            ;
 
-        });
+        var unitPromise = unitService.findAllUnits()
+                .then(rsp => {
+                    return {
+                        units: rsp.data,
+                        unitsById: rsp.data.reduce(function (map, unit) {
+                            map[unit.id] = unit;
+                            return map;
+                        }, {})
+                    };
+                })
+            ;
+
+        Promise.all([productPromise1, productPromise2, unitPromise])
+            .then((states) => {
+
+                var state = states.reduce((newState, state) => {
+                    for (var x in state) {
+                        newState[x] = state[x];
+                    }
+                    return newState;
+                }, {});
+
+                $this.setState(state);
+            })
+        ;
     },
     componentWillUnmount: function () {
         ee.removeAllListeners();
@@ -111,10 +152,7 @@ module.exports = CreateSell = React.createClass({
         var $this = this;
         var modal = $this.state.modal;
         var sell = $this.state.sell;
-        var sellUnitsByProductId = (sell.sellUnits || []).reduce(function (obj, unit) {
-            obj[unit.productId] = unit;
-            return obj;
-        }, {});
+        var sellUnitsByProductId = $this.state.sellUnitsByProductId;
 
         return (
 
@@ -133,7 +171,7 @@ module.exports = CreateSell = React.createClass({
                                 <div className="col-md-2">
                                     <button className="btn btn-primary btn-block pull-right"
                                             style={{fontWeight: 'bold'}}
-                                            onClick={function () {$this.submit(sell);}}>
+                                            onClick={$this.submit}>
                                         Create
                                     </button>
                                 </div>
@@ -142,38 +180,52 @@ module.exports = CreateSell = React.createClass({
                         </div>
                         <div className="panel-body">
 
-                            <CreateSellHeader sell={sell}/>
+                            <CreateSellHeader sell={sell} onChange={$this.onSellChange}/>
 
                         </div>
                     </div>
 
                     <div className="panel panel-default">
 
-                        <button className="btn btn-primary pull-right"
-                                style={{fontWeight: 'bold'}}
-                                onClick={function () {$this.submit(sell);}}>
-                            Create
-                        </button>
+                        <div className="panel-heading">
 
-                        <button className="btn btn-danger pull-right"
-                                style={{fontWeight: 'bold'}}
-                                onClick={$this.clearAllUnits}>
-                            Clear All
-                        </button>
+                            <div className="row">
+                                <div className="col-md-9">
+                                    Products
+                                </div>
+                                <div className="col-md-3">
 
-                        <CreateSellGrid unitsById={$this.props.units} productsById={$this.state.productsById}
-                                        productsUnitWisePrice={$this.props.productsUnitWisePrice}
+                                    <button className="btn btn-primary pull-right"
+                                            style={{fontWeight: 'bold'}}
+                                            onClick={$this.submit}>
+                                        Create
+                                    </button>
+
+                                    <button className="btn btn-danger pull-right"
+                                            style={{fontWeight: 'bold', marginRight: '10px'}}
+                                            onClick={$this.clearAllUnits}>
+                                        Clear All
+                                    </button>
+
+                                </div>
+                            </div>
+
+                        </div>
+
+                        <CreateSellGrid unitsById={$this.state.unitsById} productsById={$this.state.productsById}
+                                        productsUnitWisePrice={$this.state.productsUnitWisePrice}
                                         sellUnitsByProductId={sellUnitsByProductId}
                                         onChange={$this.onSaleUnitsChange} onInit={$this.onCreateSellGridInit}/>
 
                         <Modal title={modal.title} body={modal.body}
                                bodyStyle={{paddingBottom: '0', paddingTop: 0}}
                                footer={modal.footer || $this.defaultModalFooter(modal)}
-                               isOpen={modal.isOpen} onClose={modal.onClose}/>
+                               isOpen={modal.isOpen} onClose={$this.closeModal}/>
                     </div>
 
 
                     <div className="panel panel-default">
+
                         <div className="panel-body">
 
                             <form className="form-horizontal">
@@ -183,7 +235,8 @@ module.exports = CreateSell = React.createClass({
                                            style={{textAlign: 'left'}}>Remarks:</label>
 
                                     <div className="col-sm-10">
-                                        <textarea className="form-control" rows="3" placeholder="Remarks"></textarea>
+                                        <textarea className="form-control" rows="3" placeholder="Remarks"
+                                                  name="remarks" value={sell.remarks} onChange={$this.onSellChange}/>
                                     </div>
                                 </div>
                             </form>
@@ -195,22 +248,30 @@ module.exports = CreateSell = React.createClass({
             </div>
         );
     },
+    onSellChange: function (e) {
+        var $this = this;
+        var sell = $this.state.sell || {};
+        sell[e.target.name] = e.target.value;
+        $this.setState({sell: sell});
+    },
     onCreateSellGridInit: function (createSellGrid) {
         this.createSellGrid = createSellGrid;
     },
     clearAllUnits: function () {
         this.createSellGrid.clearAllUnits();
     },
-    onSaleUnitsChange: function (newSellUnitsByProductId, prevSellUnitsByProductId, unit) {
+    onSaleUnitsChange: function (newSellUnitsByProductId) {
         var $this = this;
         $this.setState({
-            sell: {
-                sellUnits: Object.keys(newSellUnitsByProductId).map(id => newSellUnitsByProductId[id])
-            }
+            sellUnitsByProductId: newSellUnitsByProductId,
         });
     },
-    submit: function (sell) {
+    submit: function (e) {
         var $this = this;
+        var sell = $this.state.sell;
+
+        sell.sellUnits = Object.keys($this.state.sellUnitsByProductId).map(id => $this.state.sellUnitsByProductId[id]);
+
         ee.emit(Events.SUBMIT_REQUESTED, sell);
     },
     onSubmitFailed: function (e) {
@@ -219,8 +280,6 @@ module.exports = CreateSell = React.createClass({
     showOrderSuccess: function (sell) {
         var $this = this;
         var sellUnits = sell.sellUnits || [];
-
-        sell.remarks = "Kala";
 
         $this.setState({
             modal: {
@@ -232,17 +291,39 @@ module.exports = CreateSell = React.createClass({
                 body: (
                     <SellPreview sell={sell}/>
                 ),
+                footer: (
+                    <div className="row">
+                        <div className="col-md-10">
+
+                            <a href={Uris.toAbsoluteUri(Uris.SELL.VIEW, {id: sell.id})}
+                               className="btn btn-success pull-left" style={{fontWeight: 'bold'}}>View
+                            </a>
+
+                            <a href={Uris.toAbsoluteUri(Uris.SELL.EDIT, {id: sell.id})}
+                               className="btn btn-warning pull-left" style={{fontWeight: 'bold'}}>Edit
+                            </a>
+
+                        </div>
+                        <div className="col-md-2">
+                            <button className="btn btn-primary btn-lg" style={{fontWeight: 'bold'}}
+                                    onClick={$this.closeModal}>Ok
+                            </button>
+                        </div>
+                    </div>
+                ),
                 isOpen: true,
-                onClose: function () {
-                    $this.setState({modal: {isOpen: false}});
-                }
             }
         });
     },
+    closeModal: function () {
+        var $this = this;
+        $this.setState({modal: {isOpen: false}});
+    },
     defaultModalFooter: function (modal) {
+        var $this = this;
         return (
             <button className="btn btn-primary btn-lg" style={{fontWeight: 'bold'}}
-                    onClick={modal.onClose}>Ok</button>
+                    onClick={$this.closeModal}>Ok</button>
         );
     },
 });

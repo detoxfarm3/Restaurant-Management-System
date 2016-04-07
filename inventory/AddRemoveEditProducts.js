@@ -262,6 +262,13 @@ var AddRemoveEditProducts = React.createClass({
             .then(rsp => $this.setState({inventoryProducts: rsp.data}))
         ;
     },
+    onQuantityChange: function (e, item) {
+        var $this = this;
+        item.__quantity__ = e.target.value;
+        $this.setState({
+            inventoryProducts: $this.state.inventoryProducts
+        });
+    },
     formatAction: function (action, item) {
         var $this = this;
         return (
@@ -269,21 +276,20 @@ var AddRemoveEditProducts = React.createClass({
 
                 <div className="col-md-3">
 
-                    <AddRemoveEditForm
-                        placeholder="Value"
-                        submitButton={<span></span>}
-                        onSubmit={$this.doAdd}/>
-
+                    <input className="form-control" type="number" name="__quantity__" value={item.__quantity__}
+                           onChange={(e) => {
+                                $this.onQuantityChange(e, item);
+                           }}/>
 
                 </div>
 
                 <div className="col-md-9">
 
-                    <span className="btn btn-primary" onClick={$this.doAdd}
+                    <span className="btn btn-primary" onClick={() => $this.doAdd(item)}
                           style={{marginRight: '5px'}}>Add</span>
-                    <span className="btn btn-success" onClick={$this.doRemove}
+                    <span className="btn btn-success" onClick={() => $this.doRemove(item)}
                           style={{marginRight: '5px'}}>Remove</span>
-                    <span className="btn btn-danger" onClick={$this.editProduct}
+                    <span className="btn btn-danger" onClick={() => $this.editProduct(item)}
                           style={{marginRight: '5px'}}>Edit</span>
 
                     <span className="btn btn-danger"
@@ -318,7 +324,7 @@ var AddRemoveEditProducts = React.createClass({
             }
         });
     },
-    removeProduct: function () {
+    removeProduct: function (item) {
         var $this = this;
         this.setState({
             createModal: function () {
@@ -337,7 +343,7 @@ var AddRemoveEditProducts = React.createClass({
             }
         });
     },
-    editProduct: function () {
+    editProduct: function (item) {
         var $this = this;
         this.setState({
             createModal: function () {
@@ -346,10 +352,18 @@ var AddRemoveEditProducts = React.createClass({
                            title={<h3 className="modal-title text-danger">Edit</h3>}
                            body={
                                <AddRemoveEditForm
-                               placeholder="Edit"
-                               units={$this.state.units}
-                               onSubmit={$this.doEdit}
-                               submitButton={<input type="submit" className="btn btn-danger" value="Edit"/>}/>
+                                   placeholder="Edit"
+                                   item={item}
+                                   onChange={(e) => {
+                                        item[e.target.name] = e.target.value;
+                                        $this.setState({inventoryProducts: $this.state.inventoryProducts});
+                                   }}
+                                   units={$this.state.units}
+                                   onSubmit={(e) => {
+                                        e.preventDefault();
+                                        $this.doEdit(item);
+                                   }}
+                                   submitButton={<input type="submit" className="btn btn-lg btn-danger" value="Edit"/>}/>
                            }
                            footer={<span className="btn btn-danger" onClick={$this.closeModal}>Cancel</span>}
                         />
@@ -367,19 +381,34 @@ var AddRemoveEditProducts = React.createClass({
             }
         });
     },
-    doAdd: function (e) {
-        e.preventDefault();
-        console.log('Submit', e.target);
+    doAdd: function (item) {
+        var $this = this;
+
+        inventoryService.addProduct(item.id, item.__quantity__)
+            .then(() =>         inventoryService.findAllProducts($this.props.params.id))
+            .then(rsp => $this.setState({inventoryProducts: rsp.data}))
+        ;
+
         this.closeModal();
     },
-    doRemove: function (e) {
-        e.preventDefault();
-        console.log('Submit', e.target);
+    doRemove: function (item) {
+        var $this = this;
+
+        inventoryService.removeProduct(item.id, item.__quantity__)
+            .then(() =>         inventoryService.findAllProducts($this.props.params.id))
+            .then(rsp => $this.setState({inventoryProducts: rsp.data}))
+        ;
+
         this.closeModal();
     },
-    doEdit: function (e) {
-        e.preventDefault();
-        console.log('Submit', e.target);
+    doEdit: function (item) {
+        var $this = this;
+
+        inventoryService.editProductQuantity(item.id, item.__quantity__, item.unitId)
+            .then(() =>         inventoryService.findAllProducts($this.props.params.id))
+            .then(rsp => $this.setState({inventoryProducts: rsp.data}))
+        ;
+
         this.closeModal();
     },
 });

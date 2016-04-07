@@ -42,7 +42,8 @@ module.exports = CreateSellHeader = React.createClass({
 
                             <div className="col-sm-8">
                                 <DateTimePicker id="sellDate"
-                                                name="sellDate" value={sell.sellDate}/>
+                                                name="sellDate" value={sell.sellDate}
+                                                onChange={date => $this.props.onChange({target: {name: 'sellDate', value: date}})}/>
                             </div>
                         </div>
 
@@ -57,7 +58,7 @@ module.exports = CreateSellHeader = React.createClass({
                             <div className="col-sm-8">
                                 <input type="text" className="form-control" id="consumerName"
                                        placeholder="Consumer Name"
-                                       name="consumerName" value={sell.consumerName}/>
+                                       name="consumerName" value={sell.consumerName} onChange={$this.props.onChange}/>
                             </div>
                         </div>
 
@@ -71,7 +72,8 @@ module.exports = CreateSellHeader = React.createClass({
                             <div className="col-sm-8">
                                 <input type="text" className="form-control" id="consumerMobile"
                                        placeholder="Consumer Mobile"
-                                       name="consumerMobile" value={sell.consumerMobile}/>
+                                       name="consumerMobile" value={sell.consumerMobile}
+                                       onChange={$this.props.onChange}/>
                             </div>
                         </div>
 

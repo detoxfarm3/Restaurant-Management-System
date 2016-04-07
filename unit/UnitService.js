@@ -19,6 +19,7 @@ class UnitService {
                 }
 
                 resolve(msg.body);
+                console.log(ServerEvents.FIND_ALL_UNITS, msg.body);
             });
 
         });

@@ -54,9 +54,7 @@ module.exports = CreateSellGrid = React.createClass({
                     no: 4,
                 }
             ],
-            onChange: function (newSellUnits, prevSellUnits) {
-
-            },
+            onChange: null,
             onInit: function () {
             }
         };
@@ -145,18 +143,12 @@ module.exports = CreateSellGrid = React.createClass({
                         ),
                         unitPrice: (
                             <input className="form-control" type="number" style={{width: '120px'}}
-                                   name="unitPrice" value={unit.unitPrice}
-                                   onChange={function (e) {
-                                    $this.onChange(e, unit);
-                               }}
+                                   name="unitPrice" value={unit.unitPrice} readOnly={true}
                                 />
                         ),
                         total: (
                             <input className="form-control" type="number" style={{width: '120px'}}
-                                   name="total" value={unit.total}
-                                   onChange={function (e) {
-                                    $this.onChange(e, unit);
-                               }}
+                                   name="total" value={unit.total} readOnly={true}
                                 />
                         ),
                         action: (

@@ -1,6 +1,7 @@
 "use strict";
 var React = require('react');
 var OrderItemsTable = require('./OrderItemsTable');
+var DateView = require('../DateView');
 
 var SellPreview = React.createClass({
     getDefaultProps: function () {
@@ -33,7 +34,7 @@ var SellPreview = React.createClass({
                             <td>Created By:</td>
                             <th>{(sell.createdBy || {}).name}</th>
                             <td>Sale Date:</td>
-                            <th>{sell.sellDate}</th>
+                            <th><DateView value={sell.sellDate}/></th>
                         </tr>
                         </tbody>
                     </table>

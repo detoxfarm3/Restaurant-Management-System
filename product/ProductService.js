@@ -81,6 +81,23 @@ class ProductService {
         });
     }
 
+    unitWisePrice(params) {
+        return new Promise(function (resolve, reject) {
+            eb.send(ServerEvents.PRODUCTS_UNIT_WISE_PRICE, params, null, function (err, msg) {
+                if (!!err || !!msg.failureCode || !!(msg.body || {}).responseCode) {
+                    reject(err || msg);
+
+                    console.log("Error " + ServerEvents.PRODUCTS_UNIT_WISE_PRICE, err || msg);
+                    return;
+                }
+
+                resolve(msg.body);
+
+                console.log(ServerEvents.PRODUCTS_UNIT_WISE_PRICE, JSON.stringify(msg.body));
+            });
+        });
+    }
+
     create(product) {
         return new Promise(function (resolve, reject) {
 

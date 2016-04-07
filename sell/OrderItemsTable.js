@@ -22,11 +22,11 @@ module.exports = OrderItemsTable = React.createClass({
                 totalCounter.quantity = totalCounter.quantity + (parseInt(unit.quantity) || 0);
                 totalCounter.total = totalCounter.total + (parseInt(unit.total) || 0);
             })
-            .map(function (unit) {
-                return lib.merge2(unit, {
+            .map(function (sellUnit) {
+                return lib.merge2(sellUnit, {
                     serial: serial++,
-                    productId: unit.product.name,
-                    unitId: unit.sellingUnit.name
+                    productId: sellUnit.product.name,
+                    unitId: sellUnit.unit.name
                 });
             })
             .toArray()
@@ -48,8 +48,8 @@ module.exports = OrderItemsTable = React.createClass({
                 <TableHeaderColumn dataField="quantity">Quantity</TableHeaderColumn>
 
                 <TableHeaderColumn dataField="unitId">Unit</TableHeaderColumn>
-                <TableHeaderColumn dataField="unitPrice">Unit
-                    Price</TableHeaderColumn>
+                <TableHeaderColumn dataField="unitPrice">
+                    Unit Price</TableHeaderColumn>
 
                 <TableHeaderColumn dataField="total">Total</TableHeaderColumn>
 

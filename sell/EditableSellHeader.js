@@ -3,12 +3,12 @@
 var React = require('react');
 var DateTimePicker = require('react-widgets').DateTimePicker;
 
-var EditableSellHeader;
-module.exports = EditableSellHeader = React.createClass({
+var EditSellHeader;
+module.exports = EditSellHeader = React.createClass({
     getDefaultProps: function () {
         return {
             sell: {
-                remarks: "Sona"
+                remarks: null
             }
         };
     },
@@ -17,10 +17,23 @@ module.exports = EditableSellHeader = React.createClass({
         var dlStyle = {marginBottom: '5px'};
         var sell = $this.props.sell;
         return (
-
             <form className="form-horizontal">
                 <div className="row">
 
+
+                    <div className="col-md-6">
+
+                        <div className="form-group">
+                            <label htmlFor="transactionId" className="col-sm-4 control-label">Transaction ID:</label>
+
+                            <div className="col-sm-8">
+                                <input type="text" className="form-control" id="transactionId" placeholder="Transaction ID"
+                                       readOnly={true}
+                                       name="transactionId" value={sell.transactionId}/>
+                            </div>
+                        </div>
+
+                    </div>
 
                     <div className="col-md-6">
 
@@ -31,23 +44,6 @@ module.exports = EditableSellHeader = React.createClass({
                                 <input type="text" className="form-control" id="orderId" placeholder="Order ID"
                                        readOnly={true}
                                        name="orderId" value={sell.orderId}/>
-                            </div>
-                        </div>
-
-                    </div>
-
-
-                    <div className="col-md-6">
-
-                        <div className="form-group">
-                            <label htmlFor="transactionId" className="col-sm-4 control-label">
-                                Transaction ID:</label>
-
-                            <div className="col-sm-8">
-                                <input type="text" className="form-control" id="transactionId"
-                                       placeholder="Transaction ID"
-                                       readOnly={true}
-                                       name="transactionId" value={sell.transactionId}/>
                             </div>
                         </div>
 
@@ -74,11 +70,13 @@ module.exports = EditableSellHeader = React.createClass({
 
                             <div className="col-sm-8">
                                 <DateTimePicker id="sellDate"
-                                                name="sellDate" value={sell.sellDate}/>
+                                                name="sellDate" value={sell.sellDate}
+                                                onChange={date => $this.props.onChange({target: {name: 'sellDate', value: date}})}/>
                             </div>
                         </div>
 
                     </div>
+
 
                     <div className="col-md-6">
 
@@ -88,7 +86,7 @@ module.exports = EditableSellHeader = React.createClass({
                             <div className="col-sm-8">
                                 <input type="text" className="form-control" id="consumerName"
                                        placeholder="Consumer Name"
-                                       name="consumerName" value={sell.consumerName}/>
+                                       name="consumerName" value={sell.consumerName} onChange={$this.props.onChange}/>
                             </div>
                         </div>
 
@@ -97,13 +95,13 @@ module.exports = EditableSellHeader = React.createClass({
                     <div className="col-md-6">
 
                         <div className="form-group">
-                            <label htmlFor="consumerMobile" className="col-sm-4 control-label">Consumer
-                                Mobile:</label>
+                            <label htmlFor="consumerMobile" className="col-sm-4 control-label">Consumer Mobile:</label>
 
                             <div className="col-sm-8">
                                 <input type="text" className="form-control" id="consumerMobile"
                                        placeholder="Consumer Mobile"
-                                       name="consumerMobile" value={sell.consumerMobile}/>
+                                       name="consumerMobile" value={sell.consumerMobile}
+                                       onChange={$this.props.onChange}/>
                             </div>
                         </div>
 

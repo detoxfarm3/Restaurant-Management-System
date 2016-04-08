@@ -9,6 +9,9 @@ var lib = require('../../components/functions');
 class SellService {
 
     findAll(params) {
+
+        console.log("SEND." + ServerEvents.FIND_ALL_SELLS, JSON.stringify(params));
+
         return new Promise(function (resolve, reject) {
 
             eb.send(ServerEvents.FIND_ALL_SELLS, params, null, function (err, msg) {
@@ -19,6 +22,8 @@ class SellService {
                     console.log("Error " + ServerEvents.FIND_ALL_SELLS, err || msg);
                     return;
                 }
+
+                msg.body.data.forEach(sell => sell.sellDate = new Date(sell.sellDate));
 
                 resolve(msg.body);
 
@@ -69,23 +74,24 @@ class SellService {
         });
     }
 
-    update(product) {
+    update(sell) {
         return new Promise(function (resolve, reject) {
 
-            console.log("SEND." + ServerEvents.UPDATE_SELL, JSON.stringify(product));
+            console.log("SEND." + ServerEvents.UPDATE_SELL, JSON.stringify(sell));
 
-            eb.send(ServerEvents.UPDATE_SELL, product, null, function (err, msg) {
-                if (!!err || !!msg.failureCode || !!(msg.body || {}).responseCode) {
-                    reject(err || msg);
+            eb.send(ServerEvents.UPDATE_SELL,
+                lib.merge2(sell, {'sellDate': sell.sellDate.toJSON()}), null, function (err, msg) {
+                    if (!!err || !!msg.failureCode || !!(msg.body || {}).responseCode) {
+                        reject(err || msg);
 
-                    console.log("Error " + ServerEvents.UPDATE_SELL, err || msg);
-                    return;
-                }
+                        console.log("Error " + ServerEvents.UPDATE_SELL, err || msg);
+                        return;
+                    }
 
-                resolve(msg.body);
+                    resolve(msg.body);
 
-                ee.emit(Events.SELL_UPDATED, msg.body);
-            });
+                    ee.emit(Events.SELL_UPDATED, msg.body);
+                });
         });
     }
 

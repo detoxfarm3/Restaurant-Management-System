@@ -1,13 +1,14 @@
 "use strict";
 
 var React = require('react');
+var DateView = require('../DateView');
 
 var SellHeader;
 module.exports = SellHeader = React.createClass({
     getDefaultProps: function () {
         return {
             sell: {
-                remarks: "Sona"
+                remarks: null
             }
         };
     },
@@ -48,7 +49,7 @@ module.exports = SellHeader = React.createClass({
 
                     <dl className="dl-horizontal" style={dlStyle}>
                         <dt>Sell Date:</dt>
-                        <dd>{sell.sellDate}</dd>
+                        <dd><DateView value={sell.sellDate}/></dd>
                     </dl>
 
                 </div>
@@ -70,19 +71,6 @@ module.exports = SellHeader = React.createClass({
                     </dl>
 
                 </div>
-
-                {
-                    !sell.remarks ? "" : (
-                        <div className="col-md-6">
-
-                            <dl className="dl-horizontal" style={dlStyle}>
-                                <dt>Remarks:</dt>
-                                <dd>{sell.remarks}</dd>
-                            </dl>
-
-                        </div>
-                    )
-                }
 
             </div>
         );

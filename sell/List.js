@@ -8,6 +8,8 @@ var OrderItemsTable = require('./OrderItemsTable');
 var Uris = require('../Uris');
 var lib = require('../../components/functions');
 
+var sellService = require('./SellService');
+
 var ListSells;
 module.exports = ListSells = React.createClass({
     getDefaultProps: function () {
@@ -27,7 +29,7 @@ module.exports = ListSells = React.createClass({
                         id: 1,
                         name: 'khanki'
                     },
-                    sellDate: '15-Dec-2015 12:10:15 PM',
+                    sellDate: null,
                     remarks: '',
                     sellUnits: [
                         {
@@ -36,7 +38,7 @@ module.exports = ListSells = React.createClass({
                                 name: 'Dibba'
                             },
                             quantity: 5,
-                            sellingUnit: {
+                            unit: {
                                 id: 1,
                                 name: 'Cup'
                             },
@@ -50,7 +52,7 @@ module.exports = ListSells = React.createClass({
                                 name: 'Dibba'
                             },
                             quantity: 5,
-                            sellingUnit: {
+                            unit: {
                                 id: 1,
                                 name: 'Cup'
                             },
@@ -64,7 +66,7 @@ module.exports = ListSells = React.createClass({
                                 name: 'Dibba'
                             },
                             quantity: 5,
-                            sellingUnit: {
+                            unit: {
                                 id: 1,
                                 name: 'Cup'
                             },
@@ -78,7 +80,7 @@ module.exports = ListSells = React.createClass({
                                 name: 'Dibba'
                             },
                             quantity: 5,
-                            sellingUnit: {
+                            unit: {
                                 id: 1,
                                 name: 'Cup'
                             },
@@ -92,7 +94,7 @@ module.exports = ListSells = React.createClass({
                                 name: 'Dibba'
                             },
                             quantity: 5,
-                            sellingUnit: {
+                            unit: {
                                 id: 1,
                                 name: 'Cup'
                             },
@@ -106,7 +108,7 @@ module.exports = ListSells = React.createClass({
                                 name: 'Dibba'
                             },
                             quantity: 5,
-                            sellingUnit: {
+                            unit: {
                                 id: 1,
                                 name: 'Cup'
                             },
@@ -115,201 +117,19 @@ module.exports = ListSells = React.createClass({
                             remarks: 'Some Note'
                         },
                     ],
-                },
-                {
-                    transactionId: Math.random(),
-                    orderId: 15,
-                    createdBy: {
-                        id: 1,
-                        name: 'khanki'
-                    },
-                    sellDate: '15-Dec-2015 12:10:15 PM',
-                    remarks: '',
-                    sellUnits: [
-                        {
-                            product: {
-                                id: 1,
-                                name: 'Dibba'
-                            },
-                            quantity: 5,
-                            sellingUnit: {
-                                id: 1,
-                                name: 'Cup'
-                            },
-                            unitPrice: 500,
-                            total: 8000,
-                            remarks: 'Some Note'
-                        },
-                        {
-                            product: {
-                                id: 1,
-                                name: 'Dibba'
-                            },
-                            quantity: 5,
-                            sellingUnit: {
-                                id: 1,
-                                name: 'Cup'
-                            },
-                            unitPrice: 500,
-                            total: 8000,
-                            remarks: 'Some Note'
-                        },
-                        {
-                            product: {
-                                id: 1,
-                                name: 'Dibba'
-                            },
-                            quantity: 5,
-                            sellingUnit: {
-                                id: 1,
-                                name: 'Cup'
-                            },
-                            unitPrice: 500,
-                            total: 8000,
-                            remarks: 'Some Note'
-                        },
-                        {
-                            product: {
-                                id: 1,
-                                name: 'Dibba'
-                            },
-                            quantity: 5,
-                            sellingUnit: {
-                                id: 1,
-                                name: 'Cup'
-                            },
-                            unitPrice: 500,
-                            total: 8000,
-                            remarks: 'Some Note'
-                        },
-                        {
-                            product: {
-                                id: 1,
-                                name: 'Dibba'
-                            },
-                            quantity: 5,
-                            sellingUnit: {
-                                id: 1,
-                                name: 'Cup'
-                            },
-                            unitPrice: 500,
-                            total: 8000,
-                            remarks: 'Some Note'
-                        },
-                        {
-                            product: {
-                                id: 1,
-                                name: 'Dibba'
-                            },
-                            quantity: 5,
-                            sellingUnit: {
-                                id: 1,
-                                name: 'Cup'
-                            },
-                            unitPrice: 500,
-                            total: 8000,
-                            remarks: 'Some Note'
-                        },
-                    ],
-                },
-                {
-                    transactionId: Math.random(),
-                    orderId: 15,
-                    createdBy: {
-                        id: 1,
-                        name: 'khanki'
-                    },
-                    sellDate: '15-Dec-2015 12:10:15 PM',
-                    remarks: '',
-                    sellUnits: [
-                        {
-                            product: {
-                                id: 1,
-                                name: 'Dibba'
-                            },
-                            quantity: 5,
-                            sellingUnit: {
-                                id: 1,
-                                name: 'Cup'
-                            },
-                            unitPrice: 500,
-                            total: 8000,
-                            remarks: 'Some Note'
-                        },
-                        {
-                            product: {
-                                id: 1,
-                                name: 'Dibba'
-                            },
-                            quantity: 5,
-                            sellingUnit: {
-                                id: 1,
-                                name: 'Cup'
-                            },
-                            unitPrice: 500,
-                            total: 8000,
-                            remarks: 'Some Note'
-                        },
-                        {
-                            product: {
-                                id: 1,
-                                name: 'Dibba'
-                            },
-                            quantity: 5,
-                            sellingUnit: {
-                                id: 1,
-                                name: 'Cup'
-                            },
-                            unitPrice: 500,
-                            total: 8000,
-                            remarks: 'Some Note'
-                        },
-                        {
-                            product: {
-                                id: 1,
-                                name: 'Dibba'
-                            },
-                            quantity: 5,
-                            sellingUnit: {
-                                id: 1,
-                                name: 'Cup'
-                            },
-                            unitPrice: 500,
-                            total: 8000,
-                            remarks: 'Some Note'
-                        },
-                        {
-                            product: {
-                                id: 1,
-                                name: 'Dibba'
-                            },
-                            quantity: 5,
-                            sellingUnit: {
-                                id: 1,
-                                name: 'Cup'
-                            },
-                            unitPrice: 500,
-                            total: 8000,
-                            remarks: 'Some Note'
-                        },
-                        {
-                            product: {
-                                id: 1,
-                                name: 'Dibba'
-                            },
-                            quantity: 5,
-                            sellingUnit: {
-                                id: 1,
-                                name: 'Cup'
-                            },
-                            unitPrice: 500,
-                            total: 8000,
-                            remarks: 'Some Note'
-                        },
-                    ],
-                },
+                }
             ]
         };
+    },
+    componentDidMount: function () {
+        var $this = this;
+        sellService.findAll()
+            .then(rsp => {
+                $this.setState({sells: rsp.data, pagination: rsp.pagination});
+            })
+        ;
+    },
+    componentWillUnmount: function () {
     },
     render: function () {
         var $this = this;
@@ -348,9 +168,13 @@ module.exports = ListSells = React.createClass({
                                                             <span
                                                                 className="caret"></span></button>
                                                         <ul className="dropdown-menu">
-                                                            <li><a href="#">View Order</a></li>
+                                                            <li><a
+                                                                href={Uris.toAbsoluteUri(Uris.SELL.VIEW, {id: sell.id})}>View
+                                                                Order</a></li>
                                                             <li role="separator" className="divider"></li>
-                                                            <li><a href="#">Edit Order</a></li>
+                                                            <li><a
+                                                                href={Uris.toAbsoluteUri(Uris.SELL.EDIT, {id: sell.id})}>Edit
+                                                                Order</a></li>
                                                         </ul>
                                                     </div>
 

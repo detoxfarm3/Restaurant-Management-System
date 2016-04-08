@@ -14,6 +14,7 @@ module.exports = OrderItemsTable = React.createClass({
         var $this = this;
         var sellUnits = $this.props.sellUnits || [];
 
+        console.log('OrderItemsTable: sellUnits', sellUnits);
 
         var totalCounter = {quantity: 0, total: 0};
         var serial = 1;
@@ -25,8 +26,8 @@ module.exports = OrderItemsTable = React.createClass({
             .map(function (sellUnit) {
                 return lib.merge2(sellUnit, {
                     serial: serial++,
-                    productId: sellUnit.product.name,
-                    unitId: sellUnit.unit.name
+                    productName: sellUnit.product.name,
+                    unitName: sellUnit.unit.name
                 });
             })
             .toArray()
@@ -44,10 +45,10 @@ module.exports = OrderItemsTable = React.createClass({
                 <TableHeaderColumn isKey={true}
                                    dataField="serial">#</TableHeaderColumn>
 
-                <TableHeaderColumn dataField="productId">Product</TableHeaderColumn>
+                <TableHeaderColumn dataField="productName">Product</TableHeaderColumn>
                 <TableHeaderColumn dataField="quantity">Quantity</TableHeaderColumn>
 
-                <TableHeaderColumn dataField="unitId">Unit</TableHeaderColumn>
+                <TableHeaderColumn dataField="unitName">Unit</TableHeaderColumn>
                 <TableHeaderColumn dataField="unitPrice">
                     Unit Price</TableHeaderColumn>
 

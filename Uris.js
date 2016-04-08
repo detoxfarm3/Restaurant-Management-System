@@ -39,7 +39,8 @@ module.exports = Uris = {
         BASE: '/inventory/index',
         ADD_REMOVE_EDIT_PRODUCTS: '/inventory/:id/add-remove-edit-products',
     },
-    toAbsoluteUri: toAbsoluteUri
+    toAbsoluteUri: toAbsoluteUri,
+    parameterize: lib.parameterize
 }
 
 function toAbsoluteUri(str, params) {

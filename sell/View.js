@@ -2,6 +2,8 @@
 var React = require('react');
 var SellHeader = require('./SellHeader');
 var OrderItemsTable = require('./OrderItemsTable');
+var sellService = require('./SellService');
+var Uris = require('../Uris');
 
 var ViewSell;
 module.exports = ViewSell = React.createClass({
@@ -21,14 +23,21 @@ module.exports = ViewSell = React.createClass({
                     id: 1,
                     name: 'khanki'
                 },
-                sellDate: '15-Dec-2015 12:10:15 PM',
+                sellDate: null,
                 remarks: 'RMM'
             }
         }
     },
+    componentDidMount: function () {
+        var $this = this;
+        sellService.find($this.props.params.id)
+            .then(sell => $this.setState({sell: sell}))
+        ;
+    },
     render: function () {
         var $this = this;
         var sell = $this.state.sell;
+        var dlStyle = {marginBottom: '5px'};
 
         return (
 
@@ -39,15 +48,24 @@ module.exports = ViewSell = React.createClass({
                         <div className="panel-heading">
 
                             <div className="row">
-                                <div className="col-md-10">
+                                <div className="col-md-8">
                                     <h3 className="panel-title" style={{lineHeight: '28px', fontSize: '20px'}}>
                                         Order Details
                                     </h3>
                                 </div>
+
                                 <div className="col-md-2">
-                                    <button className="btn btn-warning btn-block pull-right">
-                                        Edit Transaction
-                                    </button>
+                                    <a href={Uris.toAbsoluteUri(Uris.SELL.CREATE)}
+                                       className="btn btn-primary btn-block pull-right">
+                                        Create New
+                                    </a>
+                                </div>
+
+                                <div className="col-md-2">
+                                    <a href={Uris.toAbsoluteUri(Uris.SELL.EDIT, {id: $this.props.params.id})}
+                                       className="btn btn-warning btn-block pull-right">
+                                        Edit
+                                    </a>
                                 </div>
                             </div>
 
@@ -78,6 +96,19 @@ module.exports = ViewSell = React.createClass({
 
                         </div>
                     </div>
+
+                    {
+                        !sell.remarks ? "" : (
+                            <div className="col-md-6">
+
+                                <dl className="dl-horizontal" style={dlStyle}>
+                                    <dt>Remarks:</dt>
+                                    <dd>{sell.remarks}</dd>
+                                </dl>
+
+                            </div>
+                        )
+                    }
 
                 </div>
             </div>

@@ -10,7 +10,7 @@ module.exports = DateView = React.createClass({
         var $this = this;
 
         return (
-            <span>{lib.formatTimeAmPm($this.props.value)}</span>
+            <span>{lib.formatDateTimeAmPm($this.props.value)}</span>
         );
     }
 });

@@ -8,7 +8,7 @@ module.exports = CreateSellHeader = React.createClass({
     getDefaultProps: function () {
         return {
             sell: {
-                remarks: "Sona"
+                remarks: null
             }
         };
     },

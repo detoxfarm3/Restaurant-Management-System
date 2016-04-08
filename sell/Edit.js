@@ -1,7 +1,7 @@
 var React = require('react');
 var CreateSellGrid = require('./CreateSellGrid');
 var Modal = require('../../components/Modal');
-var CreateSellHeader = require('./CreateSellHeader');
+var EditableSellHeader = require('./EditableSellHeader');
 var SellPreview = require('./SellPreview');
 
 var EventEmitter = require("events").EventEmitter;
@@ -197,7 +197,7 @@ module.exports = EditSell = React.createClass({
                         </div>
                         <div className="panel-body">
 
-                            <CreateSellHeader sell={sell} onChange={$this.onSellChange}/>
+                            <EditableSellHeader sell={sell} onChange={$this.onSellChange}/>
 
                         </div>
                     </div>
@@ -313,11 +313,13 @@ module.exports = EditSell = React.createClass({
                         <div className="col-md-10">
 
                             <a href={Uris.toAbsoluteUri(Uris.SELL.VIEW, {id: sell.id})}
-                               className="btn btn-success pull-left" style={{fontWeight: 'bold'}}>View
+                               className="btn btn-success pull-left" style={{fontWeight: 'bold'}}>
+                                View
                             </a>
 
-                            <a href={Uris.toAbsoluteUri(Uris.SELL.EDIT, {id: sell.id})}
-                               className="btn btn-warning pull-left" style={{fontWeight: 'bold'}}>Edit
+                            <a href={Uris.toAbsoluteUri(Uris.SELL.CREATE)}
+                               className="btn btn-warning pull-left" style={{fontWeight: 'bold'}}>
+                                Create New
                             </a>
 
                         </div>

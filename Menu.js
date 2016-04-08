@@ -28,9 +28,8 @@ class Menu extends React.Component {
                 <IndexLink to={Uris.SELL.CREATE} activeClassName="active"
                            className="list-group-item">Make Sale</IndexLink>
 
-                <IndexLink to={Uris.SELL.BASE} activeClassName="active"
+                <IndexLink to={Uris.parameterize(Uris.SELL.BASE, {tab: 1})} activeClassName="active"
                            className="list-group-item">View Sales</IndexLink>
-
 
 
                 <IndexLink to={Uris.USER.BASE} activeClassName="active"

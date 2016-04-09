@@ -23,7 +23,8 @@
     "react-autosuggest": "~3.6.0",
     "react-sidebar": "~2.1.1",
     "react-burger-menu": "~1.5.7",
-    "bluebird": "~3.3.4"
+    "bluebird": "~3.3.4",
+    "auth0-js": "~6.8.0"
   },
   "devDependencies": {},
   "scripts": {

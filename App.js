@@ -8,6 +8,7 @@ var SidebarToggleButton = require('./SidebarToggleButton');
 var SidebarMain = require('./sidebar-main/SidebarMain');
 var SidebarHeader = require('./sidebar-main/SidebarHeader');
 var Menu = require('./Menu');
+var authService = require('./AuthService');
 
 var App;
 module.exports = App = React.createClass({
@@ -25,23 +26,27 @@ module.exports = App = React.createClass({
         return (
             <div id="app" className="container">
 
-                <div className="row">
-                    <div className="col-md-12">
+                {
+                    !authService.isLoggedIn() ? null : (
+                        <div className="row">
+                            <div className="col-md-12">
 
-                        <Navbar>
+                                <Navbar>
 
-                            <NavbarHeader>
-                                <SidebarToggleButton onClick={$this.toggleSidebarMain}/>
+                                    <NavbarHeader>
+                                        <SidebarToggleButton onClick={$this.toggleSidebarMain}/>
                                 <span className="navbar-brand"
                                       style={{cursor: 'pointer'}}>Dashboard</span>
-                            </NavbarHeader>
+                                    </NavbarHeader>
 
-                            <NavbarCollapse/>
+                                    <NavbarCollapse/>
 
-                        </Navbar>
+                                </Navbar>
 
-                    </div>
-                </div>
+                            </div>
+                        </div>
+                    )
+                }
 
                 <div className="row">
                     <div className="col-md-12">

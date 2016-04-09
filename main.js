@@ -36,6 +36,8 @@ var ListInventory = require('./inventory/List');
 var ViewInventory = require('./inventory/View');
 var AddRemoveEditProducts = require('./inventory/AddRemoveEditProducts');
 
+var LoginPage = require('./pages/Login');
+
 var DashboardPage = require('./DashboardPage');
 
 var Uris = require('./Uris');
@@ -46,6 +48,9 @@ document.addEventListener("EVENT_BUS_CONNECTED", function () {
 
     ReactDom.render(
         <Router history={hashHistory}>
+            
+            <Route path={Uris.LOGIN_URI} component={LoginPage}/>
+
             <Route path={Uris.BASE_URI} component={App}>
 
                 <IndexRoute component={DashboardPage}/>

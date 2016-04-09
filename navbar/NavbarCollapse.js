@@ -1,15 +1,22 @@
 "use strict";
 
 import React from 'react';
-import { Link } from 'react-router'
+import { Link, browserHistory } from 'react-router'
 var Uris = require('../Uris');
+var authService = require('../AuthService');
 
 class UserApp extends React.Component {
     constructor(props) {
         super(props);
+        this.state = {
+            user: authService.currentUser()
+        };
     }
 
     render() {
+        var $this = this;
+        var user = $this.state.user || {};
+
         return (
 
             <div className="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
@@ -52,21 +59,23 @@ class UserApp extends React.Component {
                 <ul className="nav navbar-nav navbar-right">
                     <li className="dropdown">
                         <a href="#" className="dropdown-toggle" data-toggle="dropdown" role="button"
-                           aria-haspopup="true" aria-expanded="false">Dropdown <span
+                           aria-haspopup="true" aria-expanded="false">{user.name} <span
                             className="caret"></span></a>
                         <ul className="dropdown-menu">
-                            <li><a href="#">Action</a></li>
-                            <li><a href="#">Another action</a></li>
-                            <li><a href="#">Something else here</a></li>
+                            <li><a>Update Info</a></li>
                             <li role="separator" className="divider"></li>
-                            <li><a href="#">Separated link</a></li>
+                            <li onClick={$this.logout}><a >Logout</a></li>
                         </ul>
                     </li>
                 </ul>
             </div>
         );
+    }
 
-        var $this = this;
+    logout() {
+        console.log('logout');
+        authService.logout()
+            .then(() => location.href = Uris.toAbsoluteUri(Uris.LOGIN_URI));
     }
 }
 

@@ -116,7 +116,7 @@ module.exports = CreateSellGrid = React.createClass({
                         serial: serial++,
                         productId: (productsById[unit.productId] || {}).name,
                         quantity: (
-                            <input className="form-control" type="number" style={{width: '100px'}}
+                            <input className="form-control" type="number" style={{width: '100px', textAlign: 'right'}}
                                    name="quantity" value={unit.quantity}
                                    onChange={function (e) {
                                     $this.onChange(e, unit);
@@ -147,7 +147,7 @@ module.exports = CreateSellGrid = React.createClass({
                                 />
                         ),
                         total: (
-                            <input className="form-control" type="number" style={{width: '120px'}}
+                            <input className="form-control" type="number" style={{width: '120px', textAlign: 'right'}}
                                    name="total" value={unit.total} readOnly={true}
                                 />
                         ),
@@ -164,8 +164,17 @@ module.exports = CreateSellGrid = React.createClass({
 
         sUnits.push({
             productId: <strong>Total</strong>,
-            quantity: <strong>{totalCounter.quantity}</strong>,
-            total: <strong>{totalCounter.total}</strong>,
+            quantity: (
+                <input className="form-control" type="number" style={{width: '100px', textAlign: 'right'}}
+                       value={totalCounter.quantity}
+                       onChange={function (e) {
+                                    $this.onChange(e, unit);
+                               }}/>
+            ),
+            total: (
+                <input className="form-control" type="number" style={{width: '120px', textAlign: 'right'}}
+                       value={totalCounter.total} readOnly={true}/>
+            ),
         });
 
         return (

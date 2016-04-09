@@ -13,11 +13,6 @@ class CreateNewUserForm extends React.Component {
         return (
             <form onSubmit={() => $this.props.onSubmit(e, user)}>
                 <div className="form-group">
-                    <label htmlFor="userId">User ID</label>
-                    <input type="text" className="form-control" id="userId" placeholder="User ID"
-                           name="userId" value={user.userId} onChange={$this.props.onChange}/>
-                </div>
-                <div className="form-group">
                     <label htmlFor="username">Username</label>
                     <input type="text" className="form-control" id="username" placeholder="Username"
                            name="username" value={user.username} onChange={$this.props.onChange}/>

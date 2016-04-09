@@ -4,13 +4,44 @@ import React from 'react';
 import { Link, browserHistory } from 'react-router'
 var Uris = require('../Uris');
 var authService = require('../AuthService');
+var userService = require('../user/UserService');
+var ChangePasswordForm = require('../ChangePasswordForm');
 
-class UserApp extends React.Component {
+var lib = require('../../components/functions');
+
+var ee = require('../EventEmitter');
+var Events = require('../user/Events');
+
+var handlers = {};
+
+class NavbarCollapse extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
             user: authService.currentUser()
         };
+        this.componentDidMount.bind(this);
+        this.componentWillUnmount.bind(this);
+    }
+
+    componentDidMount() {
+        var $this = this;
+        console.log("$THIS");
+
+        handlers[Events.PASSWORD_CHANGED] = (id) => {
+            $this.setState({
+                isModalOpen: false,
+                user: lib.exclude($this.state.user, ['currentPassword', 'password', 'retypePassword'])
+            });
+        };
+
+        Object.keys(handlers).forEach(key => ee.on(key, handlers[key]));
+    }
+
+    componentWillUnmount() {
+        var $this = this;
+
+        Object.keys(handlers).forEach(key => ee.removeListener(key, handlers[key]));
     }
 
     render() {
@@ -59,24 +90,46 @@ class UserApp extends React.Component {
                 <ul className="nav navbar-nav navbar-right">
                     <li className="dropdown">
                         <a href="#" className="dropdown-toggle" data-toggle="dropdown" role="button"
-                           aria-haspopup="true" aria-expanded="false">{user.name} <span
+                           aria-haspopup="true" aria-expanded="false">{user.username} <span
                             className="caret"></span></a>
                         <ul className="dropdown-menu">
-                            <li><a>Update Info</a></li>
+                            <li><a onClick={$this.changePassword.bind($this)}>Change Password</a></li>
                             <li role="separator" className="divider"></li>
-                            <li onClick={$this.logout}><a >Logout</a></li>
+                            <li onClick={$this.logout.bind($this)}><a >Logout</a></li>
                         </ul>
                     </li>
                 </ul>
+
+                {
+                    ($this.state.createModal || (() => null))()
+                }
+
             </div>
         );
     }
 
     logout() {
+        var $this = this;
         console.log('logout');
         authService.logout()
-            .then(() => location.href = Uris.toAbsoluteUri(Uris.LOGIN_URI));
+            .then(() => location.href = Uris.toAbsoluteUri(Uris.LOGIN_URI))
+        ;
+    }
+
+    changePassword() {
+        var $this = this;
+        $this.setState({
+            isModalOpen: true,
+            createModal: () => {
+                return (
+                    <ChangePasswordForm isOpen={!!$this.state.isModalOpen}
+                                        onClose={() => $this.setState({isModalOpen: false})}
+                                        user={$this.state.user}
+                        />
+                );
+            }
+        });
     }
 }
 
-module.exports = UserApp;
+module.exports = NavbarCollapse;

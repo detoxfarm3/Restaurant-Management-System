@@ -15,6 +15,7 @@ var AddRemoveEditProducts = React.createClass({
     },
     getInitialState: function () {
         return {
+            inventories: [],
             units: [
                 {id: 1, name: 'Kg'},
                 {id: 2, name: 'Ml'},
@@ -84,6 +85,10 @@ var AddRemoveEditProducts = React.createClass({
         inventoryService.find($this.props.params.id)
             .then(inventory => $this.setState({inventory: inventory}))
         ;
+
+        inventoryService.findAll()
+            .then(rsp => $this.setState({inventories: rsp.data}))
+        ;
     },
     componentWillUnmount: function () {
     },
@@ -98,22 +103,23 @@ var AddRemoveEditProducts = React.createClass({
             };
         var inventory = $this.state.inventory || {};
         return (
-            <div className="panel panel-default">
-                <div className="panel-heading">
-                    <div className="row">
-                        <div className="col-md-6">
-                            <h3 className="panel-title">Add/Remove/Edit Products</h3>
+            <div classNameName="panel panel-default">
+                <div classNameName="panel-heading">
+                    <div classNameName="row">
+                        <div classNameName="col-md-6">
+                            <h3 classNameName="panel-title">Add/Remove/Edit Products</h3>
                         </div>
-                        <div className="col-md-6">
-                            <span className="btn btn-success pull-right" onClick={$this.addAnotherProduct}>
+                        <div classNameName="col-md-6">
+                            <span classNameName="btn btn-success pull-right" onClick={$this.addAnotherProduct}>
                                 Add another product</span>
                         </div>
                     </div>
                 </div>
 
                 <h4>
-                    ID: <strong style={{fontWeight: 'bold'}} className="text-primary">{inventory.id}</strong>
-                    {' | '}Name: <strong style={{fontWeight: 'bold'}} className="text-primary">{inventory.name}</strong>
+                    ID: <strong style={{fontWeight: 'bold'}} classNameName="text-primary">{inventory.id}</strong>
+                    {' | '}Name: <strong style={{fontWeight: 'bold'}}
+                                         classNameName="text-primary">{inventory.name}</strong>
                 </h4>
 
                 <BootstrapTable data={inventoryProducts} striped={true} hover={true}>
@@ -155,10 +161,10 @@ var AddRemoveEditProducts = React.createClass({
             createModal: function () {
                 return (
                     <Modal isOpen={true} onClose={$this.closeModal}
-                           title={<h3 className="modal-title text-primary">Add another product</h3>}
+                           title={<h3 classNameName="modal-title text-primary">Add another product</h3>}
                            body={
                                        <AddAnotherProductForm
-                                           products={$this.state.products}
+                                           products={$this.filterProducts($this.state.products)}
                                            units={$this.state.units}
                                            product={$this.state.product}
                                            onChange={$this.onProductChange}
@@ -167,9 +173,9 @@ var AddRemoveEditProducts = React.createClass({
                                     }
                            footer={
                                         <div>
-                                            <span className="btn btn-primary btn-lg pull-right"
+                                            <span classNameName="btn btn-primary btn-lg pull-right"
                                                 onClick={$this.doAddAnother}>Add</span>
-                                            <span className="btn btn-danger btn-lg pull-right" style={{marginRight: '10px'}}
+                                            <span classNameName="btn btn-danger btn-lg pull-right" style={{marginRight: '10px'}}
                                                 onClick={$this.closeModal}>Cancel</span>
                                         </div>
                                     }
@@ -190,10 +196,10 @@ var AddRemoveEditProducts = React.createClass({
             createModal: function () {
                 return (
                     <Modal isOpen={true} onClose={$this.closeModal}
-                           title={<h3 className="modal-title text-primary">Add another product</h3>}
+                           title={<h3 classNameName="modal-title text-primary">Add another product</h3>}
                            body={
                                        <AddAnotherProductForm
-                                           products={$this.state.products}
+                                           products={$this.filterProducts($this.state.products)}
                                            units={$this.state.units}
                                            product={$this.state.product}
                                            onChange={$this.onProductChange}
@@ -202,9 +208,9 @@ var AddRemoveEditProducts = React.createClass({
                                     }
                            footer={
                                         <div>
-                                            <span className="btn btn-primary btn-lg pull-right"
+                                            <span classNameName="btn btn-primary btn-lg pull-right"
                                                 onClick={$this.doAddAnother}>Add</span>
-                                            <span className="btn btn-danger btn-lg pull-right" style={{marginRight: '10px'}}
+                                            <span classNameName="btn btn-danger btn-lg pull-right" style={{marginRight: '10px'}}
                                                 onClick={$this.closeModal}>Cancel</span>
                                         </div>
                                     }
@@ -230,10 +236,10 @@ var AddRemoveEditProducts = React.createClass({
                     createModal: function () {
                         return (
                             <Modal isOpen={true} onClose={$this.closeModal}
-                                   title={<h3 className="modal-title text-primary">Add another product</h3>}
+                                   title={<h3 classNameName="modal-title text-primary">Add another product</h3>}
                                    body={
                                        <AddAnotherProductForm
-                                           products={$this.state.products}
+                                           products={$this.filterProducts($this.state.products)}
                                            units={$this.state.units}
                                            product={{}}
                                            onChange={$this.onProductChange}
@@ -242,9 +248,9 @@ var AddRemoveEditProducts = React.createClass({
                                     }
                                    footer={
                                         <div>
-                                            <span className="btn btn-primary btn-lg pull-right"
+                                            <span classNameName="btn btn-primary btn-lg pull-right"
                                                 onClick={$this.doAddAnother}>Add</span>
-                                            <span className="btn btn-danger btn-lg pull-right" style={{marginRight: '10px'}}
+                                            <span classNameName="btn btn-danger btn-lg pull-right" style={{marginRight: '10px'}}
                                                 onClick={$this.closeModal}>Cancel</span>
                                         </div>
                                     }
@@ -254,6 +260,19 @@ var AddRemoveEditProducts = React.createClass({
                 });
             })
         ;
+    },
+    filterProducts: function (products) {
+        var $this = this;
+        products = products || [];
+
+        var mp = $this.state.inventoryProducts.reduce((map, prod) => {
+            map[prod.productId] = prod.productId;
+            return map;
+        }, {});
+
+        return products.filter(prod => {
+            return !mp[prod.id];
+        });
     },
     removeItem: function (item) {
         var $this = this;
@@ -272,31 +291,37 @@ var AddRemoveEditProducts = React.createClass({
     formatAction: function (action, item) {
         var $this = this;
         return (
-            <div className="row">
+            <div classNameName="row">
 
-                <div className="col-md-3">
+                <div classNameName="col-md-3">
 
-                    <input className="form-control" type="number" name="__quantity__" value={item.__quantity__}
+                    <input classNameName="form-control" type="number" name="__quantity__" value={item.__quantity__}
                            onChange={(e) => {
                                 $this.onQuantityChange(e, item);
                            }}/>
 
                 </div>
 
-                <div className="col-md-9">
+                <div classNameName="col-md-9">
 
-                    <span className="btn btn-primary" onClick={() => $this.doAdd(item)}
+                    <span classNameName="btn btn-primary" onClick={() => $this.doAdd(item)}
                           style={{marginRight: '5px'}}>Add</span>
-                    <span className="btn btn-success" onClick={() => $this.doRemove(item)}
+                    <span classNameName="btn btn-success" onClick={() => $this.doRemove(item)}
                           style={{marginRight: '5px'}}>Remove</span>
-                    <span className="btn btn-danger" onClick={() => $this.editProduct(item)}
+                    <span classNameName="btn btn-danger" onClick={() => $this.editProduct(item)}
                           style={{marginRight: '5px'}}>Edit</span>
 
-                    <span className="btn btn-danger"
+                    <span classNameName="btn btn-info" onClick={() => $this.transfer(item)}
+                          style={{marginRight: '5px'}}>Transfer</span>
+
+                    <span classNameName="btn btn-info" onClick={() => $this.bring(item)}
+                          style={{marginRight: '5px'}}>Bring</span>
+
+                    <span classNameName="btn btn-danger pull-right"
                           onClick={function (e) {
                             $this.removeItem(item);
                           }}>
-                        <span className="glyphicon glyphicon-remove" aria-hidden="true"></span>
+                        <span classNameName="glyphicon glyphicon-remove" aria-hidden="true"></span>
                     </span>
 
                 </div>
@@ -311,14 +336,14 @@ var AddRemoveEditProducts = React.createClass({
             createModal: function () {
                 return (
                     <Modal isOpen={true} onClose={$this.closeModal}
-                           title={<h3 className="modal-title text-primary">Add</h3>}
+                           title={<h3 classNameName="modal-title text-primary">Add</h3>}
                            body={
                                <AddRemoveEditForm
                                placeholder="Add"
                                onSubmit={$this.doAdd}
-                               submitButton={<input type="submit" className="btn btn-primary" value="Add"/>}/>
+                               submitButton={<input type="submit" classNameName="btn btn-primary" value="Add"/>}/>
                            }
-                           footer={<span className="btn btn-danger" onClick={$this.closeModal}>Cancel</span>}
+                           footer={<span classNameName="btn btn-danger" onClick={$this.closeModal}>Cancel</span>}
                         />
                 );
             }
@@ -330,14 +355,14 @@ var AddRemoveEditProducts = React.createClass({
             createModal: function () {
                 return (
                     <Modal isOpen={true} onClose={$this.closeModal}
-                           title={<h3 className="modal-title text-success">Remove</h3>}
+                           title={<h3 classNameName="modal-title text-success">Remove</h3>}
                            body={
                                <AddRemoveEditForm
                                placeholder="Remove"
                                onSubmit={$this.doRemove}
-                               submitButton={<input type="submit" className="btn btn-success" value="Remove"/>}/>
+                               submitButton={<input type="submit" classNameName="btn btn-success" value="Remove"/>}/>
                            }
-                           footer={<span className="btn btn-danger" onClick={$this.closeModal}>Cancel</span>}
+                           footer={<span classNameName="btn btn-danger" onClick={$this.closeModal}>Cancel</span>}
                         />
                 );
             }
@@ -349,7 +374,7 @@ var AddRemoveEditProducts = React.createClass({
             createModal: function () {
                 return (
                     <Modal isOpen={true} onClose={$this.closeModal}
-                           title={<h3 className="modal-title text-danger">Edit</h3>}
+                           title={<h3 classNameName="modal-title text-danger">Edit</h3>}
                            body={
                                <AddRemoveEditForm
                                    placeholder="Edit"
@@ -363,14 +388,69 @@ var AddRemoveEditProducts = React.createClass({
                                         e.preventDefault();
                                         $this.doEdit(item);
                                    }}
-                                   submitButton={<input type="submit" className="btn btn-lg btn-danger" value="Edit"/>}/>
+                                   submitButton={<input type="submit" classNameName="btn btn-lg btn-danger" value="Edit"/>}/>
                            }
-                           footer={<span className="btn btn-danger" onClick={$this.closeModal}>Cancel</span>}
+                           footer={<span classNameName="btn btn-danger" onClick={$this.closeModal}>Cancel</span>}
                         />
                 );
             }
         });
     },
+
+    transfer: function (inventory) {
+        var $this = this;
+
+        var body = (
+            <form onSubmit={e => {e.preventDefault(); $this.doTransfer(inventory);}}>
+                <div className="form-group">
+                    <label forHtml="quantity">Quantity</label>
+                    <input type="number" className="form-control"
+                           id="quantity" name="quantity" value={inventory.__quantity__}/>
+                </div>
+                <div className="form-group">
+                    <label forHtml="inventoryId">Invenotry</label>
+                    <select className="form-control"
+                            id="inventoryId" name="inventoryId" value={inventory.__transferTo__}>
+                        <option value={0}>Select Inventory</option>
+                        {
+                            $this.state.inventories.map(inv => {
+                                <option value={inv.id}>{inv.name}</option>
+                            })
+                        }
+                    </select>
+                </div>
+                <button type="submit" className="btn btn-primary btn-lg">Transfer</button>
+            </form>
+        );
+
+        this.setState({
+            createModal: function () {
+                return (
+                    <Modal isOpen={true} onClose={$this.closeModal}
+                           title={<h3 classNameName="modal-title text-danger">Transfer to another inventory</h3>}
+                           body={body}
+                           footer={<span classNameName="btn btn-danger" onClick={$this.closeModal}>Cancel</span>}
+                        />
+                );
+            }
+        });
+    },
+
+    bring: function (inventory) {
+        var $this = this;
+        this.setState({
+            createModal: function () {
+                return (
+                    <Modal isOpen={true} onClose={$this.closeModal}
+                           title={<h3 classNameName="modal-title text-danger">Transfer to another inventory</h3>}
+                           body={''}
+                           footer={<span classNameName="btn btn-danger" onClick={$this.closeModal}>Cancel</span>}
+                        />
+                );
+            }
+        });
+    },
+
     closeModal: function () {
         var $this = this;
         this.setState({
@@ -410,6 +490,8 @@ var AddRemoveEditProducts = React.createClass({
         ;
 
         this.closeModal();
+    },
+    doTransfer: function (inventory) {
     },
 });
 

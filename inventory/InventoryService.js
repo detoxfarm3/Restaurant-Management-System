@@ -222,6 +222,14 @@ class InventoryService {
             });
         });
     }
+
+    transferTo(req) {
+
+    }
+
+    bringFrom(req) {
+
+    }
 }
 
 module.exports = new InventoryService();

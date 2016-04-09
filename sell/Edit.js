@@ -158,6 +158,8 @@ module.exports = EditSell = React.createClass({
                     return newState;
                 }, {});
 
+                state.sellUnitsByProductId = $this.interceptSellUnits(state.sellUnitsByProductId, state.productsUnitWisePrice);
+
                 $this.setState(state);
             })
         ;
@@ -280,7 +282,7 @@ module.exports = EditSell = React.createClass({
     onSaleUnitsChange: function (newSellUnitsByProductId) {
         var $this = this;
         $this.setState({
-            sellUnitsByProductId: newSellUnitsByProductId,
+            sellUnitsByProductId: $this.interceptSellUnits(newSellUnitsByProductId, $this.state.productsUnitWisePrice),
         });
     },
     submit: function (e) {
@@ -345,4 +347,22 @@ module.exports = EditSell = React.createClass({
                     onClick={$this.closeModal}>Ok</button>
         );
     },
+
+    interceptSellUnits: function (sellUnitsByProductId, productsUnitWisePrice) {
+        var $this = this;
+        for (var x in sellUnitsByProductId) {
+            var su = sellUnitsByProductId[x] || {};
+
+            var priceByUnitIds = productsUnitWisePrice[su.productId] || {};
+
+            if (Object.keys(priceByUnitIds).length == 1) {
+                su.unitId = Object.keys(priceByUnitIds).reduce((unitId, id) => unitId || id, null);
+            }
+
+            su.unitPrice = priceByUnitIds[su.unitId] || undefined;
+            su.total = su.quantity * su.unitPrice;
+        }
+
+        return sellUnitsByProductId;
+    }
 });

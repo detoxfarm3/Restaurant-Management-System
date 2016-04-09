@@ -42,8 +42,9 @@ module.exports = CreateSellHeader = React.createClass({
 
                             <div className="col-sm-8">
                                 <DateTimePicker id="sellDate"
-                                                name="sellDate" value={sell.sellDate}
-                                                onChange={date => $this.props.onChange({target: {name: 'sellDate', value: date}})}/>
+                                                name="sellDate"
+                                                value={sell.sellDate}
+                                                time={false}/>
                             </div>
                         </div>
 

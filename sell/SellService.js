@@ -27,8 +27,6 @@ class SellService {
 
                 resolve(msg.body);
 
-                console.log(ServerEvents.FIND_ALL_SELLS, JSON.stringify(msg.body));
-
             });
         });
     }

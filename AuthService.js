@@ -24,6 +24,8 @@ class AuthService {
                     user = JSON.parse(tkn);
 
                     resolve(user);
+
+                    console.log("LOGIN_SUCCESS", JSON.stringify({token: token, user: user}));
                 },
                 error: reject
             });

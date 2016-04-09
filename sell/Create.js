@@ -15,6 +15,8 @@ var lib = require('../../components/functions');
 
 var Uris = require('../Uris');
 
+var authService = require('../AuthService');
+
 var Events = {
     SUBMIT_REQUESTED: 'SUBMIT_REQUESTED',
     SUBMIT_SUCCESSFULL: 'SUBMIT_SUCCESSFULL',
@@ -71,6 +73,7 @@ module.exports = CreateSell = React.createClass({
                 consumerName: '',
                 consumerMobile: '',
                 sellDate: new Date(),
+                createdBy: authService.currentUser(),
                 remarks: ''
             },
             sellUnitsByProductId: {},
@@ -140,6 +143,8 @@ module.exports = CreateSell = React.createClass({
                     }
                     return newState;
                 }, {});
+
+                state.sellUnitsByProductId = $this.interceptSellUnits(state.sellUnitsByProductId, state.productsUnitWisePrice);
 
                 $this.setState(state);
             })
@@ -263,7 +268,7 @@ module.exports = CreateSell = React.createClass({
     onSaleUnitsChange: function (newSellUnitsByProductId) {
         var $this = this;
         $this.setState({
-            sellUnitsByProductId: newSellUnitsByProductId,
+            sellUnitsByProductId: $this.interceptSellUnits(newSellUnitsByProductId, $this.state.productsUnitWisePrice),
         });
     },
     submit: function (e) {
@@ -326,4 +331,21 @@ module.exports = CreateSell = React.createClass({
                     onClick={$this.closeModal}>Ok</button>
         );
     },
+    interceptSellUnits: function (sellUnitsByProductId, productsUnitWisePrice) {
+        var $this = this;
+        for (var x in sellUnitsByProductId) {
+            var su = sellUnitsByProductId[x] || {};
+
+            var priceByUnitIds = productsUnitWisePrice[su.productId] || {};
+
+            if (Object.keys(priceByUnitIds).length == 1) {
+                su.unitId = Object.keys(priceByUnitIds).reduce((unitId, id) => unitId || id, null);
+            }
+
+            su.unitPrice = priceByUnitIds[su.unitId] || undefined;
+            su.total = su.quantity * su.unitPrice;
+        }
+
+        return sellUnitsByProductId;
+    }
 });

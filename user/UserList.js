@@ -27,8 +27,6 @@ class UserList extends React.Component {
                 <TableHeaderColumn isKey={true}
                                    dataField="id" hidden={true}>ID</TableHeaderColumn>
 
-                <TableHeaderColumn dataField="userId">User ID</TableHeaderColumn>
-
                 <TableHeaderColumn dataField="username">Username</TableHeaderColumn>
                 <TableHeaderColumn dataField="name">Name</TableHeaderColumn>
 

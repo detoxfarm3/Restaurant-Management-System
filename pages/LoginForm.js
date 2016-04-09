@@ -11,7 +11,10 @@ class LoginForm extends React.Component {
         var $this = this;
         var user = $this.props.user;
         return (
-            <form onSubmit={$this.props.onSubmit}>
+            <form method="post" onSubmit={e => {
+                e.preventDefault();
+                $this.props.onSubmit(user);
+            }}>
                 <div className="form-group">
                     <label htmlFor="username">Username</label>
                     <input type="text" className="form-control" id="username" placeholder="Username"
@@ -22,6 +25,7 @@ class LoginForm extends React.Component {
                     <input type="password" className="form-control" id="password" placeholder="Password"
                            name="password" value={user.password} onChange={$this.props.onChange}/>
                 </div>
+                <input type="submit" style={{display: 'none'}}/>
             </form>
         );
     }

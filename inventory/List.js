@@ -8,6 +8,7 @@ var inventoryService = require("./InventoryService");
 var ee = require('../EventEmitter');
 var Events = require('./Events');
 var Uris = require('../Uris');
+var auth = require('../AuthService');
 
 var ListInventories;
 module.exports = ListInventories = React.createClass({
@@ -49,6 +50,8 @@ module.exports = ListInventories = React.createClass({
         var $this = this;
         var inventories = $this.state.inventories || [];
 
+        var editable = auth.currentUser().username == "admin";
+
         return (
 
             <div className="row">
@@ -63,8 +66,12 @@ module.exports = ListInventories = React.createClass({
                                     <h3 className="panel-title">Inventory List [ total: {inventories.length} ]</h3>
                                 </div>
                                 <div className="col-md-4">
-                                    <span className="btn btn-primary pull-right"
-                                          onClick={$this.createNewInventory}>New</span>
+                                    {
+                                        auth.currentUser().username != "admin" ? null : (
+                                            <span className="btn btn-primary pull-right"
+                                                  onClick={$this.createNewInventory}>New</span>
+                                        )
+                                    }
                                 </div>
                             </div>
 
@@ -72,10 +79,10 @@ module.exports = ListInventories = React.createClass({
 
                         <BootstrapTable data={inventories} cellEdit={$this.cellEditProp()}>
                             <TableHeaderColumn dataField="id" isKey={true}>ID</TableHeaderColumn>
-                            <TableHeaderColumn dataField="name">Name</TableHeaderColumn>
+                            <TableHeaderColumn dataField="name" editable={editable}>Name</TableHeaderColumn>
                             <TableHeaderColumn dataField="totalProducts" editable={false}>
                                 Total Products</TableHeaderColumn>
-                            <TableHeaderColumn dataField="remarks">Remarks</TableHeaderColumn>
+                            <TableHeaderColumn dataField="remarks" editable={editable}>Remarks</TableHeaderColumn>
                             <TableHeaderColumn dataField="action" editable={false}
                                                dataFormat={$this.formatAction}>Action</TableHeaderColumn>
                         </BootstrapTable>
@@ -101,8 +108,8 @@ module.exports = ListInventories = React.createClass({
             <div>
 
                 <a href={Uris.toAbsoluteUri(Uris.INVENTORY.ADD_REMOVE_EDIT_PRODUCTS, {id: inventory.id})}
-                      className="btn btn-primary" style={{marginRight: '5px'}}
-                      title="Add product to this inventory.">
+                   className="btn btn-primary" style={{marginRight: '5px'}}
+                   title="Add product to this inventory.">
                     Add/Remove/Edit Products
                 </a>
 
@@ -112,10 +119,14 @@ module.exports = ListInventories = React.createClass({
                     View
                 </a>
 
-                <span className="btn btn-danger" title="Delete this inventory."
-                      onClick={() => $this.deleteInventory(inventory.id)}>
-                    <span className="glyphicon glyphicon-remove" aria-hidden="true"></span>
-                </span>
+                {
+                    auth.currentUser().username != "admin" ? null : (
+                        <span className="btn btn-danger" title="Delete this inventory."
+                              onClick={() => $this.deleteInventory(inventory.id)}>
+                            <span className="glyphicon glyphicon-remove" aria-hidden="true"></span>
+                        </span>
+                    )
+                }
 
             </div>
         );

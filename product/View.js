@@ -7,6 +7,8 @@ var productService = require('./ProductService');
 
 var Uris = require('../Uris');
 
+var auth = require('../AuthService');
+
 var ViewProduct;
 module.exports = ViewProduct = React.createClass({
     getDefaultProps: function () {
@@ -52,9 +54,13 @@ module.exports = ViewProduct = React.createClass({
                                 <div className="col-md-1">
                                     <div className="btn-group btn-group-justified">
 
-                                        <a href={Uris.toAbsoluteUri(Uris.PRODUCT.EDIT, {id: id})}
-                                           className="btn btn-primary"
-                                           onClick={$this.createProduct}>Edit</a>
+                                        {
+                                            auth.currentUser().username != "admin" ? null : (
+                                                <a href={Uris.toAbsoluteUri(Uris.PRODUCT.EDIT, {id: id})}
+                                                   className="btn btn-primary"
+                                                   onClick={$this.createProduct}>Edit</a>
+                                            )
+                                        }
 
                                     </div>
 

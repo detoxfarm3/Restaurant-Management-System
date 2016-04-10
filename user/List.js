@@ -8,6 +8,8 @@ var userService = require('./UserService');
 var ee = require('./EventEmmiter');
 var Events = require('./Events');
 
+var auth = require('../AuthService');
+
 class ListUser extends React.Component {
     constructor(props) {
         super(props);
@@ -100,8 +102,14 @@ class ListUser extends React.Component {
 
                                 </div>
                                 <div className="col-md-6">
-                                    <span className="btn btn-primary pull-right"
-                                          onClick={$this.createNewUser.bind($this)}>Create New</span>
+
+                                    {
+                                        auth.currentUser().username != "admin" ? null : (
+                                            <span className="btn btn-primary pull-right"
+                                                  onClick={$this.createNewUser.bind($this)}>Create New</span>
+                                        )
+                                    }
+
                                 </div>
                             </div>
                         </div>

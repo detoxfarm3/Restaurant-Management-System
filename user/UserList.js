@@ -4,6 +4,8 @@ import {BootstrapTable, TableHeaderColumn} from 'react-bootstrap-table';
 var AuthoritiesListViewEmbed = require('./AuthoritiesListViewEmbed');
 var userService = require('./UserService');
 
+var auth = require('../AuthService');
+
 class UserList extends React.Component {
     constructor(props) {
         super(props);
@@ -21,22 +23,25 @@ class UserList extends React.Component {
             afterSaveCell: $this.doUpdateUser
         }
 
+        var editable = auth.currentUser().username == "admin";
+
         return (
             <BootstrapTable data={users} striped={true} hover={true} cellEdit={cellEditProp}>
 
                 <TableHeaderColumn isKey={true}
                                    dataField="id" hidden={true}>ID</TableHeaderColumn>
 
-                <TableHeaderColumn dataField="username">Username</TableHeaderColumn>
-                <TableHeaderColumn dataField="name">Name</TableHeaderColumn>
+                <TableHeaderColumn dataField="username" editable={editable}>Username</TableHeaderColumn>
+                <TableHeaderColumn dataField="name" editable={editable}>Name</TableHeaderColumn>
 
-                <TableHeaderColumn dataField="phone">Phone</TableHeaderColumn>
+                <TableHeaderColumn dataField="phone" editable={editable}>Phone</TableHeaderColumn>
 
-                <TableHeaderColumn dataField="address">Address</TableHeaderColumn>
-                <TableHeaderColumn dataField="remarks">Remarks</TableHeaderColumn>
+                <TableHeaderColumn dataField="address" editable={editable}>Address</TableHeaderColumn>
+                <TableHeaderColumn dataField="remarks" editable={editable}>Remarks</TableHeaderColumn>
 
                 <TableHeaderColumn dataField="remarks" editable={false}
-                                   dataFormat={$this.formatAction.bind($this)}>Action</TableHeaderColumn>
+                                   dataFormat={$this.formatAction.bind($this)}
+                    hidden={!editable}>Action</TableHeaderColumn>
 
             </BootstrapTable>
         );

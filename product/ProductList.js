@@ -6,14 +6,20 @@ var PriceView = require('./PriceView');
 var PricePerUnit = require('./PricePerUnit');
 var Uris = require('../Uris');
 
+var authService = require('../AuthService');
+
 var ProductList;
 module.exports = ProductList = React.createClass({
     getDefaultProps: function () {
         return {products: []};
     },
+    componentDidMount: function () {
+        var $this = this;
+    },
     render: function () {
         var $this = this;
         var products = $this.props.products;
+        var currentUser = authService.currentUser();
         return (
 
             <div className="row">
@@ -24,8 +30,9 @@ module.exports = ProductList = React.createClass({
                         <TableHeaderColumn dataField="name">Name</TableHeaderColumn>
                         <TableHeaderColumn dataField="prices"
                                            dataFormat={$this.formatPrice}>Price</TableHeaderColumn>
-                        <TableHeaderColumn dataField="manufacturerPrice" dataFormat={$this.formatManufacturerPrice}>Manufacturer
-                            Price</TableHeaderColumn>
+                        <TableHeaderColumn hidden={currentUser.username != "admin"} dataField="manufacturerPrice"
+                                           dataFormat={$this.formatManufacturerPrice}>
+                            Manufacturer Price</TableHeaderColumn>
                         <TableHeaderColumn dataField="inventories" dataFormat={$this.formatInventories}>
                             Inventory</TableHeaderColumn>
                         <TableHeaderColumn dataField="sku">SKU</TableHeaderColumn>
@@ -62,7 +69,12 @@ module.exports = ProductList = React.createClass({
         return (
             <div className="">
                 <a href={Uris.toAbsoluteUri(Uris.PRODUCT.VIEW, {id: product.id})} className="btn btn-sm btn-primary">View</a>
-                <a href={Uris.toAbsoluteUri(Uris.PRODUCT.EDIT, {id: product.id})} className="btn btn-sm btn-warning">Edit</a>
+                {
+                    authService.currentUser().username != "admin" ? null : (
+                        <a href={Uris.toAbsoluteUri(Uris.PRODUCT.EDIT, {id: product.id})}
+                           className="btn btn-sm btn-warning">Edit</a>
+                    )
+                }
             </div>
         );
     }

@@ -88,6 +88,7 @@ module.exports = CreateSell = React.createClass({
     componentDidMount: function () {
 
         var $this = this;
+
         console.log("MOUNTING: SELL_CREATE");
         ee.on(Events.SUBMIT_REQUESTED, function (sell) {
             console.log(sell);

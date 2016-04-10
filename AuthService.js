@@ -63,6 +63,11 @@ class AuthService {
         user = null;
         return new Promise(function (resolve, reject) {
             console.log("AuthService.LOgout");
+
+            if(!!localStorage) {
+                localStorage.clear();
+            }
+
             resolve("ok");
             //$.ajax({
             //    url: Apis.LOGOUT_URI,

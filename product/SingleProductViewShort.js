@@ -4,6 +4,7 @@ var PriceView = require('./PriceView');
 var PricePerUnit = require('./PricePerUnit');
 var ProductStockViewEmbed = require('./ProductStockViewEmbed');
 var ProductsInventoryView = require('./ProductsInventoryView');
+var auth = require('../AuthService');
 
 var SingleProductViewShort;
 module.exports = SingleProductViewShort = React.createClass({
@@ -37,14 +38,18 @@ module.exports = SingleProductViewShort = React.createClass({
 
                     </td>
                 </tr>
-                <tr>
-                    <th>Manufacturer Price:</th>
-                    <td colSpan="3">
-                        <PricePerUnit
-                            price={(product.manufacturerPrice || {}).amount}
-                            unit={((product.manufacturerPrice || {}).unit || {}).name}/>
-                    </td>
-                </tr>
+                {
+                    auth.currentUser().username != "admin" ? null : (
+                        <tr>
+                            <th>Manufacturer Price:</th>
+                            <td colSpan="3">
+                                <PricePerUnit
+                                    price={(product.manufacturerPrice || {}).amount}
+                                    unit={((product.manufacturerPrice || {}).unit || {}).name}/>
+                            </td>
+                        </tr>
+                    )
+                }
                 {
                     (!product.inventories || !product.inventories.length) ? null : (
                         <tr>

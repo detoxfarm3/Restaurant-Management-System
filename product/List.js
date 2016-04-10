@@ -5,6 +5,8 @@ var ProductList = require('./ProductList');
 var Uris = require('../Uris');
 var productService = require('./ProductService');
 
+var authService = require('../AuthService');
+
 var ListProduct;
 module.exports = ListProduct = React.createClass({
     getInitialState: function () {
@@ -150,8 +152,12 @@ module.exports = ListProduct = React.createClass({
 
                         <div className="col-md-2">
 
-                            <a className="btn btn-primary pull-right"
-                               href={Uris.toAbsoluteUri(Uris.PRODUCT.CREATE)}>New Product</a>
+                            {
+                                authService.currentUser().username != "admin" ? null : (
+                                    <a className="btn btn-primary pull-right"
+                                       href={Uris.toAbsoluteUri(Uris.PRODUCT.CREATE)}>New Product</a>
+                                )
+                            }
 
                         </div>
 

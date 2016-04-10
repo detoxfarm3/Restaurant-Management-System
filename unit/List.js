@@ -12,6 +12,8 @@ var unitService = require('./UnitService');
 var ee = require('../EventEmitter');
 var Events = require('../Events');
 
+var auth = require('../AuthService');
+
 var ListUnits;
 module.exports = ListUnits = React.createClass({
     getDefaultProps: function () {
@@ -49,6 +51,8 @@ module.exports = ListUnits = React.createClass({
     render: function () {
         var $this = this;
         var units = $this.state.units;
+
+        var editable = auth.currentUser().username == "admin";
         return (
 
             <div className="row">
@@ -63,8 +67,12 @@ module.exports = ListUnits = React.createClass({
                                     <h3 className="panel-title">Panel title</h3>
                                 </div>
                                 <div className="col-md-4">
-                                    <span className="btn btn-primary pull-right"
-                                          onClick={$this.createNewUnit}>New</span>
+                                    {
+                                        auth.currentUser().username != "admin" ? null : (
+                                            <span className="btn btn-primary pull-right"
+                                                  onClick={$this.createNewUnit}>New</span>
+                                        )
+                                    }
                                 </div>
                             </div>
 
@@ -72,11 +80,12 @@ module.exports = ListUnits = React.createClass({
 
                         <BootstrapTable data={units} cellEdit={$this.cellEditProp()}>
                             <TableHeaderColumn dataField="id" isKey={true}>ID</TableHeaderColumn>
-                            <TableHeaderColumn dataField="name">Name</TableHeaderColumn>
-                            <TableHeaderColumn dataField="fullName">Full Name</TableHeaderColumn>
-                            <TableHeaderColumn dataField="remarks">Remarks</TableHeaderColumn>
+                            <TableHeaderColumn dataField="name" editable={editable}>Name</TableHeaderColumn>
+                            <TableHeaderColumn dataField="fullName" editable={editable}>Full Name</TableHeaderColumn>
+                            <TableHeaderColumn dataField="remarks" editable={editable}>Remarks</TableHeaderColumn>
                             <TableHeaderColumn dataField="action" editable={false}
-                                               dataFormat={$this.formatAction}>Action</TableHeaderColumn>
+                                               dataFormat={$this.formatAction}
+                                               hidden={!editable}>Action</TableHeaderColumn>
                         </BootstrapTable>
 
                     </div>

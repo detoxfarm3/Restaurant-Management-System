@@ -4,6 +4,8 @@ import React from 'react';
 import { IndexLink } from 'react-router';
 var Uris = require('./Uris');
 
+var auth = require('./AuthService');
+
 class Menu extends React.Component {
     constructor(props) {
         super(props);
@@ -16,11 +18,12 @@ class Menu extends React.Component {
 
             <div className="list-group">
 
-                <IndexLink to={Uris.BASE_URI} activeClassName="active"
-                           className="list-group-item">Dashboard</IndexLink>
-
-                <IndexLink to={Uris.PRODUCT.CREATE} activeClassName="active"
-                           className="list-group-item">Create Product</IndexLink>
+                {
+                    auth.currentUser().username != "admin" ? null : (
+                        <IndexLink to={Uris.PRODUCT.CREATE} activeClassName="active"
+                                   className="list-group-item">Create Product</IndexLink>
+                    )
+                }
 
                 <IndexLink to={Uris.PRODUCT.BASE} activeClassName="active"
                            className="list-group-item">View Products</IndexLink>

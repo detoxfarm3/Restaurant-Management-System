@@ -12,6 +12,8 @@ var productService = require('./ProductService');
 var unitService = require('../unit/UnitService');
 var Uris = require('../Uris');
 
+var auth = require('../AuthService');
+
 var CreateProduct;
 module.exports = CreateProduct = React.createClass({
     getInitialState: function () {
@@ -68,6 +70,13 @@ module.exports = CreateProduct = React.createClass({
         var modal = !!createModal ? createModal() || {} : {};
         var units = $this.state.units || [];
         var inventories = $this.state.inventories;
+
+        if (auth.currentUser().username != "admin") {
+            return (
+                <h2>You do not have right to create product.</h2>
+            );
+        }
+
         return (
             <div className="row">
                 <div className="col-md-12">

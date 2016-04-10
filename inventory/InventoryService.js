@@ -218,17 +218,29 @@ class InventoryService {
 
                 resolve(msg.body);
 
-                ee.emit(Events.EDIT_INVENTORY_PRODUCT_QUANTITY, msg.body);
+                ee.emit(Events.INVENTORY_PRODUCT_QUANTITY_EDITED, msg.body);
             });
         });
     }
 
-    transferTo(req) {
+    transferTo(srcInventoryId, destInventoryId, productId, quantity, unitId) {
+        var req = {srcInventoryId, destInventoryId, productId, quantity, unitId};
+        console.log("SEND." + ServerEvents.TRANSFER_PRODUCT_TO_INVENTORY, req);
 
-    }
+        return new Promise(function (resolve, reject) {
+            eb.send(ServerEvents.TRANSFER_PRODUCT_TO_INVENTORY, req, null, function (err, msg) {
+                if (!!err || !!msg.failureCode || !!(msg.body || {}).responseCode) {
+                    reject(err || msg);
 
-    bringFrom(req) {
+                    console.log("Error " + ServerEvents.TRANSFER_PRODUCT_TO_INVENTORY, err || msg);
+                    return;
+                }
 
+                resolve(msg.body);
+
+                ee.emit(Events.INVENTORY_PRODUCT_TRANSFERRED, msg.body);
+            });
+        });
     }
 }
 

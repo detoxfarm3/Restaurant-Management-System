@@ -5,8 +5,27 @@ var Events = require('./Events');
 var $ = require('jquery');
 //var jwt = require('jsonwebtoken');
 
+var localStorage = window.localStorage;
+
 var token = null;
 var user = null;
+var date = null;
+//Retrieve
+if (!!localStorage) {
+
+    date = !!localStorage.getItem("date") ? new Date(localStorage.getItem("date")) : null;
+
+    if (!!date && date.getDate() == new Date().getDate()) {
+        token = localStorage.getItem("token");
+        user = localStorage.getItem("user");
+        try {
+            user = JSON.parse(user);
+        } catch (e) {
+            token = null;
+            user = null;
+        }
+    }
+}
 
 class AuthService {
 
@@ -26,6 +45,13 @@ class AuthService {
                     resolve(user);
 
                     console.log("LOGIN_SUCCESS", JSON.stringify({token: token, user: user}));
+
+                    //Store
+                    if (!!localStorage) {
+                        localStorage.setItem("token", token);
+                        localStorage.setItem("user", JSON.stringify(user));
+                        localStorage.setItem("date", new Date().toJSON());
+                    }
                 },
                 error: reject
             });

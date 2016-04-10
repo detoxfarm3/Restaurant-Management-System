@@ -27,20 +27,11 @@ var AddRemoveEditForm = React.createClass({
             <form onSubmit={$this.props.onSubmit}>
 
                 <div className="form-group">
-                    <label>Current Quantity</label>
+                    <label forHtml="quantity">New Quantity</label>
                     <input type="text" className="form-control" id="quantity"
                            style={{width: '130px'}}
-                           placeholder={''}
-                           value={item.quantity} readOnly={true}/>
-
-                </div>
-
-                <div className="form-group">
-                    <label forHtml="__quantity__">New Quantity</label>
-                    <input type="text" className="form-control" id="__quantity__"
-                           style={{width: '130px'}}
                            placeholder={placeholder}
-                           name="__quantity__" value={item.__quantity__} onChange={$this.props.onChange}/>
+                           name="quantity" value={item.quantity} onChange={$this.props.onChange}/>
 
                 </div>
 

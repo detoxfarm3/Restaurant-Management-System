@@ -29,6 +29,13 @@ var send = eb.send;
 
 eb.send = function (address, message, headers, callback) {
 
+    if (eb.state != EventBus.OPEN) {
+        window.alert("Disconnected from server. Please login again.");
+        location.href = Uris.toAbsoluteUri(Uris.LOGIN_URI);
+        callback(new Error("Invalid state error."), null);
+        return;
+    }
+
     headers = headers || {};
     if (authSerice.isLoggedIn()) {
         headers['authToken'] = authSerice.authToken();

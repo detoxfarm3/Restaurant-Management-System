@@ -56,7 +56,8 @@ var AddRemoveEditProducts = React.createClass({
             ],
             products: [],
             productsById: {},
-            product: {}
+            product: {},
+            productsUnitWisePrice: {},
         };
     },
     componentDidMount: function () {
@@ -71,17 +72,24 @@ var AddRemoveEditProducts = React.createClass({
             }))
         ;
         productService.findAllDecomposed()
-            .then(rsp => $this.setState({
-                products: rsp.data,
-                productsById: rsp.data.reduce(function (rr, pro) {
-                    rr[pro.id] = pro;
-                    return rr;
-                }, {})
-            }))
+            .then(rsp => {
+                return {
+                    products: rsp.data,
+                    productsById: rsp.data.reduce(function (rr, pro) {
+                        rr[pro.id] = pro;
+                        return rr;
+                    }, {})
+                };
+            })
+            .then(state => {
+                return inventoryService.findAllProducts($this.props.params.id).then(rsp => {
+                    state.inventoryProducts = rsp.data;
+                    return state;
+                })
+            })
+            .then(state => $this.setState($this.intercept(state)))
         ;
-        inventoryService.findAllProducts($this.props.params.id)
-            .then(rsp => $this.setState({inventoryProducts: rsp.data}))
-        ;
+
         inventoryService.find($this.props.params.id)
             .then(inventory => $this.setState({inventory: inventory}))
         ;
@@ -89,6 +97,12 @@ var AddRemoveEditProducts = React.createClass({
         inventoryService.findAll()
             .then(rsp => $this.setState({inventories: rsp.data}))
         ;
+
+        var productPromise2 = productService.unitWisePrice()
+                .then(unitWisePrice => {
+                    return {productsUnitWisePrice: unitWisePrice};
+                })
+            ;
     },
     componentWillUnmount: function () {
     },
@@ -103,23 +117,23 @@ var AddRemoveEditProducts = React.createClass({
             };
         var inventory = $this.state.inventory || {};
         return (
-            <div classNameName="panel panel-default">
-                <div classNameName="panel-heading">
-                    <div classNameName="row">
-                        <div classNameName="col-md-6">
-                            <h3 classNameName="panel-title">Add/Remove/Edit Products</h3>
+            <div className="panel panel-default">
+                <div className="panel-heading">
+                    <div className="row">
+                        <div className="col-md-6">
+                            <h3 className="panel-title">Add/Remove/Edit Products</h3>
                         </div>
-                        <div classNameName="col-md-6">
-                            <span classNameName="btn btn-success pull-right" onClick={$this.addAnotherProduct}>
+                        <div className="col-md-6">
+                            <span className="btn btn-success pull-right" onClick={$this.addAnotherProduct}>
                                 Add another product</span>
                         </div>
                     </div>
                 </div>
 
                 <h4>
-                    ID: <strong style={{fontWeight: 'bold'}} classNameName="text-primary">{inventory.id}</strong>
+                    ID: <strong style={{fontWeight: 'bold'}} className="text-primary">{inventory.id}</strong>
                     {' | '}Name: <strong style={{fontWeight: 'bold'}}
-                                         classNameName="text-primary">{inventory.name}</strong>
+                                         className="text-primary">{inventory.name}</strong>
                 </h4>
 
                 <BootstrapTable data={inventoryProducts} striped={true} hover={true}>
@@ -161,10 +175,11 @@ var AddRemoveEditProducts = React.createClass({
             createModal: function () {
                 return (
                     <Modal isOpen={true} onClose={$this.closeModal}
-                           title={<h3 classNameName="modal-title text-primary">Add another product</h3>}
+                           title={<h3 className="modal-title text-primary">Add another product</h3>}
                            body={
                                        <AddAnotherProductForm
                                            products={$this.filterProducts($this.state.products)}
+                                           productsUnitWisePrice={$this.state.productsUnitWisePrice}
                                            units={$this.state.units}
                                            product={$this.state.product}
                                            onChange={$this.onProductChange}
@@ -173,9 +188,9 @@ var AddRemoveEditProducts = React.createClass({
                                     }
                            footer={
                                         <div>
-                                            <span classNameName="btn btn-primary btn-lg pull-right"
+                                            <span className="btn btn-primary btn-lg pull-right"
                                                 onClick={$this.doAddAnother}>Add</span>
-                                            <span classNameName="btn btn-danger btn-lg pull-right" style={{marginRight: '10px'}}
+                                            <span className="btn btn-danger btn-lg pull-right" style={{marginRight: '10px'}}
                                                 onClick={$this.closeModal}>Cancel</span>
                                         </div>
                                     }
@@ -196,7 +211,7 @@ var AddRemoveEditProducts = React.createClass({
             createModal: function () {
                 return (
                     <Modal isOpen={true} onClose={$this.closeModal}
-                           title={<h3 classNameName="modal-title text-primary">Add another product</h3>}
+                           title={<h3 className="modal-title text-primary">Add another product</h3>}
                            body={
                                        <AddAnotherProductForm
                                            products={$this.filterProducts($this.state.products)}
@@ -208,9 +223,9 @@ var AddRemoveEditProducts = React.createClass({
                                     }
                            footer={
                                         <div>
-                                            <span classNameName="btn btn-primary btn-lg pull-right"
+                                            <span className="btn btn-primary btn-lg pull-right"
                                                 onClick={$this.doAddAnother}>Add</span>
-                                            <span classNameName="btn btn-danger btn-lg pull-right" style={{marginRight: '10px'}}
+                                            <span className="btn btn-danger btn-lg pull-right" style={{marginRight: '10px'}}
                                                 onClick={$this.closeModal}>Cancel</span>
                                         </div>
                                     }
@@ -226,7 +241,7 @@ var AddRemoveEditProducts = React.createClass({
         inventoryService.insertProduct($this.state.product, $this.state.inventory.id)
             .then(() => {
                 return inventoryService.findAllProducts($this.props.params.id)
-                    .then(rsp => $this.setState({inventoryProducts: rsp.data}))
+                    .then(rsp => $this.setState($this.intercept({inventoryProducts: rsp.data})))
                     ;
             })
             .then(() => {
@@ -236,7 +251,7 @@ var AddRemoveEditProducts = React.createClass({
                     createModal: function () {
                         return (
                             <Modal isOpen={true} onClose={$this.closeModal}
-                                   title={<h3 classNameName="modal-title text-primary">Add another product</h3>}
+                                   title={<h3 className="modal-title text-primary">Add another product</h3>}
                                    body={
                                        <AddAnotherProductForm
                                            products={$this.filterProducts($this.state.products)}
@@ -248,9 +263,9 @@ var AddRemoveEditProducts = React.createClass({
                                     }
                                    footer={
                                         <div>
-                                            <span classNameName="btn btn-primary btn-lg pull-right"
+                                            <span className="btn btn-primary btn-lg pull-right"
                                                 onClick={$this.doAddAnother}>Add</span>
-                                            <span classNameName="btn btn-danger btn-lg pull-right" style={{marginRight: '10px'}}
+                                            <span className="btn btn-danger btn-lg pull-right" style={{marginRight: '10px'}}
                                                 onClick={$this.closeModal}>Cancel</span>
                                         </div>
                                     }
@@ -278,50 +293,50 @@ var AddRemoveEditProducts = React.createClass({
         var $this = this;
         inventoryService.deleteProduct(item.id)
             .then(() => inventoryService.findAllProducts($this.props.params.id))
-            .then(rsp => $this.setState({inventoryProducts: rsp.data}))
+            .then(rsp => $this.setState($this.intercept({inventoryProducts: rsp.data})))
         ;
     },
     onQuantityChange: function (e, item) {
         var $this = this;
         item.__quantity__ = e.target.value;
-        $this.setState({
+        $this.setState($this.intercept({
             inventoryProducts: $this.state.inventoryProducts
-        });
+        }));
     },
     formatAction: function (action, item) {
         var $this = this;
         return (
-            <div classNameName="row">
+            <div className="row">
 
-                <div classNameName="col-md-3">
+                <div className="col-md-3">
 
-                    <input classNameName="form-control" type="number" name="__quantity__" value={item.__quantity__}
+                    <input className="form-control" type="number" name="__quantity__" value={item.__quantity__}
                            onChange={(e) => {
                                 $this.onQuantityChange(e, item);
                            }}/>
 
                 </div>
 
-                <div classNameName="col-md-9">
+                <div className="col-md-9">
 
-                    <span classNameName="btn btn-primary" onClick={() => $this.doAdd(item)}
+                    <span className="btn btn-primary" onClick={() => $this.doAdd(item)}
                           style={{marginRight: '5px'}}>Add</span>
-                    <span classNameName="btn btn-success" onClick={() => $this.doRemove(item)}
+                    <span className="btn btn-success" onClick={() => $this.doRemove(item)}
                           style={{marginRight: '5px'}}>Remove</span>
-                    <span classNameName="btn btn-danger" onClick={() => $this.editProduct(item)}
+                    <span className="btn btn-danger" onClick={() => $this.editProduct(item)}
                           style={{marginRight: '5px'}}>Edit</span>
 
-                    <span classNameName="btn btn-info" onClick={() => $this.transfer(item)}
+                    <span className="btn btn-info" onClick={() => $this.transfer(item)}
                           style={{marginRight: '5px'}}>Transfer</span>
 
-                    <span classNameName="btn btn-info" onClick={() => $this.bring(item)}
+                    <span className="btn btn-info" onClick={() => $this.bring(item)}
                           style={{marginRight: '5px'}}>Bring</span>
 
-                    <span classNameName="btn btn-danger pull-right"
+                    <span className="btn btn-danger pull-right"
                           onClick={function (e) {
                             $this.removeItem(item);
                           }}>
-                        <span classNameName="glyphicon glyphicon-remove" aria-hidden="true"></span>
+                        <span className="glyphicon glyphicon-remove" aria-hidden="true"></span>
                     </span>
 
                 </div>
@@ -330,51 +345,13 @@ var AddRemoveEditProducts = React.createClass({
         );
     },
 
-    addProduct: function () {
-        var $this = this;
-        this.setState({
-            createModal: function () {
-                return (
-                    <Modal isOpen={true} onClose={$this.closeModal}
-                           title={<h3 classNameName="modal-title text-primary">Add</h3>}
-                           body={
-                               <AddRemoveEditForm
-                               placeholder="Add"
-                               onSubmit={$this.doAdd}
-                               submitButton={<input type="submit" classNameName="btn btn-primary" value="Add"/>}/>
-                           }
-                           footer={<span classNameName="btn btn-danger" onClick={$this.closeModal}>Cancel</span>}
-                        />
-                );
-            }
-        });
-    },
-    removeProduct: function (item) {
-        var $this = this;
-        this.setState({
-            createModal: function () {
-                return (
-                    <Modal isOpen={true} onClose={$this.closeModal}
-                           title={<h3 classNameName="modal-title text-success">Remove</h3>}
-                           body={
-                               <AddRemoveEditForm
-                               placeholder="Remove"
-                               onSubmit={$this.doRemove}
-                               submitButton={<input type="submit" classNameName="btn btn-success" value="Remove"/>}/>
-                           }
-                           footer={<span classNameName="btn btn-danger" onClick={$this.closeModal}>Cancel</span>}
-                        />
-                );
-            }
-        });
-    },
     editProduct: function (item) {
         var $this = this;
         this.setState({
             createModal: function () {
                 return (
                     <Modal isOpen={true} onClose={$this.closeModal}
-                           title={<h3 classNameName="modal-title text-danger">Edit</h3>}
+                           title={<h3 className="modal-title text-danger">Edit</h3>}
                            body={
                                <AddRemoveEditForm
                                    placeholder="Edit"
@@ -388,69 +365,171 @@ var AddRemoveEditProducts = React.createClass({
                                         e.preventDefault();
                                         $this.doEdit(item);
                                    }}
-                                   submitButton={<input type="submit" classNameName="btn btn-lg btn-danger" value="Edit"/>}/>
+                                   submitButton={<input type="submit" className="btn btn-lg btn-danger" value="Edit"/>}/>
                            }
-                           footer={<span classNameName="btn btn-danger" onClick={$this.closeModal}>Cancel</span>}
+                           footer={<span className="btn btn-danger" onClick={$this.closeModal}>Cancel</span>}
                         />
                 );
             }
         });
     },
 
-    transfer: function (inventory) {
+    transfer: function (inv) {
         var $this = this;
 
         var body = (
-            <form onSubmit={e => {e.preventDefault(); $this.doTransfer(inventory);}}>
-                <div className="form-group">
-                    <label forHtml="quantity">Quantity</label>
-                    <input type="number" className="form-control"
-                           id="quantity" name="quantity" value={inventory.__quantity__}/>
+            <form onSubmit={e => {e.preventDefault(); $this.doTransfer(inv);}}>
+
+                <div className="row">
+
+                    <div className="col-md-6">
+
+                        <div className="form-group">
+                            <label forHtml="__quantity__">Quantity</label>
+                            <input type="number" className="form-control"
+                                   id="__quantity__" name="__quantity__" value={inv.__quantity__}
+                                   onChange={e => $this.onInvenotryChange(e, inv)}/>
+                        </div>
+
+                    </div>
+
+                    <div className="col-md-6">
+
+                        <div className="form-group">
+                            <label forHtml="unitId">Unit</label>
+                            <input type="text" className="form-control"
+                                   id="unitId"
+                                   value={$this.state.unitsById[inv.unitId].name}
+                                   readOnly={true}/>
+                        </div>
+
+                    </div>
+
+                    <div className="col-md-12">
+
+                        <div className="form-group">
+                            <label forHtml="destInventoryId">Transfer to invenotry</label>
+                            <select className="form-control"
+                                    id="destInventoryId" name="destInventoryId" value={inv.__transferTo__}
+                                    onChange={e => $this.onInvenotryChange(e, inv)}>
+                                <option value={0}>Select Inventory</option>
+                                {
+                                    $this.state.inventories.map(inventory => {
+                                        if (inv.inventoryId == inventory.id) {
+                                            return null;
+                                        }
+                                        return (
+                                            <option key={inventory.id} value={inventory.id}>{inventory.name}</option>
+                                        );
+                                    })
+                                }
+                            </select>
+                        </div>
+
+                    </div>
+
                 </div>
-                <div className="form-group">
-                    <label forHtml="inventoryId">Invenotry</label>
-                    <select className="form-control"
-                            id="inventoryId" name="inventoryId" value={inventory.__transferTo__}>
-                        <option value={0}>Select Inventory</option>
-                        {
-                            $this.state.inventories.map(inv => {
-                                <option value={inv.id}>{inv.name}</option>
-                            })
-                        }
-                    </select>
-                </div>
-                <button type="submit" className="btn btn-primary btn-lg">Transfer</button>
+
+                <button type="submit" className="btn btn-primary btn-lg" onSubmit={e => $this.doTransfer(inv)}>
+                    Transfer
+                </button>
             </form>
         );
 
         this.setState({
+            isModalOpen: true,
             createModal: function () {
                 return (
-                    <Modal isOpen={true} onClose={$this.closeModal}
-                           title={<h3 classNameName="modal-title text-danger">Transfer to another inventory</h3>}
+                    <Modal isOpen={$this.state.isModalOpen} onClose={$this.closeModal}
+                           title={<h3 className="modal-title text-danger">Transfer to another inventory</h3>}
                            body={body}
-                           footer={<span classNameName="btn btn-danger" onClick={$this.closeModal}>Cancel</span>}
+                           footer={<span className="btn btn-danger" onClick={$this.closeModal}>Cancel</span>}
                         />
                 );
             }
         });
     },
 
-    bring: function (inventory) {
+    bring: function (inv) {
         var $this = this;
+
+        var body = (
+            <form onSubmit={e => {e.preventDefault(); $this.doBring(inv);}}>
+
+                <div className="row">
+
+                    <div className="col-md-6">
+
+                        <div className="form-group">
+                            <label forHtml="__quantity__">Quantity</label>
+                            <input type="number" className="form-control"
+                                   id="__quantity__" name="__quantity__" value={inv.__quantity__}
+                                   onChange={e => $this.onInvenotryChange(e, inv)}/>
+                        </div>
+
+                    </div>
+
+                    <div className="col-md-6">
+
+                        <div className="form-group">
+                            <label forHtml="unitId">Unit</label>
+                            <input type="text" className="form-control"
+                                   id="unitId"
+                                   value={$this.state.unitsById[inv.unitId].name}
+                                   readOnly={true}/>
+                        </div>
+
+                    </div>
+
+                    <div className="col-md-12">
+
+                        <div className="form-group">
+                            <label forHtml="srcInventoryId">Bring from inventory</label>
+                            <select className="form-control"
+                                    id="srcInventoryId" name="srcInventoryId" value={inv.__transferTo__}
+                                    onChange={e => $this.onInvenotryChange(e, inv)}>
+                                <option value={0}>Select Inventory</option>
+                                {
+                                    $this.state.inventories.map(inventory => {
+                                        if (inv.inventoryId == inventory.id) {
+                                            return null;
+                                        }
+                                        return (
+                                            <option key={inventory.id} value={inventory.id}>{inventory.name}</option>
+                                        );
+                                    })
+                                }
+                            </select>
+                        </div>
+
+                    </div>
+
+                </div>
+
+                <button type="submit" className="btn btn-primary btn-lg" onSubmit={e => $this.doBring(inv)}>
+                    Bring
+                </button>
+            </form>
+        );
+
         this.setState({
+            isModalOpen: true,
             createModal: function () {
                 return (
-                    <Modal isOpen={true} onClose={$this.closeModal}
-                           title={<h3 classNameName="modal-title text-danger">Transfer to another inventory</h3>}
-                           body={''}
-                           footer={<span classNameName="btn btn-danger" onClick={$this.closeModal}>Cancel</span>}
+                    <Modal isOpen={$this.state.isModalOpen} onClose={$this.closeModal}
+                           title={<h3 className="modal-title text-danger">Bring from another inventory</h3>}
+                           body={body}
+                           footer={<span className="btn btn-danger" onClick={$this.closeModal}>Cancel</span>}
                         />
                 );
             }
         });
     },
-
+    onInvenotryChange: function (e, inv) {
+        var $this = this;
+        inv[e.target.name] = e.target.value;
+        $this.setState($this.intercept({inventoryProducts: $this.state.inventoryProducts}));
+    },
     closeModal: function () {
         var $this = this;
         this.setState({
@@ -465,8 +544,8 @@ var AddRemoveEditProducts = React.createClass({
         var $this = this;
 
         inventoryService.addProduct(item.id, item.__quantity__)
-            .then(() =>         inventoryService.findAllProducts($this.props.params.id))
-            .then(rsp => $this.setState({inventoryProducts: rsp.data}))
+            .then(() => inventoryService.findAllProducts($this.props.params.id))
+            .then(rsp => $this.setState($this.intercept({inventoryProducts: rsp.data})))
         ;
 
         this.closeModal();
@@ -475,8 +554,8 @@ var AddRemoveEditProducts = React.createClass({
         var $this = this;
 
         inventoryService.removeProduct(item.id, item.__quantity__)
-            .then(() =>         inventoryService.findAllProducts($this.props.params.id))
-            .then(rsp => $this.setState({inventoryProducts: rsp.data}))
+            .then(() => inventoryService.findAllProducts($this.props.params.id))
+            .then(rsp => $this.setState($this.intercept({inventoryProducts: rsp.data})))
         ;
 
         this.closeModal();
@@ -484,15 +563,47 @@ var AddRemoveEditProducts = React.createClass({
     doEdit: function (item) {
         var $this = this;
 
-        inventoryService.editProductQuantity(item.id, item.__quantity__, item.unitId)
-            .then(() =>         inventoryService.findAllProducts($this.props.params.id))
-            .then(rsp => $this.setState({inventoryProducts: rsp.data}))
+        inventoryService.editProductQuantity(item.id, item.quantity, item.unitId)
+            .then(() => inventoryService.findAllProducts($this.props.params.id))
+            .then(rsp => $this.setState($this.intercept({inventoryProducts: rsp.data})))
         ;
 
         this.closeModal();
     },
-    doTransfer: function (inventory) {
+    doTransfer: function (inv) {
+        var $this = this;
+        inventoryService.transferTo(inv.inventoryId, inv.destInventoryId, inv.productId, inv.__quantity__, inv.unitId)
+            .then(() => inventoryService.findAllProducts($this.props.params.id))
+            .then(rsp => $this.setState($this.intercept({inventoryProducts: rsp.data})))
+            .then(() => $this.setState({isModalOpen: false}))
+        ;
     },
+    doBring: function (inv) {
+        var $this = this;
+        inventoryService.transferTo(inv.srcInventoryId, inv.inventoryId, inv.productId, inv.__quantity__, inv.unitId)
+            .then(() => inventoryService.findAllProducts($this.props.params.id))
+            .then(rsp => $this.setState($this.intercept({inventoryProducts: rsp.data})))
+            .then(() => $this.setState({isModalOpen: false}))
+        ;
+    },
+
+    intercept: function (state) {
+        var $this = this;
+        var productsById = state.productsById || $this.state.productsById || {};
+
+        state.inventoryProducts = state.inventoryProducts || [];
+
+
+        //console.error("productsById", JSON.stringify(productsById));
+        //console.error("state.inventoryProducts", JSON.stringify(state.inventoryProducts));
+
+        state.inventoryProducts = state.inventoryProducts
+            .sort((a, b) => (productsById[a.productId] || {}).name > (productsById[b.productId] || {}).name)
+
+        //console.error("sorted state.inventoryProducts", JSON.stringify(state.inventoryProducts));
+
+        return state;
+    }
 });
 
 module.exports = AddRemoveEditProducts;

@@ -9,6 +9,7 @@ var AddAnotherProductForm = React.createClass({
                 {id: 2, name: 'op-2'},
                 {id: 3, name: 'op-3'}
             ],
+            productsUnitWisePrice: {},
             units: [
                 {id: 1, name: 'op-1'},
                 {id: 2, name: 'op-2'},
@@ -51,7 +52,7 @@ var AddAnotherProductForm = React.createClass({
                             <label htmlFor="unitId">Unit</label>
                             <Select id="unitId" name="unitId" value={product.unitId}
                                     initialOption={{id: 0, name: 'Select Unit'}}
-                                    options={$this.props.units || []}
+                                    options={$this.props.units}
                                     onChange={$this.props.onChange}/>
                         </div>
                     </div>

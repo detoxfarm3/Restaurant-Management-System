@@ -64,7 +64,7 @@ class AuthService {
         return new Promise(function (resolve, reject) {
             console.log("AuthService.LOgout");
 
-            if(!!localStorage) {
+            if (!!localStorage) {
                 localStorage.clear();
             }
 
@@ -86,7 +86,7 @@ class AuthService {
     }
 
     currentUser() {
-        return user;
+        return user || {};
     }
 
     authToken() {

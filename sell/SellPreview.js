@@ -36,6 +36,10 @@ var SellPreview = React.createClass({
                             <td>Sale Date:</td>
                             <th><DateView value={sell.sellDate}/></th>
                         </tr>
+                        <tr>
+                            <td>Status</td>
+                            <th colSpan="3">{!!sell.status ? 'Cleared' : 'Holding'}</th>
+                        </tr>
                         </tbody>
                     </table>
                 </div>

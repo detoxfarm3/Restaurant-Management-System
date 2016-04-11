@@ -74,6 +74,7 @@ module.exports = CreateSell = React.createClass({
                 consumerMobile: '',
                 sellDate: new Date(),
                 createdBy: authService.currentUser(),
+                status: true,
                 remarks: ''
             },
             sellUnitsByProductId: {},
@@ -98,7 +99,7 @@ module.exports = CreateSell = React.createClass({
             ;
         });
 
-        var productPromise1 = productService.findAllDecomposed()
+        var productPromise1 = productService.findAllDecomposed({forSale: true})
                 .then(rsp => {
                     var sellUnits = rsp.data.map(function (product) {
                         return {no: Math.random(), productId: product.id};
@@ -196,10 +197,33 @@ module.exports = CreateSell = React.createClass({
                         <div className="panel-heading">
 
                             <div className="row">
-                                <div className="col-md-9">
+                                <div className="col-md-2">
                                     Products
                                 </div>
-                                <div className="col-md-3">
+                                <div className="col-md-10">
+
+                                    <div className="checkbox"
+                                         style={{marginRight: '30px', display: 'inline-block'}}>
+
+                                        <label style={{fontWeight: 'initial'}}>
+
+                                            <input type="checkbox" name="status"
+                                                   value={sell.status}
+                                                   checked={!!sell.status}
+                                                   onChange={e => {
+                                                        sell.status = !sell.status;
+                                                        $this.setState({sell: sell});
+                                                   }}
+                                                />
+
+                                            {!!sell.status ? (
+                                                <span><strong>Clear</strong> / Holding</span>
+                                            ) : (
+                                                <span>Clear / <strong>Holding</strong></span>
+                                            )}
+
+                                        </label>
+                                    </div>
 
                                     <button className="btn btn-primary pull-right"
                                             style={{fontWeight: 'bold'}}
@@ -208,7 +232,7 @@ module.exports = CreateSell = React.createClass({
                                     </button>
 
                                     <button className="btn btn-danger pull-right"
-                                            style={{fontWeight: 'bold', marginRight: '10px'}}
+                                            style={{fontWeight: 'bold', marginRight: '30px'}}
                                             onClick={$this.clearAllUnits}>
                                         Clear All
                                     </button>

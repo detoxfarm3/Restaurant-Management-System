@@ -10,6 +10,13 @@ class SellService {
 
     findAll(params) {
 
+        var pms = {};
+        for (var x in params) {
+            if (!(params[x] !== false && !params[x])) pms[x] = params[x];
+        }
+
+        params = pms;
+
         console.log("SEND." + ServerEvents.FIND_ALL_SELLS, JSON.stringify(params));
 
         return new Promise(function (resolve, reject) {
@@ -49,13 +56,15 @@ class SellService {
         });
     }
 
-    create(product) {
+    create(sell) {
         return new Promise(function (resolve, reject) {
 
-            console.log("SEND." + ServerEvents.CREATE_SELL, JSON.stringify(product));
+            sell.status = !!sell.status;
+
+            console.log("SEND." + ServerEvents.CREATE_SELL, JSON.stringify(sell));
 
             eb.send(ServerEvents.CREATE_SELL,
-                lib.merge2(product, {'sellDate': product.sellDate.toJSON()}), null, function (err, msg) {
+                lib.merge2(sell, {'sellDate': sell.sellDate.toJSON()}), null, function (err, msg) {
                     if (!!err || !!msg.failureCode || !!(msg.body || {}).responseCode) {
                         reject(err || msg);
 
@@ -67,7 +76,7 @@ class SellService {
 
                     ee.emit(Events.SELL_CREATED, msg.body);
 
-                    console.log(Events.SELL_CREATED, product);
+                    console.log(Events.SELL_CREATED, sell);
                 });
         });
     }

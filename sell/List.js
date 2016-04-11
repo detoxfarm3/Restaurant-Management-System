@@ -14,9 +14,7 @@ var ListSells;
 module.exports = ListSells = React.createClass({
     getDefaultProps: function () {
         return {
-            params: {
-                tab: 1
-            }
+            params: {}
         };
     },
     getInitialState: function () {
@@ -134,10 +132,76 @@ module.exports = ListSells = React.createClass({
     render: function () {
         var $this = this;
         var sells = $this.state.sells;
+        var form = $this.state.form || {};
 
         return (
             <div className="panel panel-primary">
                 <div className="panel-body">
+
+                    <form onSubmit={e => {
+                        e.preventDefault();
+                        $this.submitForm(form);
+                    }}>
+                        <div className="form-group col-md-2">
+                            <label htmlFor="s.transactionId">Transaction ID</label>
+                            <input type="text" className="form-control" id="s.transactionId"
+                                   name="s.transactionId" value={form['s.transactionId']}
+                                   onChange={e => {
+                                        form[e.target.name] = e.target.value;
+                                        $this.setState({form: form});
+                                   }}
+                                   placeholder="Transaction ID"/>
+                        </div>
+
+                        <div className="form-group col-md-2">
+                            <label htmlFor="s.orderId">Order ID</label>
+                            <input type="text" className="form-control" id="s.orderId"
+                                   name="s.orderId" value={form['s.orderId']}
+                                   onChange={e => {
+                                        form[e.target.name] = e.target.value;
+                                        $this.setState({form: form});
+                                   }}
+                                   placeholder="Order ID"/>
+                        </div>
+
+                        <div className="form-group col-md-2">
+                            <label htmlFor="s.status">Status</label>
+
+                            <select className="form-control" id="s.status"
+                                    name="s.status" value={form['s.status']}
+                                    onChange={e => {
+                                        form[e.target.name] = e.target.value;
+                                        $this.setState({form: form});
+                                   }}>
+
+                                {
+                                    ["Select", "Holding", "Created"].map(function (op, ind) {
+                                        return (
+                                            <option key={ind} value={ind}>{op}</option>
+                                        );
+                                    })
+                                }
+
+                            </select>
+                        </div>
+
+                        <div className="form-group col-md-2">
+                            <label htmlFor="s.consumerMobile">Consumer Mobile</label>
+                            <input type="text" className="form-control" id="s.consumerMobile"
+                                   name="s.consumerMobile" value={form['s.consumerMobile']}
+                                   onChange={e => {
+                                        form[e.target.name] = e.target.value;
+                                        $this.setState({form: form});
+                                   }}
+                                   placeholder="Consumer Mobile"/>
+                        </div>
+
+                        <div className="form-group col-md-2 pull-right">
+                            <input type="submit" className="btn btn-primary btn-lg pull-right"
+                                   style={{marginTop: '4px'}} value="Submit"/>
+                        </div>
+
+                    </form>
 
                     {
                         sells.map(function (sell) {
@@ -200,8 +264,19 @@ module.exports = ListSells = React.createClass({
             </div>
         );
     },
-    switchToTab: function (tab) {
-        console.log("tab", tab);
-        browserHistory.push(Uris.toAbsoluteUri(lib.parameterize(Uris.SELL.BASE, {tab: tab})));
+    submitForm: function (form) {
+        var $this = this;
+
+        var ps = parseInt(form['s.status']);
+
+        form = lib.merge2(form, {
+            's.status': ps == 0 ? null : ps == 1 ? false : ps == 2 ? true : null
+        });
+
+        sellService.findAll(form)
+            .then(rsp => {
+                $this.setState({sells: rsp.data, pagination: rsp.pagination});
+            })
+        ;
     }
 })

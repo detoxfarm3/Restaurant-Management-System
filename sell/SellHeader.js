@@ -72,6 +72,15 @@ module.exports = SellHeader = React.createClass({
 
                 </div>
 
+                <div className="col-md-6">
+
+                    <dl className="dl-horizontal" style={dlStyle}>
+                        <dt>Status:</dt>
+                        <dd>{!!sell.status ? "Clear" : "Holding"}</dd>
+                    </dl>
+
+                </div>
+
             </div>
         );
     }

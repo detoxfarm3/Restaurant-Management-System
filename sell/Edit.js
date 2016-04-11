@@ -94,7 +94,7 @@ module.exports = EditSell = React.createClass({
             ;
         });
 
-        var productPromise1 = productService.findAllDecomposed()
+        var productPromise1 = productService.findAllDecomposed({forSale: true})
                 .then(rsp => {
                     var sellUnits = rsp.data.map(function (product) {
                         return {no: Math.random(), productId: product.id};
@@ -209,10 +209,32 @@ module.exports = EditSell = React.createClass({
                         <div className="panel-heading">
 
                             <div className="row">
-                                <div className="col-md-9">
+
+                                <div className="col-md-2">
                                     Products
                                 </div>
-                                <div className="col-md-3">
+                                <div className="col-md-10">
+
+                                    <div className="checkbox"
+                                         style={{marginRight: '30px', display: 'inline-block'}}>
+                                        <label style={{fontWeight: 'bold'}}>
+                                            <input type="checkbox" name="status"
+                                                   value={sell.status}
+                                                   checked={!!sell.status}
+                                                   onChange={e => {
+                                                        sell.status = !sell.status;
+                                                        $this.setState({sell: sell});
+                                                   }}
+                                                />
+
+                                            {!!sell.status ? (
+                                                <span><strong>Clear</strong> / Holding</span>
+                                            ) : (
+                                                <span>Clear / <strong>Holding</strong></span>
+                                            )}
+
+                                        </label>
+                                    </div>
 
                                     <button className="btn btn-primary pull-right"
                                             style={{fontWeight: 'bold'}}
@@ -221,12 +243,13 @@ module.exports = EditSell = React.createClass({
                                     </button>
 
                                     <button className="btn btn-danger pull-right"
-                                            style={{fontWeight: 'bold', marginRight: '10px'}}
+                                            style={{fontWeight: 'bold', marginRight: '30px'}}
                                             onClick={$this.clearAllUnits}>
                                         Clear All
                                     </button>
 
                                 </div>
+
                             </div>
 
                         </div>
@@ -304,7 +327,7 @@ module.exports = EditSell = React.createClass({
             modal: {
                 title: (
                     <h4 className="modal-title text-primary" id="myModalLabel">
-                        Order created successfully. Order ID: <strong
+                        Order updated successfully. Order ID: <strong
                         style={{fontWeight: 'bold', fontSize: '20px'}}> {sell.orderId} </strong></h4>
                 ),
                 body: (

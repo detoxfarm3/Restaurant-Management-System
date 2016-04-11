@@ -159,6 +159,20 @@ module.exports = CreateProduct = React.createClass({
                                     </div>
 
                                     <div className="form-group col-md-12">
+                                        <div className="checkbox">
+                                            <label>
+                                                <input type="checkbox" name="forSale" value={product.forSale}
+                                                       checked={!!product.forSale}
+                                                       onChange={e => {
+                                                            product.forSale = !product.forSale;
+                                                            $this.setState({product: product});
+                                                       }}
+                                                    /> For Sale
+                                            </label>
+                                        </div>
+                                    </div>
+
+                                    <div className="form-group col-md-12">
                                         <label htmlFor="remarks">Remarks</label>
                                         <textarea className="form-control" id="remarks" placeholder="Remarks"
                                                   name="remarks" value={product.remarks}

@@ -98,7 +98,7 @@ module.exports = CreateSellGrid = React.createClass({
         var productsUnitWisePrice = $this.props.productsUnitWisePrice;
         var unitsById = $this.props.unitsById;
 
-        var totalCounter = {quantity: 0, total: 0};
+        var totalCounter = {quantity: 0.0, total: 0.0};
         var serial = 1;
         var sUnits = Stream(Object.keys(productsById))
                 .map(function (productId) {
@@ -108,8 +108,8 @@ module.exports = CreateSellGrid = React.createClass({
                         };
                 })
                 .peek(function (unit) {
-                    totalCounter.quantity = totalCounter.quantity + (parseInt(unit.quantity) || 0);
-                    totalCounter.total = totalCounter.total + (parseInt(unit.total) || 0);
+                    totalCounter.quantity = totalCounter.quantity + (parseFloat(unit.quantity) || 0);
+                    totalCounter.total = totalCounter.total + (parseFloat(unit.total) || 0);
                 })
                 .map(function (unit) {
                     return lib.merge2(unit, {
@@ -129,7 +129,7 @@ module.exports = CreateSellGrid = React.createClass({
                                     onChange={function (e) {
                                         $this.onChange(e, unit);
                                      }}>
-                                <option key={0} value="">Unit</option>
+                                <option key={0} value={''}>Unit</option>
 
                                 {
                                     Object.keys(productsUnitWisePrice[unit.productId] || {}).map(function (unitId) {
@@ -143,12 +143,13 @@ module.exports = CreateSellGrid = React.createClass({
                         ),
                         unitPrice: (
                             <input className="form-control" type="number" style={{width: '120px'}}
-                                   name="unitPrice" value={unit.unitPrice} readOnly={true}
+                                   name="unitPrice" value={!unit.unitPrice ? null : unit.unitPrice.toFixed(2)}
+                                   readOnly={true}
                                 />
                         ),
                         total: (
                             <input className="form-control" type="number" style={{width: '120px', textAlign: 'right'}}
-                                   name="total" value={unit.total} readOnly={true}
+                                   name="total" value={!unit.total ? null : unit.total.toFixed(2)} readOnly={true}
                                 />
                         ),
                         action: (
@@ -166,14 +167,11 @@ module.exports = CreateSellGrid = React.createClass({
             productId: <strong>Total</strong>,
             quantity: (
                 <input className="form-control" type="number" style={{width: '100px', textAlign: 'right'}}
-                       value={totalCounter.quantity}
-                       onChange={function (e) {
-                                    $this.onChange(e, unit);
-                               }}/>
+                       value={totalCounter.quantity} readOnly={true}/>
             ),
             total: (
                 <input className="form-control" type="number" style={{width: '120px', textAlign: 'right'}}
-                       value={totalCounter.total} readOnly={true}/>
+                       value={!totalCounter.total ? null : totalCounter.total.toFixed(2)} readOnly={true}/>
             ),
         });
 

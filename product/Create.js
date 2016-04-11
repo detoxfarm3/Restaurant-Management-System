@@ -18,7 +18,7 @@ var CreateProduct;
 module.exports = CreateProduct = React.createClass({
     getInitialState: function () {
         return {
-            product: {},
+            product: {forSale: true},
             prices: [],
             productInventories: [
                 {
@@ -62,7 +62,7 @@ module.exports = CreateProduct = React.createClass({
     },
     render: function () {
         var $this = this;
-        var product = $this.state.product || {};
+        var product = $this.state.product || {forSale: true};
         var prices = $this.state.prices || [];
         var productInventories = $this.state.productInventories || [];
 
@@ -150,6 +150,20 @@ module.exports = CreateProduct = React.createClass({
 
                                         </select>
 
+                                    </div>
+
+                                    <div className="form-group col-md-12">
+                                        <div className="checkbox">
+                                            <label>
+                                                <input type="checkbox" name="forSale" value={product.forSale}
+                                                       checked={!!product.forSale}
+                                                       onChange={e => {
+                                                            product.forSale = !product.forSale;
+                                                            $this.setState({product: product});
+                                                       }}
+                                                    /> For Sale
+                                            </label>
+                                        </div>
                                     </div>
 
                                     <div className="form-group col-md-12">

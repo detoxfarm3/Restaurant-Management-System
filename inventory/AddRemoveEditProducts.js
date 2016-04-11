@@ -9,6 +9,8 @@ var unitService = require('../unit/UnitService');
 var inventoryService = require('./InventoryService');
 var productService = require('../product/ProductService');
 
+var auth = require('../AuthService');
+
 var AddRemoveEditProducts = React.createClass({
     getDefaultProps: function () {
         return {};
@@ -321,10 +323,20 @@ var AddRemoveEditProducts = React.createClass({
 
                     <span className="btn btn-primary" onClick={() => $this.doAdd(item)}
                           style={{marginRight: '5px'}}>Add</span>
-                    <span className="btn btn-success" onClick={() => $this.doRemove(item)}
-                          style={{marginRight: '5px'}}>Remove</span>
-                    <span className="btn btn-danger" onClick={() => $this.editProduct(item)}
-                          style={{marginRight: '5px'}}>Edit</span>
+
+                    {
+                        auth.currentUser().username != "admin" ? null : (
+                            <div>
+
+                                <span className="btn btn-success"
+                                      onClick={() => $this.doRemove(item)}
+                                      style={{marginRight: '5px'}}>Remove</span>
+                                <span className="btn btn-danger" onClick={() => $this.editProduct(item)}
+                                      style={{marginRight: '5px'}}>Edit</span>
+
+                            </div>
+                        )
+                    }
 
                     <span className="btn btn-info" onClick={() => $this.transfer(item)}
                           style={{marginRight: '5px'}}>Transfer</span>
@@ -332,12 +344,16 @@ var AddRemoveEditProducts = React.createClass({
                     <span className="btn btn-info" onClick={() => $this.bring(item)}
                           style={{marginRight: '5px'}}>Bring</span>
 
-                    <span className="btn btn-danger pull-right"
-                          onClick={function (e) {
-                            $this.removeItem(item);
-                          }}>
-                        <span className="glyphicon glyphicon-remove" aria-hidden="true"></span>
-                    </span>
+                    {
+                        auth.currentUser().username != "admin" ? null : (
+                            <span className="btn btn-danger pull-right"
+                                  onClick={function (e) {
+                                    $this.removeItem(item);
+                            }}>
+                                <span className="glyphicon glyphicon-remove" aria-hidden="true"></span>
+                            </span>
+                        )
+                    }
 
                 </div>
 

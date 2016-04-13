@@ -326,15 +326,14 @@ var AddRemoveEditProducts = React.createClass({
 
                     {
                         auth.currentUser().username != "admin" ? null : (
-                            <div>
 
+                            <span>
                                 <span className="btn btn-success"
                                       onClick={() => $this.doRemove(item)}
                                       style={{marginRight: '5px'}}>Remove</span>
                                 <span className="btn btn-danger" onClick={() => $this.editProduct(item)}
                                       style={{marginRight: '5px'}}>Edit</span>
-
-                            </div>
+                            </span>
                         )
                     }
 

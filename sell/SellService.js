@@ -21,7 +21,7 @@ class SellService {
 
         return new Promise(function (resolve, reject) {
 
-            eb.send(ServerEvents.FIND_ALL_SELLS, params, null, function (err, msg) {
+            eb().send(ServerEvents.FIND_ALL_SELLS, params, null, function (err, msg) {
 
                 if (!!err || !!msg.failureCode || !!(msg.body || {}).responseCode) {
                     reject(err || msg);
@@ -40,7 +40,7 @@ class SellService {
 
     find(id) {
         return new Promise(function (resolve, reject) {
-            eb.send(ServerEvents.FIND_SELL, id, null, function (err, msg) {
+            eb().send(ServerEvents.FIND_SELL, id, null, function (err, msg) {
                 if (!!err || !!msg.failureCode || !!(msg.body || {}).responseCode) {
                     reject(err || msg);
 
@@ -63,7 +63,7 @@ class SellService {
 
             console.log("SEND." + ServerEvents.CREATE_SELL, JSON.stringify(sell));
 
-            eb.send(ServerEvents.CREATE_SELL,
+            eb().send(ServerEvents.CREATE_SELL,
                 lib.merge2(sell, {'sellDate': sell.sellDate.toJSON()}), null, function (err, msg) {
                     if (!!err || !!msg.failureCode || !!(msg.body || {}).responseCode) {
                         reject(err || msg);
@@ -86,7 +86,7 @@ class SellService {
 
             console.log("SEND." + ServerEvents.UPDATE_SELL, JSON.stringify(sell));
 
-            eb.send(ServerEvents.UPDATE_SELL,
+            eb().send(ServerEvents.UPDATE_SELL,
                 lib.merge2(sell, {'sellDate': sell.sellDate.toJSON()}), null, function (err, msg) {
                     if (!!err || !!msg.failureCode || !!(msg.body || {}).responseCode) {
                         reject(err || msg);
@@ -107,7 +107,7 @@ class SellService {
 
             console.log("SEND." + ServerEvents.DELETE_SELL, id);
 
-            eb.send(ServerEvents.DELETE_SELL, id, null, function (err, msg) {
+            eb().send(ServerEvents.DELETE_SELL, id, null, function (err, msg) {
                 if (!!err || !!msg.failureCode || !!(msg.body || {}).responseCode) {
                     reject(err || msg);
 

@@ -9,7 +9,7 @@ class InventoryService {
 
     findAllProducts(id) {
         return new Promise(function (resolve, reject) {
-            eb.send(ServerEvents.FIND_ALL_INVENTORY_PRODUCTS, id, null, function (err, msg) {
+            eb().send(ServerEvents.FIND_ALL_INVENTORY_PRODUCTS, id, null, function (err, msg) {
 
                 if (!!err || !!msg.failureCode || !!(msg.body || {}).responseCode) {
                     reject(err || msg);
@@ -28,7 +28,7 @@ class InventoryService {
 
     findAll(params) {
         return new Promise(function (resolve, reject) {
-            eb.send(ServerEvents.FIND_ALL_INVENTORIES, params, null, function (err, msg) {
+            eb().send(ServerEvents.FIND_ALL_INVENTORIES, params, null, function (err, msg) {
 
                 if (!!err || !!msg.failureCode || !!(msg.body || {}).responseCode) {
                     reject(err || msg);
@@ -45,7 +45,7 @@ class InventoryService {
 
     find(id) {
         return new Promise(function (resolve, reject) {
-            eb.send(ServerEvents.FIND_INVENTORY, id, null, function (err, msg) {
+            eb().send(ServerEvents.FIND_INVENTORY, id, null, function (err, msg) {
                 if (!!err || !!msg.failureCode || !!(msg.body || {}).responseCode) {
                     reject(err || msg);
 
@@ -60,7 +60,7 @@ class InventoryService {
 
     create(product) {
         return new Promise(function (resolve, reject) {
-            eb.send(ServerEvents.CREATE_INVENTORY, product, null, function (err, msg) {
+            eb().send(ServerEvents.CREATE_INVENTORY, product, null, function (err, msg) {
                 if (!!err || !!msg.failureCode || !!(msg.body || {}).responseCode) {
                     reject(err || msg);
 
@@ -79,7 +79,7 @@ class InventoryService {
 
     update(product) {
         return new Promise(function (resolve, reject) {
-            eb.send(ServerEvents.UPDATE_INVENTORY, product, null, function (err, msg) {
+            eb().send(ServerEvents.UPDATE_INVENTORY, product, null, function (err, msg) {
                 if (!!err || !!msg.failureCode || !!(msg.body || {}).responseCode) {
                     reject(err || msg);
 
@@ -96,7 +96,7 @@ class InventoryService {
 
     delete(id) {
         return new Promise(function (resolve, reject) {
-            eb.send(ServerEvents.DELETE_INVENTORY, id, null, function (err, msg) {
+            eb().send(ServerEvents.DELETE_INVENTORY, id, null, function (err, msg) {
                 if (!!err || !!msg.failureCode || !!(msg.body || {}).responseCode) {
                     reject(err || msg);
 
@@ -118,7 +118,7 @@ class InventoryService {
         console.log("SEND." + ServerEvents.INSERT_INVENTORY_PRODUCT, inventoryProduct);
 
         return new Promise(function (resolve, reject) {
-            eb.send(ServerEvents.INSERT_INVENTORY_PRODUCT, inventoryProduct, null, function (err, msg) {
+            eb().send(ServerEvents.INSERT_INVENTORY_PRODUCT, inventoryProduct, null, function (err, msg) {
                 if (!!err || !!msg.failureCode || !!(msg.body || {}).responseCode) {
                     reject(err || msg);
 
@@ -138,7 +138,7 @@ class InventoryService {
         console.log("SEND." + ServerEvents.DELETE_INVENTORY_PRODUCT, inventoryProductId);
 
         return new Promise(function (resolve, reject) {
-            eb.send(ServerEvents.DELETE_INVENTORY_PRODUCT, inventoryProductId, null, function (err, msg) {
+            eb().send(ServerEvents.DELETE_INVENTORY_PRODUCT, inventoryProductId, null, function (err, msg) {
                 if (!!err || !!msg.failureCode || !!(msg.body || {}).responseCode) {
                     reject(err || msg);
 
@@ -160,7 +160,7 @@ class InventoryService {
         console.log("SEND." + ServerEvents.ADD_PRODUCT_TO_INVENTORY, payload);
 
         return new Promise(function (resolve, reject) {
-            eb.send(ServerEvents.ADD_PRODUCT_TO_INVENTORY, payload, null, function (err, msg) {
+            eb().send(ServerEvents.ADD_PRODUCT_TO_INVENTORY, payload, null, function (err, msg) {
                 if (!!err || !!msg.failureCode || !!(msg.body || {}).responseCode) {
                     reject(err || msg);
 
@@ -183,7 +183,7 @@ class InventoryService {
 
         return new Promise(function (resolve, reject) {
 
-            eb.send(ServerEvents.REMOVE_PRODUCT_FROM_INVENTORY, payload, null, function (err, msg) {
+            eb().send(ServerEvents.REMOVE_PRODUCT_FROM_INVENTORY, payload, null, function (err, msg) {
 
                 if (!!err || !!msg.failureCode || !!(msg.body || {}).responseCode) {
                     reject(err || msg);
@@ -207,7 +207,7 @@ class InventoryService {
 
         return new Promise(function (resolve, reject) {
 
-            eb.send(ServerEvents.EDIT_INVENTORY_PRODUCT_QUANTITY, payload, null, function (err, msg) {
+            eb().send(ServerEvents.EDIT_INVENTORY_PRODUCT_QUANTITY, payload, null, function (err, msg) {
 
                 if (!!err || !!msg.failureCode || !!(msg.body || {}).responseCode) {
                     reject(err || msg);
@@ -228,7 +228,7 @@ class InventoryService {
         console.log("SEND." + ServerEvents.TRANSFER_PRODUCT_TO_INVENTORY, req);
 
         return new Promise(function (resolve, reject) {
-            eb.send(ServerEvents.TRANSFER_PRODUCT_TO_INVENTORY, req, null, function (err, msg) {
+            eb().send(ServerEvents.TRANSFER_PRODUCT_TO_INVENTORY, req, null, function (err, msg) {
                 if (!!err || !!msg.failureCode || !!(msg.body || {}).responseCode) {
                     reject(err || msg);
 

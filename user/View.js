@@ -16,7 +16,7 @@ module.exports = ViewUser = React.createClass({
     },
     componentDidMount: function () {
         var $this = this;
-        eb.send(ServerEvents.FIND_USER, $this.props.id, {}, function (err, msg) {
+        eb().send(ServerEvents.FIND_USER, $this.props.id, {}, function (err, msg) {
             if (!!msg.failureCode) {
                 console.error(msg.message);
                 return;

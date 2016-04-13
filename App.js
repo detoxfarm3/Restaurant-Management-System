@@ -10,6 +10,13 @@ var SidebarHeader = require('./sidebar-main/SidebarHeader');
 var Menu = require('./Menu');
 var authService = require('./AuthService');
 
+var ee = require('./EventEmitter');
+var Events = require('./Events');
+
+var Print = require('./print/Print');
+
+var handlers = {};
+
 var App;
 module.exports = App = React.createClass({
     getDefaultProps: function () {
@@ -18,57 +25,106 @@ module.exports = App = React.createClass({
     getInitialState: function () {
         return {
             isSidebarMainOpen: false,
+            isPrinterVisible: false,
         };
+    },
+    componentDidMount() {
+        var $this = this;
+
+        handlers[Events.PRINT] = req => {
+
+            req.onComplete = () => {
+
+                $this.setState({
+                    isPrinterVisible: false,
+                    printer: null
+                });
+
+            };
+
+            $this.setState({
+                isPrinterVisible: true,
+                printer: req.printer
+            }, req.callback);
+        };
+
+        for (var event in handlers) {
+            ee.on(event, handlers[event]);
+        }
+
+    },
+    componentWillUnmount: function () {
+        var $this = this;
+
+        for (var event in handlers) {
+            ee.removeListener(event, handlers[event]);
+        }
     },
     render: function () {
         var $this = this;
 
+        var style = {};
+        style.display = !!$this.state.isPrinterVisible ? 'none' : 'block';
+
         return (
-            <div id="app" className="container">
+            <div>
 
-                {
-                    !authService.isLoggedIn() ? null : (
-                        <div className="row">
-                            <div className="col-md-12">
+                <div id="app-content" className="container" style={style}>
 
-                                <Navbar>
+                    {
+                        !authService.isLoggedIn() ? null : (
+                            <div className="row">
+                                <div className="col-md-12">
 
-                                    <NavbarHeader>
-                                        <SidebarToggleButton onClick={$this.toggleSidebarMain}/>
+                                    <Navbar>
+
+                                        <NavbarHeader>
+                                            <SidebarToggleButton onClick={$this.toggleSidebarMain}/>
                                 <span className="navbar-brand"
                                       style={{cursor: 'pointer'}}>Dashboard</span>
-                                    </NavbarHeader>
+                                        </NavbarHeader>
 
-                                    <NavbarCollapse/>
+                                        <NavbarCollapse/>
 
-                                </Navbar>
+                                    </Navbar>
 
+                                </div>
                             </div>
+                        )
+                    }
+
+                    <div className="row">
+                        <div className="col-md-12">
+
+                            {this.props.children}
+
                         </div>
-                    )
-                }
-
-                <div className="row">
-                    <div className="col-md-12">
-
-                        {this.props.children}
-
                     </div>
+
+                    <SidebarMain isOpen={$this.state.isSidebarMainOpen}>
+
+                        <div className="panel panel-default">
+
+                            <SidebarHeader onClick={$this.toggleSidebarMain}>
+                                <h4 className="text-center">Click to hide</h4>
+                            </SidebarHeader>
+
+                            <Menu/>
+
+                        </div>
+
+                    </SidebarMain>
+
                 </div>
 
-                <SidebarMain isOpen={$this.state.isSidebarMainOpen}>
 
-                    <div className="panel panel-default">
+                <Print isPrinterVisible={$this.state.isPrinterVisible}>
 
-                        <SidebarHeader onClick={$this.toggleSidebarMain}>
-                            <h4 className="text-center">Click to hide</h4>
-                        </SidebarHeader>
+                    {
+                        !$this.state.printer ? null : $this.state.printer()
+                    }
 
-                        <Menu/>
-
-                    </div>
-
-                </SidebarMain>
+                </Print>
 
             </div>
         );

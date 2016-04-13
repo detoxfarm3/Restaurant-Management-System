@@ -12,7 +12,7 @@ class UnitService {
         var $this = this;
         return new Promise(function (resolve, reject) {
 
-            eb.send(ServerEvents.FIND_ALL_UNITS, params, null, function (err, msg) {
+            eb().send(ServerEvents.FIND_ALL_UNITS, params, null, function (err, msg) {
                 if (!!err || !!msg.failureCode) {
                     reject(err || msg);
                     return;
@@ -29,7 +29,7 @@ class UnitService {
         var $this = this;
         return new Promise(function (resolve, reject) {
 
-            eb.send(ServerEvents.FIND_UNIT, id, null, function (err, msg) {
+            eb().send(ServerEvents.FIND_UNIT, id, null, function (err, msg) {
                 if (!!err || !!msg.failureCode) {
                     reject(err || msg);
                     return;
@@ -45,7 +45,7 @@ class UnitService {
         var $this = this;
         return new Promise(function (resolve, reject) {
 
-            eb.send(ServerEvents.CREATE_UNIT, unit, null, function (err, msg) {
+            eb().send(ServerEvents.CREATE_UNIT, unit, null, function (err, msg) {
                 if (!!err || !!msg.failureCode) {
                     reject(err || msg);
                     return;
@@ -63,7 +63,7 @@ class UnitService {
         var $this = this;
         return new Promise(function (resolve, reject) {
 
-            eb.send(ServerEvents.UPDATE_UNIT, unit, null, function (err, msg) {
+            eb().send(ServerEvents.UPDATE_UNIT, unit, null, function (err, msg) {
                 if (!!err || !!msg.failureCode) {
                     reject(err || msg);
                     return;
@@ -82,7 +82,7 @@ class UnitService {
         var $this = this;
         return new Promise(function (resolve, reject) {
 
-            eb.send(ServerEvents.DELETE_UNIT, id, null, function (err, msg) {
+            eb().send(ServerEvents.DELETE_UNIT, id, null, function (err, msg) {
                 if (!!err || !!msg.failureCode) {
                     reject(err || msg);
                     return;

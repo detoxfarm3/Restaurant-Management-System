@@ -10,7 +10,7 @@ class ProductService {
     findAll(params) {
         return new Promise(function (resolve, reject) {
 
-            eb.send(ServerEvents.FIND_ALL_PRODUCTS, params, null, function (err, msg) {
+            eb().send(ServerEvents.FIND_ALL_PRODUCTS, params, null, function (err, msg) {
 
                 if (!!err || !!msg.failureCode || !!(msg.body || {}).responseCode) {
                     reject(err || msg);
@@ -30,7 +30,7 @@ class ProductService {
     findAllDecomposed(params) {
         return new Promise(function (resolve, reject) {
 
-            eb.send(ServerEvents.FIND_ALL_PRODUCTS_DECOMPOSED, params, null, function (err, msg) {
+            eb().send(ServerEvents.FIND_ALL_PRODUCTS_DECOMPOSED, params, null, function (err, msg) {
 
                 if (!!err || !!msg.failureCode || !!(msg.body || {}).responseCode) {
                     reject(err || msg);
@@ -49,7 +49,7 @@ class ProductService {
 
     find(id) {
         return new Promise(function (resolve, reject) {
-            eb.send(ServerEvents.FIND_PRODUCT, id, null, function (err, msg) {
+            eb().send(ServerEvents.FIND_PRODUCT, id, null, function (err, msg) {
                 if (!!err || !!msg.failureCode || !!(msg.body || {}).responseCode) {
                     reject(err || msg);
 
@@ -66,7 +66,7 @@ class ProductService {
 
     findDecomposed(id) {
         return new Promise(function (resolve, reject) {
-            eb.send(ServerEvents.FIND_PRODUCT_DECOMPOSED, id, null, function (err, msg) {
+            eb().send(ServerEvents.FIND_PRODUCT_DECOMPOSED, id, null, function (err, msg) {
                 if (!!err || !!msg.failureCode || !!(msg.body || {}).responseCode) {
                     reject(err || msg);
 
@@ -83,7 +83,7 @@ class ProductService {
 
     unitWisePrice(params) {
         return new Promise(function (resolve, reject) {
-            eb.send(ServerEvents.PRODUCTS_UNIT_WISE_PRICE, params, null, function (err, msg) {
+            eb().send(ServerEvents.PRODUCTS_UNIT_WISE_PRICE, params, null, function (err, msg) {
                 if (!!err || !!msg.failureCode || !!(msg.body || {}).responseCode) {
                     reject(err || msg);
 
@@ -103,7 +103,7 @@ class ProductService {
 
             console.log("SEND." + ServerEvents.CREATE_PRODUCT, JSON.stringify(product));
 
-            eb.send(ServerEvents.CREATE_PRODUCT, product, null, function (err, msg) {
+            eb().send(ServerEvents.CREATE_PRODUCT, product, null, function (err, msg) {
                 if (!!err || !!msg.failureCode || !!(msg.body || {}).responseCode) {
                     reject(err || msg);
 
@@ -125,7 +125,7 @@ class ProductService {
 
             console.log("SEND." + ServerEvents.UPDATE_PRODUCT, JSON.stringify(product));
 
-            eb.send(ServerEvents.UPDATE_PRODUCT, product, null, function (err, msg) {
+            eb().send(ServerEvents.UPDATE_PRODUCT, product, null, function (err, msg) {
                 if (!!err || !!msg.failureCode || !!(msg.body || {}).responseCode) {
                     reject(err || msg);
 
@@ -145,7 +145,7 @@ class ProductService {
 
             console.log("SEND." + ServerEvents.DELETE_PRODUCT, id);
 
-            eb.send(ServerEvents.DELETE_PRODUCT, id, null, function (err, msg) {
+            eb().send(ServerEvents.DELETE_PRODUCT, id, null, function (err, msg) {
                 if (!!err || !!msg.failureCode || !!(msg.body || {}).responseCode) {
                     reject(err || msg);
 

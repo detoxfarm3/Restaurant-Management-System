@@ -5,7 +5,7 @@ var CreateSellHeader = require('./CreateSellHeader');
 var SellPreview = require('./SellPreview');
 
 var EventEmitter = require("events").EventEmitter;
-var ee = new EventEmitter();
+var eeLocal = new EventEmitter();
 
 var unitService = require('../unit/UnitService');
 var productService = require('../product/ProductService');
@@ -17,11 +17,14 @@ var Uris = require('../Uris');
 
 var authService = require('../AuthService');
 
-var Events = {
+var LocalEvents = {
     SUBMIT_REQUESTED: 'SUBMIT_REQUESTED',
     SUBMIT_SUCCESSFULL: 'SUBMIT_SUCCESSFULL',
     SUBMIT_FAILED: 'SUBMIT_FAILED'
 };
+
+var ee = require('../EventEmitter');
+var Events = require('../Events');
 
 var CreateSell;
 module.exports = CreateSell = React.createClass({
@@ -91,11 +94,21 @@ module.exports = CreateSell = React.createClass({
         var $this = this;
 
         console.log("MOUNTING: SELL_CREATE");
-        ee.on(Events.SUBMIT_REQUESTED, function (sell) {
+        eeLocal.on(LocalEvents.SUBMIT_REQUESTED, function (sell) {
             console.log(sell);
             sellService.create(sell)
                 .then(sellService.find)
                 .then($this.showOrderSuccess)
+                .then(() => {
+                    $this.setState({
+                        sell: lib.merge2($this.state.sell, {
+                            consumerName: '',
+                            consumerMobile: '',
+                            remarks: '',
+                        })
+                    });
+                    $this.clearAllUnits();
+                })
             ;
         });
 
@@ -153,7 +166,7 @@ module.exports = CreateSell = React.createClass({
         ;
     },
     componentWillUnmount: function () {
-        ee.removeAllListeners();
+        eeLocal.removeAllListeners();
     },
     render: function () {
         var $this = this;
@@ -302,7 +315,7 @@ module.exports = CreateSell = React.createClass({
 
         sell.sellUnits = Object.keys($this.state.sellUnitsByProductId).map(id => $this.state.sellUnitsByProductId[id]);
 
-        ee.emit(Events.SUBMIT_REQUESTED, sell);
+        eeLocal.emit(LocalEvents.SUBMIT_REQUESTED, sell);
     },
     onSubmitFailed: function (e) {
 
@@ -323,7 +336,7 @@ module.exports = CreateSell = React.createClass({
                 ),
                 footer: (
                     <div className="row">
-                        <div className="col-md-10">
+                        <div className="col-md-8">
 
                             <a href={Uris.toAbsoluteUri(Uris.SELL.VIEW, {id: sell.id})}
                                className="btn btn-success pull-left" style={{fontWeight: 'bold'}}>View
@@ -334,7 +347,12 @@ module.exports = CreateSell = React.createClass({
                             </a>
 
                         </div>
-                        <div className="col-md-2">
+                        <div className="col-md-4">
+
+                            <button className="btn btn-success btn-lg" style={{fontWeight: 'bold'}}
+                                    onClick={e => {$this.closeModal(); $this.printSell(sell);}}>Print
+                            </button>
+
                             <button className="btn btn-primary btn-lg" style={{fontWeight: 'bold'}}
                                     onClick={$this.closeModal}>Ok
                             </button>
@@ -344,6 +362,21 @@ module.exports = CreateSell = React.createClass({
                 isOpen: true,
             }
         });
+    },
+    printSell: function (sell) {
+        var req = {
+            printer: () => {
+                return (
+                    <SellPreview sell={sell}/>
+                );
+            },
+            callback: () => {
+                window.print()
+                req.onComplete();
+            },
+        };
+
+        ee.emit(Events.PRINT, req);
     },
     closeModal: function () {
         var $this = this;

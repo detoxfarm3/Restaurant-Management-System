@@ -3,6 +3,7 @@ var Events = {
     UNIT_UPDATED: 'UNIT_UPDATED',
     UNIT_DELETED: 'UNIT_DELETED',
     USER_LOGGED_IN: 'USER_LOGGED_IN',
+    PRINT: 'PRINT'
 };
 
 module.exports = Events;

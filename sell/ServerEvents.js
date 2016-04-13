@@ -4,6 +4,8 @@ var ServerEvents = {
     CREATE_SELL: 'CREATE_SELL',
     UPDATE_SELL: 'UPDATE_SELL',
     DELETE_SELL: 'DELETE_SELL',
+    CREATE_TRACK: 'CREATE_TRACK',
+    UPDATE_TRACK: 'UPDATE_TRACK'
 };
 
 module.exports = ServerEvents;

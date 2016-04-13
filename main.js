@@ -40,6 +40,8 @@ var LoginPage = require('./pages/Login');
 
 var DashboardPage = require('./DashboardPage');
 
+var TrackPage = require('./sell/SellTrackingSettings');
+
 var Uris = require('./Uris');
 
 //Create and initialize app when eventbus initialization complete.
@@ -48,7 +50,7 @@ document.addEventListener("EVENT_BUS_CONNECTED", function () {
 
     ReactDom.render(
         <Router history={hashHistory}>
-            
+
             <Route path={Uris.LOGIN_URI} component={LoginPage}/>
 
             <Route path={Uris.BASE_URI} component={App}>
@@ -85,6 +87,8 @@ document.addEventListener("EVENT_BUS_CONNECTED", function () {
                     <Route path={Uris.INVENTORY.VIEW} component={ViewInventory}/>
                     <Route path={Uris.INVENTORY.ADD_REMOVE_EDIT_PRODUCTS} component={AddRemoveEditProducts}/>
                 </Route>
+
+                <Route path={Uris.SELL_INVENTORY_TRACK.CREATE} component={TrackPage}/>
 
             </Route>
         </Router>, document.getElementById('app'));

@@ -362,11 +362,10 @@ module.exports = SellApp = React.createClass({
     rawProducts: function (prod) {
         var $this = this;
 
-        var prods = $this.state.inventoryProductsByInventoryId[prod.inventoryId] || $this.state.rawProducts || [];
-
-        prods = prods.filter(pd => !pd.forSale);
+        var prods = $this.state.inventoryProductsByInventoryId[prod.inventoryId || ''] || [];
 
         var rawProdsById = $this.state.rawProductsById;
+        var productsById = $this.state.productsById;
 
         return (
             <select className="form-control"
@@ -381,7 +380,7 @@ module.exports = SellApp = React.createClass({
                         var id = pp.productId || pp.id
 
                         return (
-                            <option key={id} value={id}>{(rawProdsById[id] || {}).name}</option>
+                            <option key={id} value={id}>{(rawProdsById[id] || productsById[id] || {}).name}</option>
                         );
                     })
                 }

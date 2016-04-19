@@ -19,41 +19,9 @@ module.exports = CreateSellGrid = React.createClass({
     getDefaultProps: function () {
         return {
             productsById: {},
-            unitsById: {
-                1: {
-                    id: 1,
-                    name: 'Cup'
-                }
-                ,
-                2: {
-                    id: 2,
-                    name: 'Peace'
-                }
-            },
-            productsUnitWisePrice: {
-                1: {
-                    1: 200,
-                    2: 500
-                },
-                2: {
-                    1: 10,
-                    2: 50
-                }
-            },
-            sellUnitsByProductId: [
-                {
-                    no: 1,
-                },
-                {
-                    no: 2,
-                },
-                {
-                    no: 3,
-                },
-                {
-                    no: 4,
-                }
-            ],
+            unitsById: {},
+            productsUnitWisePrice: {},
+            sellUnitsByProductId: {},
             onChange: null,
             onInit: function () {
             }
@@ -98,15 +66,33 @@ module.exports = CreateSellGrid = React.createClass({
         var productsUnitWisePrice = $this.props.productsUnitWisePrice;
         var unitsById = $this.props.unitsById;
 
+        var keys = Object.keys(sellUnitsByProductId)
+            .map(function (productId) {
+                return sellUnitsByProductId[productId] || {
+                        no: Math.random(),
+                        productId: productId
+                    };
+            })
+            .sort(function (a, b) {
+
+                var an = (productsById[a.productId] || {}).name || '';
+                var bn = (productsById[b.productId] || {}).name || '';
+
+                an = an.toLowerCase();
+                bn = bn.toLowerCase();
+
+                if (an < bn) {
+                    return -1;
+                } else if (an > bn) {
+                    return 1;
+                } else {
+                    return 0;
+                }
+            });
+
         var totalCounter = {quantity: 0.0, total: 0.0};
         var serial = 1;
-        var sUnits = Stream(Object.keys(productsById))
-                .map(function (productId) {
-                    return sellUnitsByProductId[productId] || {
-                            no: Math.random(),
-                            productId: productId
-                        };
-                })
+        var sUnits = Stream(keys)
                 .peek(function (unit) {
                     totalCounter.quantity = totalCounter.quantity + (parseFloat(unit.quantity) || 0);
                     totalCounter.total = totalCounter.total + (parseFloat(unit.total) || 0);
@@ -153,10 +139,21 @@ module.exports = CreateSellGrid = React.createClass({
                                 />
                         ),
                         action: (
-                            <button className="btn btn-danger"
-                                    onClick={function (e) {
+                            <div>
+
+                                <button className="btn btn-danger"
+                                        onClick={function (e) {
                                     $this.crearUnit(unit);
-                                }}>Clear</button>
+                                }}>Clear
+                                </button>
+
+                                <span className="btn btn-danger pull-right"
+                                      onClick={function () {
+                                            $this.deleteSellUnit(unit);
+                                      }}>
+                                    <span className="glyphicon glyphicon-remove" aria-hidden="true"></span>
+                                </span>
+                            </div>
                         )
                     });
                 })
@@ -195,6 +192,15 @@ module.exports = CreateSellGrid = React.createClass({
 
         );
     },
+
+    deleteSellUnit: function (unit) {
+        var $this = this;
+
+        delete $this.props.sellUnitsByProductId[unit.productId || ''];
+
+        $this.props.onChange($this.props.sellUnitsByProductId, $this.props.sellUnitsByProductId, unit);
+    },
+
     clearAllUnits: function () {
         var $this = this;
 
@@ -234,17 +240,17 @@ module.exports = CreateSellGrid = React.createClass({
     },
     addNew: function (sellUnit) {
         var $this = this;
-        var sellUnitsByProductId = $this.props.sellUnitsByProductId;
+        var sellUnitsByProductId = $this.props.sellUnitsByProductId || {};
 
         sellUnit = sellUnit || {};
 
-        if (!!sellUnit.no && sellUnitsByProductId.findIndex(function (unit) {
-                return sellUnit.no == unit.no;
+        if (!!sellUnit.no && Object.keys(sellUnitsByProductId).findIndex((pid) => {
+                return sellUnit.productId == pid;
             }) < 0) {
             sellUnit = $this.validateSaleUnit(sellUnit);
 
 
-            sellUnitsByProductId.push(sellUnit);
+            sellUnitsByProductId[sellUnit.productId] = sellUnit;
 
             $this.props.onChange(sellUnitsByProductId, $this.props.sellUnitsByProductId, sellUnit);
 
@@ -253,13 +259,14 @@ module.exports = CreateSellGrid = React.createClass({
         ;
         sellUnit.no = Math.random();
 
-        sellUnitsByProductId.push($this.validateSaleUnit(sellUnit));
+        sellUnitsByProductId[sellUnit.productId] = sellUnit;
 
         $this.props.onChange(sellUnitsByProductId, $this.props.sellUnitsByProductId, sellUnit);
 
         return sellUnit;
     },
     validateSaleUnit: function (unit) {
+        var $this = this;
         if (!unit.productId || unit.productId < 0) {
             unit.quantity = '';
             unit.unitId = '';

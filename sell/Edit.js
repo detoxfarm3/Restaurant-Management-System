@@ -26,46 +26,10 @@ module.exports = EditSell = React.createClass({
     getInitialState: function () {
         return {
             productsById: {
-                1: {
-                    id: 1,
-                    name: 'Biriani'
-                }
-                ,
-                2: {
-                    id: 2,
-                    name: 'Kaccchi'
-                }
-                ,
-                3: {
-                    id: 3,
-                    name: 'Misti'
-                }
-                ,
-                4: {
-                    id: 4,
-                    name: 'Doi'
-                }
             },
             unitsById: {
-                1: {
-                    id: 1,
-                    name: 'Cup'
-                }
-                ,
-                2: {
-                    id: 2,
-                    name: 'Peace'
-                }
             },
             productsUnitWisePrice: {
-                1: {
-                    1: 200,
-                    2: 500
-                },
-                2: {
-                    1: 10,
-                    2: 50
-                }
             },
             sell: {
                 consumerName: '',

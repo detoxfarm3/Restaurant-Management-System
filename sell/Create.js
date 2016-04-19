@@ -3,6 +3,7 @@ var CreateSellGrid = require('./CreateSellGrid');
 var Modal = require('../../components/Modal');
 var CreateSellHeader = require('./CreateSellHeader');
 var SellPreview = require('./SellPreview');
+var ProductSelect = require('./ProductSelect');
 
 var EventEmitter = require("events").EventEmitter;
 var eeLocal = new EventEmitter();
@@ -30,48 +31,10 @@ var CreateSell;
 module.exports = CreateSell = React.createClass({
     getInitialState: function () {
         return {
-            productsById: {
-                1: {
-                    id: 1,
-                    name: 'Biriani'
-                }
-                ,
-                2: {
-                    id: 2,
-                    name: 'Kaccchi'
-                }
-                ,
-                3: {
-                    id: 3,
-                    name: 'Misti'
-                }
-                ,
-                4: {
-                    id: 4,
-                    name: 'Doi'
-                }
-            },
-            unitsById: {
-                1: {
-                    id: 1,
-                    name: 'Cup'
-                }
-                ,
-                2: {
-                    id: 2,
-                    name: 'Peace'
-                }
-            },
-            productsUnitWisePrice: {
-                1: {
-                    1: 200,
-                    2: 500
-                },
-                2: {
-                    1: 10,
-                    2: 50
-                }
-            },
+            products: [],
+            productsById: {},
+            unitsById: {},
+            productsUnitWisePrice: {},
             sell: {
                 consumerName: '',
                 consumerMobile: '',
@@ -80,6 +43,7 @@ module.exports = CreateSell = React.createClass({
                 status: true,
                 remarks: ''
             },
+            sellUnit: {},
             sellUnitsByProductId: {},
             modal: {
                 body: '',
@@ -105,7 +69,9 @@ module.exports = CreateSell = React.createClass({
                             consumerName: '',
                             consumerMobile: '',
                             remarks: '',
-                        })
+                        }),
+                        sellUnit: {},
+                        sellUnitsByProductId: {}
                     });
                     $this.clearAllUnits();
                 })
@@ -123,10 +89,18 @@ module.exports = CreateSell = React.createClass({
                             map[product.id] = product;
                             return map;
                         }, {}),
-                        sellUnitsByProductId: sellUnits.reduce((map, sellUnit) => {
-                            map[sellUnit.productId] = sellUnit;
+                        productsByName: rsp.data.reduce((map, product) => {
+                            map[product.name] = product;
                             return map;
-                        }, {})
+                        }, {}),
+                        productsBySku: rsp.data.reduce((map, product) => {
+                            map[product.sku] = product;
+                            return map;
+                        }, {}),
+                        //sellUnitsByProductId: sellUnits.reduce((map, sellUnit) => {
+                        //    map[sellUnit.productId] = sellUnit;
+                        //    return map;
+                        //}, {})
                     };
                 })
             ;
@@ -172,7 +146,7 @@ module.exports = CreateSell = React.createClass({
         var $this = this;
         var modal = $this.state.modal;
         var sell = $this.state.sell;
-        var sellUnitsByProductId = $this.state.sellUnitsByProductId;
+        var sellUnitsByProductId = $this.state.sellUnitsByProductId || {};
 
         return (
 
@@ -211,7 +185,9 @@ module.exports = CreateSell = React.createClass({
 
                             <div className="row">
                                 <div className="col-md-2">
+
                                     Products
+
                                 </div>
                                 <div className="col-md-10">
 
@@ -255,6 +231,12 @@ module.exports = CreateSell = React.createClass({
 
                         </div>
 
+                        <ProductSelect products={$this.state.products} units={$this.state.units}
+                                       sellUnit={$this.state.sellUnit}
+                                       onChange={$this.onSellUnitChange}
+                                       onSubmit={$this.onSellUnitSubmit}
+                            />
+
                         <CreateSellGrid unitsById={$this.state.unitsById} productsById={$this.state.productsById}
                                         productsUnitWisePrice={$this.state.productsUnitWisePrice}
                                         sellUnitsByProductId={sellUnitsByProductId}
@@ -290,6 +272,51 @@ module.exports = CreateSell = React.createClass({
                 </div>
             </div>
         );
+    },
+    onSellUnitSubmit: function (sellUnit) {
+        var $this = this;
+        var sellUnitsByProductId = $this.state.sellUnitsByProductId || {};
+
+        if (sellUnit.productId > 0 && sellUnit.quantity > 0 && sellUnit.unitId > 0
+            && !sellUnitsByProductId[sellUnit.productId]) {
+            $this.createSellGrid.addNew(lib.copy(sellUnit));
+            $this.setState({sellUnit: {}});
+        }
+    },
+    onSellUnitChange: function (e) {
+
+        var $this = this;
+        var sellUnit = $this.state.sellUnit || {};
+
+        if (e.target.name == "productName" || e.target.name == "productSku") {
+            sellUnit.productName = '';
+            sellUnit.productSku = '';
+            sellUnit.unitId = '';
+            sellUnit.productId = '';
+
+            sellUnit[e.target.name] = e.target.value;
+
+            var product = $this.state.productsByName[sellUnit.productName]
+                || $this.state.productsBySku[sellUnit.productSku] || {};
+            ;
+            sellUnit.productId = product.id;
+
+            if (!!product.id) {
+                sellUnit.productName = product.name;
+                sellUnit.productSku = product.sku;
+            }
+
+            if (!!sellUnit.productId) {
+                var unitIds = Object.keys($this.state.productsUnitWisePrice[sellUnit.productId] || {});
+                if (!!unitIds && !!unitIds.length && (unitIds.length === 1)) {
+                    sellUnit.unitId = unitIds[0];
+                }
+            }
+        }
+
+        sellUnit[e.target.name] = e.target.value;
+
+        $this.setState({sellUnit: sellUnit});
     },
     onSellChange: function (e) {
         var $this = this;

@@ -364,6 +364,7 @@ var AddRemoveEditProducts = React.createClass({
         var $this = this;
         this.setState({
             createModal: function () {
+                var submitButton = (<input type="submit" className="btn btn-lg btn-danger" value="Edit"/>);
                 return (
                     <Modal isOpen={true} onClose={$this.closeModal}
                            title={<h3 className="modal-title text-danger">Edit</h3>}
@@ -380,7 +381,7 @@ var AddRemoveEditProducts = React.createClass({
                                         e.preventDefault();
                                         $this.doEdit(item);
                                    }}
-                                   submitButton={<input type="submit" className="btn btn-lg btn-danger" value="Edit"/>}/>
+                                   submitButton={submitButton}/>
                            }
                            footer={<span className="btn btn-danger" onClick={$this.closeModal}>Cancel</span>}
                         />
@@ -578,7 +579,7 @@ var AddRemoveEditProducts = React.createClass({
     doEdit: function (item) {
         var $this = this;
 
-        inventoryService.editProductQuantity(item.id, item.quantity, item.unitId)
+        inventoryService.editProductQuantity(item.id, item.__quantity__, item.unitId)
             .then(() => inventoryService.findAllProducts($this.props.params.id))
             .then(rsp => $this.setState($this.intercept({inventoryProducts: rsp.data})))
         ;

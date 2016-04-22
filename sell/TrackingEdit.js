@@ -9,8 +9,8 @@ var Promise = require('bluebird');
 
 var trkSv = require('./TrackService');
 
-var SellTrackingSettings;
-module.exports = SellTrackingSettings = React.createClass({
+var TrackEdit;
+module.exports = TrackEdit = React.createClass({
     getDefaultProps: function () {
         return {};
     },
@@ -122,6 +122,12 @@ module.exports = SellTrackingSettings = React.createClass({
                 }))
         ;
 
+        arr.push(
+            trkSv.find({productId: $this.props.params.productId})
+                .then(trks => {
+                    return {tracks: trks, productId: $this.props.params.productId};
+                }))
+
         Promise.all(arr)
             .then(list => {
                 list = list || [];
@@ -167,7 +173,7 @@ module.exports = SellTrackingSettings = React.createClass({
 
                         <div className="col-md-2">
 
-                            <span className="btn btn-primary pull-right" onClick={$this.create}>Create </span>
+                            <span className="btn btn-primary pull-right" onClick={$this.update}>Update </span>
 
                         </div>
 
@@ -448,15 +454,11 @@ module.exports = SellTrackingSettings = React.createClass({
         return state;
     },
 
-    create: function () {
+    update: function () {
         var $this = this;
-        trkSv.create($this.state.tracks)
+        trkSv.update($this.state.productId, $this.state.tracks)
             .then(v => {
-                alert("Created successfully");
-                $this.setState({
-                    tracks: [],
-                    productId: null,
-                });
+                alert("Updated successfully");
             })
         ;
     }

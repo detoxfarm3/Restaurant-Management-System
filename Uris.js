@@ -9,7 +9,8 @@ module.exports = Uris = {
     LOGIN_URI: '/login',
     SELL_INVENTORY_TRACK: {
         CREATE: '/sell-inventory-track/create',
-        UPDATE: '/sell-inventory-track/update'
+        UPDATE: '/sell-inventory-track/edit/:productId',
+        BASE: '/sell-inventory-track/index',
     },
     USER: {
         CREATE: '/user/create',

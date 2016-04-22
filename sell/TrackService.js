@@ -10,11 +10,11 @@ class TrackService {
 
     findAll(params) {
         return new Promise(function (resolve, reject) {
-            eb().send(ServerEvents.FIND_ALL_USERS, params, null, function (err, msg) {
+            eb().send(ServerEvents.FIND_ALL_TRACKS, params, null, function (err, msg) {
                 if (!!err || !!msg.failureCode || !!(msg.body || {}).responseCode) {
                     reject(err || msg);
 
-                    console.log("Error " + Events.USER_CREATED, err || msg);
+                    console.log("Error " + ServerEvents.FIND_ALL_TRACKS, err || msg);
                     return;
                 }
 
@@ -25,11 +25,11 @@ class TrackService {
 
     find(id) {
         return new Promise(function (resolve, reject) {
-            eb().send(ServerEvents.FIND_USER, id, null, function (err, msg) {
+            eb().send(ServerEvents.FIND_TRACK, id, null, function (err, msg) {
                 if (!!err || !!msg.failureCode || !!(msg.body || {}).responseCode) {
                     reject(err || msg);
 
-                    console.log("Error " + Events.USER_CREATED, err || msg);
+                    console.log("Error " + ServerEvents.FIND_TRACK, err || msg);
                     return;
                 }
 
@@ -38,14 +38,14 @@ class TrackService {
         });
     }
 
-    create(track) {
+    create(tracks) {
         return new Promise(function (resolve, reject) {
 
-            track.forEach(tk => tk.productId = tk.id);
+            tracks.forEach(tk => tk.productId = tk.id);
 
-            console.log("SEND." + ServerEvents.CREATE_TRACK, JSON.stringify(track));
+            console.log("SEND." + ServerEvents.CREATE_TRACK, JSON.stringify(tracks));
 
-            eb().send(ServerEvents.CREATE_TRACK, track, null, function (err, msg) {
+            eb().send(ServerEvents.CREATE_TRACK, tracks, null, function (err, msg) {
                 if (!!err || !!msg.failureCode || !!(msg.body || {}).responseCode) {
                     reject(err || msg);
 
@@ -55,22 +55,22 @@ class TrackService {
 
                 resolve(msg.body);
 
-                ee.emit(Events.CREATE_TRACK, msg.body);
+                ee.emit(Events.TRACK_CREATED, msg.body);
 
-                console.log(Events.CREATE_TRACK, track);
+                console.log(Events.TRACK_CREATED, tracks);
             });
         });
     }
 
-    update(track) {
+    update(productId, tracks) {
 
-        track = track.forEach(tk => tk.productId = tk.id);
+        tracks = tracks.forEach(tk => tk.productId = tk.id);
 
         return new Promise(function (resolve, reject) {
 
-            console.log("SEND." + ServerEvents.UPDATE_TRACK, JSON.stringify(track));
+            console.log("SEND." + ServerEvents.UPDATE_TRACK, JSON.stringify({productId, tracks}));
 
-            eb().send(ServerEvents.UPDATE_TRACK, track, null, function (err, msg) {
+            eb().send(ServerEvents.UPDATE_TRACK, {productId, tracks}, null, function (err, msg) {
                 if (!!err || !!msg.failureCode || !!(msg.body || {}).responseCode) {
                     reject(err || msg);
 
@@ -80,10 +80,11 @@ class TrackService {
 
                 resolve(msg.body);
 
-                ee.emit(Events.SELL_UPDATED, msg.body);
+                ee.emit(Events.TRACK_UPDATED, msg.body);
             });
         });
     }
+
 
 }
 

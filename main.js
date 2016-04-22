@@ -41,6 +41,8 @@ var LoginPage = require('./pages/Login');
 var DashboardPage = require('./DashboardPage');
 
 var TrackPage = require('./sell/SellTrackingSettings');
+var TrackEdit = require('./sell/TrackingEdit');
+var ListTrack = require('./sell/ListTrack');
 
 var Uris = require('./Uris');
 
@@ -89,6 +91,8 @@ document.addEventListener("EVENT_BUS_CONNECTED", function () {
                 </Route>
 
                 <Route path={Uris.SELL_INVENTORY_TRACK.CREATE} component={TrackPage}/>
+                <Route path={Uris.SELL_INVENTORY_TRACK.UPDATE} component={TrackEdit}/>
+                <Route path={Uris.SELL_INVENTORY_TRACK.BASE} component={ListTrack}/>
 
             </Route>
         </Router>, document.getElementById('app'));

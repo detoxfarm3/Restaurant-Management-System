@@ -27,6 +27,10 @@ var LocalEvents = {
 var ee = require('../EventEmitter');
 var Events = require('../Events');
 
+var KeyEventHandlers = require('../KeyEventsHandler');
+var keyDownListeners = [];
+var $ = require('jquery');
+
 var CreateSell;
 module.exports = CreateSell = React.createClass({
     getInitialState: function () {
@@ -138,15 +142,34 @@ module.exports = CreateSell = React.createClass({
                 $this.setState(state);
             })
         ;
+
+
+        keyDownListeners.push(e => {
+            if (e.altKey && e.keyCode === 66) {
+                $('#create-button').click();
+            }
+            if (e.altKey && e.keyCode === 86) {
+                $('#popup-ok-button').click();
+            }
+        });
+
+        KeyEventHandlers.addAllKeyDownListeners(keyDownListeners);
     },
     componentWillUnmount: function () {
         eeLocal.removeAllListeners();
+
+        KeyEventHandlers.removeAllKeyDownListeners(keyDownListeners);
     },
     render: function () {
         var $this = this;
         var modal = $this.state.modal;
         var sell = $this.state.sell;
         var sellUnitsByProductId = $this.state.sellUnitsByProductId || {};
+
+        var productsUnitWisePrice = $this.state.productsUnitWisePrice || {};
+
+        var productSelectUnits = Object.keys(productsUnitWisePrice[$this.state.sellUnit.productId] || {})
+            .map(unitId => $this.state.unitsById[unitId]);
 
         return (
 
@@ -163,10 +186,10 @@ module.exports = CreateSell = React.createClass({
                                     </h3>
                                 </div>
                                 <div className="col-md-2">
-                                    <button className="btn btn-primary btn-block pull-right"
+                                    <button id="create-button" className="btn btn-primary btn-block pull-right"
                                             style={{fontWeight: 'bold'}}
                                             onClick={$this.submit}>
-                                        Create
+                                        Create (ALT+B)
                                     </button>
                                 </div>
                             </div>
@@ -217,7 +240,7 @@ module.exports = CreateSell = React.createClass({
                                     <button className="btn btn-primary pull-right"
                                             style={{fontWeight: 'bold'}}
                                             onClick={$this.submit}>
-                                        Create
+                                        Create (ALT+B)
                                     </button>
 
                                     <button className="btn btn-danger pull-right"
@@ -231,7 +254,7 @@ module.exports = CreateSell = React.createClass({
 
                         </div>
 
-                        <ProductSelect products={$this.state.products} units={$this.state.units}
+                        <ProductSelect products={$this.state.products} units={productSelectUnits}
                                        sellUnit={$this.state.sellUnit}
                                        onChange={$this.onSellUnitChange}
                                        onSubmit={$this.onSellUnitSubmit}
@@ -305,16 +328,16 @@ module.exports = CreateSell = React.createClass({
                 sellUnit.productName = product.name;
                 sellUnit.productSku = product.sku;
             }
-
-            if (!!sellUnit.productId) {
-                var unitIds = Object.keys($this.state.productsUnitWisePrice[sellUnit.productId] || {});
-                if (!!unitIds && !!unitIds.length && (unitIds.length === 1)) {
-                    sellUnit.unitId = unitIds[0];
-                }
-            }
         }
 
         sellUnit[e.target.name] = e.target.value;
+
+        if (!!sellUnit.productId) {
+            var unitIds = Object.keys($this.state.productsUnitWisePrice[sellUnit.productId] || {});
+            if (!!unitIds && !!unitIds.length && (unitIds.length === 1)) {
+                sellUnit.unitId = unitIds[0];
+            }
+        }
 
         $this.setState({sellUnit: sellUnit});
     },
@@ -340,7 +363,7 @@ module.exports = CreateSell = React.createClass({
         var $this = this;
         var sell = $this.state.sell;
 
-        sell.sellUnits = Object.keys($this.state.sellUnitsByProductId).map(id => $this.state.sellUnitsByProductId[id]);
+        sell.sellUnits = Object.keys($this.state.sellUnitsByProductId || {}).map(id => $this.state.sellUnitsByProductId[id]);
 
         eeLocal.emit(LocalEvents.SUBMIT_REQUESTED, sell);
     },
@@ -363,7 +386,7 @@ module.exports = CreateSell = React.createClass({
                 ),
                 footer: (
                     <div className="row">
-                        <div className="col-md-8">
+                        <div className="col-md-6">
 
                             <a href={Uris.toAbsoluteUri(Uris.SELL.VIEW, {id: sell.id})}
                                className="btn btn-success pull-left" style={{fontWeight: 'bold'}}>View
@@ -374,14 +397,14 @@ module.exports = CreateSell = React.createClass({
                             </a>
 
                         </div>
-                        <div className="col-md-4">
+                        <div className="col-md-6">
 
                             <button className="btn btn-success btn-lg" style={{fontWeight: 'bold'}}
                                     onClick={e => {$this.closeModal(); $this.printSell(sell);}}>Print
                             </button>
 
-                            <button className="btn btn-primary btn-lg" style={{fontWeight: 'bold'}}
-                                    onClick={$this.closeModal}>Ok
+                            <button id="popup-ok-button" className="btn btn-primary btn-lg" style={{fontWeight: 'bold'}}
+                                    onClick={$this.closeModal}>Ok (ALT+V)
                             </button>
                         </div>
                     </div>

@@ -113,12 +113,6 @@ module.exports = ListInventories = React.createClass({
                     Add/Remove/Edit Products
                 </a>
 
-                <a href={Uris.toAbsoluteUri(Uris.INVENTORY.VIEW, {id: inventory.id})}
-                   className="btn btn-success"
-                   style={{marginRight: '5px'}} title="View this inventory.">
-                    View
-                </a>
-
                 {
                     auth.currentUser().username != "admin" ? null : (
                         <span className="btn btn-danger" title="Delete this inventory."

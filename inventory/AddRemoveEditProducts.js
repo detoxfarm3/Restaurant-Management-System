@@ -146,8 +146,6 @@ var AddRemoveEditProducts = React.createClass({
 
                     <TableHeaderColumn dataField="name" dataFormat={$this.formatName}>Name</TableHeaderColumn>
                     <TableHeaderColumn dataField="quantity">Quantity</TableHeaderColumn>
-                    <TableHeaderColumn dataField="added">Added</TableHeaderColumn>
-                    <TableHeaderColumn dataField="removed">Removed</TableHeaderColumn>
                     <TableHeaderColumn dataField="unitId" dataFormat={$this.formatUnit}>Unit</TableHeaderColumn>
                     <TableHeaderColumn dataField="action" dataFormat={$this.formatAction}>Action</TableHeaderColumn>
                 </BootstrapTable>

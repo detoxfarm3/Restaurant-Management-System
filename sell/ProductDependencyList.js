@@ -2,6 +2,7 @@
 var Stream = require('streamjs');
 
 import React from 'react';
+var Uris = require('../Uris');
 
 class ProductDependencyList extends React.Component {
     constructor(props) {
@@ -15,7 +16,7 @@ class ProductDependencyList extends React.Component {
         var products = $this.props.products;
         return (
 
-            <table class="table table-condensed">
+            <table className="table table-condensed">
                 <thead>
                 <tr>
                     <th>
@@ -35,17 +36,22 @@ class ProductDependencyList extends React.Component {
                                 product: productsById[p.id] || {}
                             };
                         })
+                        .peek(p => console.log("product", p.name))
                         .filter(e => !!e.tracks.length)
                         .map(e => {
                             const {tracks, product} = e;
                             return (
-                                <tr>
-                                    <td>{product.name}</td>
+                                <tr key={Math.random()}>
+                                    <td>
+                                        <a href={Uris.toAbsoluteUri(Uris.SELL_INVENTORY_TRACK.UPDATE, {productId: product.id})}>{product.name}</a>
+                                    </td>
                                     <td>
                                         {
                                             tracks.map((tk, idx) => {
                                                 return (
-                                                    tk.name
+                                                    <span key={Math.random()}>
+                                                        {productsById[tk.inventoryProductId].name + ((idx === (tracks.length - 1)) ? '' : ', ')}
+                                                    </span>
                                                 );
                                             })
                                         }

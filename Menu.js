@@ -46,7 +46,10 @@ class Menu extends React.Component {
 
 
                 <IndexLink to={Uris.SELL_INVENTORY_TRACK.CREATE} activeClassName="active"
-                           className="list-group-item">Sell Inventory Relation</IndexLink>
+                           className="list-group-item">Create Sell Inventory Relation</IndexLink>
+
+                <IndexLink to={Uris.SELL_INVENTORY_TRACK.BASE} activeClassName="active"
+                           className="list-group-item">Sell Inventory Relations</IndexLink>
 
             </div>
 

@@ -37,9 +37,7 @@ module.exports = ProductList = React.createClass({
                         <TableHeaderColumn dataField="forSale"
                                            dataFormat={forSale => !!forSale ? 'Yes' : 'No'}>
                             For Sale</TableHeaderColumn>
-
-                        <TableHeaderColumn dataField="inventories" dataFormat={$this.formatInventories}>
-                            Inventory</TableHeaderColumn>
+                        
                         <TableHeaderColumn dataField="sku">SKU</TableHeaderColumn>
                         <TableHeaderColumn dataField="remarks">Remarks</TableHeaderColumn>
                         <TableHeaderColumn dataField="action" dataFormat={$this.formatAction}>Action</TableHeaderColumn>

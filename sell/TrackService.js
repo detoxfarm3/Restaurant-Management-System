@@ -41,7 +41,10 @@ class TrackService {
     create(tracks) {
         return new Promise(function (resolve, reject) {
 
-            tracks.forEach(tk => tk.productId = tk.id);
+            tracks.forEach(tk => {
+                tk.productId = tk.id
+                delete tk.id;
+            });
 
             console.log("SEND." + ServerEvents.CREATE_TRACK, JSON.stringify(tracks));
 
@@ -64,7 +67,10 @@ class TrackService {
 
     update(productId, tracks) {
 
-        tracks = tracks.forEach(tk => tk.productId = tk.id);
+        tracks.forEach(tk => {
+            tk.productId = tk.productId || tk.id;
+            delete tk.id;
+        });
 
         return new Promise(function (resolve, reject) {
 

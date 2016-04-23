@@ -123,10 +123,16 @@ module.exports = TrackEdit = React.createClass({
         ;
 
         arr.push(
-            trkSv.find({productId: $this.props.params.productId})
-                .then(trks => {
-                    return {tracks: trks, productId: $this.props.params.productId};
-                }))
+            trkSv.findAll({productId: $this.props.params.productId})
+                .then(rsp => {
+                    return {
+                        tracks: rsp.data.map(tk => {
+                            tk.no = Math.random();
+                            tk.id = tk.productId;
+                            return tk;
+                        }), productId: $this.props.params.productId
+                    };
+                }));
 
         Promise.all(arr)
             .then(list => {

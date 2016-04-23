@@ -25,6 +25,9 @@ class Menu extends React.Component {
                     )
                 }
 
+                <IndexLink to={Uris.DASHBOARD} activeClassName="active"
+                           className="list-group-item">Total Sales By Date</IndexLink>
+
                 <IndexLink to={Uris.PRODUCT.BASE} activeClassName="active"
                            className="list-group-item">View Products</IndexLink>
 

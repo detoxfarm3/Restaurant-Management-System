@@ -7,6 +7,7 @@ var Uris;
 module.exports = Uris = {
     BASE_URI: "/",
     LOGIN_URI: '/login',
+    DASHBOARD: '/dashboard',
     SELL_INVENTORY_TRACK: {
         CREATE: '/sell-inventory-track/create',
         UPDATE: '/sell-inventory-track/edit/:productId',

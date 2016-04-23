@@ -44,6 +44,8 @@ var TrackPage = require('./sell/SellTrackingSettings');
 var TrackEdit = require('./sell/TrackingEdit');
 var ListTrack = require('./sell/ListTrack');
 
+var Dashboard = require('./pages/Dashboard');
+
 var Uris = require('./Uris');
 
 //Create and initialize app when eventbus initialization complete.
@@ -93,6 +95,8 @@ document.addEventListener("EVENT_BUS_CONNECTED", function () {
                 <Route path={Uris.SELL_INVENTORY_TRACK.CREATE} component={TrackPage}/>
                 <Route path={Uris.SELL_INVENTORY_TRACK.UPDATE} component={TrackEdit}/>
                 <Route path={Uris.SELL_INVENTORY_TRACK.BASE} component={ListTrack}/>
+
+                <Route path={Uris.DASHBOARD} component={Dashboard}/>
 
             </Route>
         </Router>, document.getElementById('app'));

@@ -48,9 +48,9 @@ var Dashboard = require('./pages/Dashboard');
 
 var Uris = require('./Uris');
 
-//Create and initialize app when eventbus initialization complete.
+var initApp = function () {
 
-document.addEventListener("EVENT_BUS_CONNECTED", function () {
+    window.document.removeEventListener('EVENT_BUS_CONNECTED', initApp);
 
     ReactDom.render(
         <Router history={hashHistory}>
@@ -100,7 +100,9 @@ document.addEventListener("EVENT_BUS_CONNECTED", function () {
 
             </Route>
         </Router>, document.getElementById('app'));
-});
+};
+
+document.addEventListener("EVENT_BUS_CONNECTED", initApp);
 
 //Create the EventBus
 window.ebb = require('././EventBus');

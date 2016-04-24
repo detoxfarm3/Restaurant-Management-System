@@ -153,6 +153,12 @@ module.exports = CreateSell = React.createClass({
             }
         });
 
+        keyDownListeners.push(e => {
+            if (e.altKey && e.keyCode === 78) {
+                $('#print-button').click();
+            }
+        });
+
         KeyEventHandlers.addAllKeyDownListeners(keyDownListeners);
     },
     componentWillUnmount: function () {
@@ -386,7 +392,7 @@ module.exports = CreateSell = React.createClass({
                 ),
                 footer: (
                     <div className="row">
-                        <div className="col-md-6">
+                        <div className="col-md-4">
 
                             <a href={Uris.toAbsoluteUri(Uris.SELL.VIEW, {id: sell.id})}
                                className="btn btn-success pull-left" style={{fontWeight: 'bold'}}>View
@@ -397,10 +403,10 @@ module.exports = CreateSell = React.createClass({
                             </a>
 
                         </div>
-                        <div className="col-md-6">
+                        <div className="col-md-8">
 
-                            <button className="btn btn-success btn-lg" style={{fontWeight: 'bold'}}
-                                    onClick={e => {$this.closeModal(); $this.printSell(sell);}}>Print
+                            <button id="print-button" className="btn btn-success btn-lg" style={{fontWeight: 'bold'}}
+                                    onClick={e => {$this.closeModal(); $this.printSell(sell);}}>Print (ALT+N)
                             </button>
 
                             <button id="popup-ok-button" className="btn btn-primary btn-lg" style={{fontWeight: 'bold'}}
@@ -421,7 +427,7 @@ module.exports = CreateSell = React.createClass({
                 );
             },
             callback: () => {
-                window.print()
+                window.print();
                 req.onComplete();
             },
         };

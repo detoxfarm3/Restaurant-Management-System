@@ -17,6 +17,8 @@ var Print = require('./print/Print');
 
 var handlers = {};
 
+var eb = require('./EventBus');
+
 var App;
 module.exports = App = React.createClass({
     getDefaultProps: function () {
@@ -34,6 +36,8 @@ module.exports = App = React.createClass({
         handlers[Events.PRINT] = req => {
 
             req.onComplete = () => {
+
+                eb().reconnect();
 
                 $this.setState({
                     isPrinterVisible: false,

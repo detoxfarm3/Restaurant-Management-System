@@ -139,15 +139,15 @@ module.exports = CreateSellGrid = React.createClass({
                                 />
                         ),
                         action: (
-                            <div>
+                            <div style={{minWidth: '100px'}}>
 
-                                <button className="btn btn-danger"
+                                <button className="btn btn-danger btn-sm"
                                         onClick={function (e) {
                                     $this.crearUnit(unit);
                                 }}>Clear
                                 </button>
 
-                                <span className="btn btn-danger pull-right"
+                                <span className="btn btn-danger pull-right btn-sm"
                                       onClick={function () {
                                             $this.deleteSellUnit(unit);
                                       }}>

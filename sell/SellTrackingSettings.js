@@ -6,6 +6,7 @@ var unitService = require('../unit/UnitService');
 var inventoryServie = require('../inventory/InventoryService');
 
 var Promise = require('bluebird');
+var Stream = require('streamjs');
 
 var trkSv = require('./TrackService');
 
@@ -196,7 +197,9 @@ module.exports = SellTrackingSettings = React.createClass({
                                 return (
                                     <tr key={prod.no}>
 
-                                        <td>{($this.state.productsById[prod.id] || {}).name}</td>
+                                        <td>
+                                            {($this.state.productsById[prod.id] || {}).name}
+                                        </td>
 
                                         <td>
                                             {
@@ -393,6 +396,15 @@ module.exports = SellTrackingSettings = React.createClass({
         var rawProdsById = $this.state.rawProductsById;
         var productsById = $this.state.productsById;
 
+        var tracks = $this.state.tracks || [];
+
+        var tracksByIPId = tracks.reduce((map, tk) => {
+            if (!!tk.inventoryProductId) {
+                map[tk.inventoryProductId] = tk;
+            }
+            return map;
+        }, {});
+
         return (
             <select className="form-control"
                     name="inventoryProductId" value={prod.inventoryProductId}
@@ -401,14 +413,21 @@ module.exports = SellTrackingSettings = React.createClass({
                 <option value={0}>Select Raw Product</option>
 
                 {
-                    prods.map(pp => {
+                    Stream(prods)
+                        .filter(pp => {
 
-                        var id = pp.productId || pp.id
+                            var id = pp.productId || pp.id;
 
-                        return (
-                            <option key={id} value={id}>{(rawProdsById[id] || productsById[id] || {}).name}</option>
-                        );
-                    })
+                            return !tracksByIPId[id] || (prod.inventoryProductId == id);
+                        })
+                        .map(pp => {
+
+                            var id = pp.productId || pp.id;
+
+                            return (
+                                <option key={id} value={id}>{(rawProdsById[id] || productsById[id] || {}).name}</option>
+                            );
+                        }).toArray()
                 }
 
             </select>

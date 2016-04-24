@@ -1,68 +1,160 @@
-//..................................................................................
-//Create EventBus
-
 var EventBus = require("vertx3-eventbus-client");
-var eb = new EventBus('http://' + location.host + '/eventbus');
 var document = require('./document');
 var authSerice = require('./AuthService');
 var Uris = require('./Uris');
 
-eb.onopen = function onopen() {
+var handlers = [];  //address, headers, callback
 
-    console.info("EVENT_BUS OPENED");
+function newEventBus(onOpenHandler) {
 
-    var event = new Event('EVENT_BUS_CONNECTED');
+    onOpenHandler = onOpenHandler || (() => null);
 
-    document.dispatchEvent(event);
-}
+    var _onOpen = () => {
+        window.document.removeEventListener('EVENT_BUS_CONNECTED', _onOpen);
+        onOpenHandler();
+    };
 
-eb.onclose = function () {
+    window.document.addEventListener('EVENT_BUS_CONNECTED', _onOpen);
 
-    console.info("EVENT_BUS CLOSED");
+    var eb = new EventBus('http://' + location.host + '/eventbus');
 
-    var event = new Event('EVENT_BUS_DISCONNECTED');
+    eb.onopen = function onopen() {
 
-    document.dispatchEvent(event);
-}
+        console.info("EVENT_BUS OPENED");
 
-var send = eb.send;
+        var event = new Event('EVENT_BUS_CONNECTED');
 
-eb.send = function (address, message, headers, callback) {
-
-    if (eb.state != EventBus.OPEN) {
-
-        //console.log("EVENT_BUS_RECONNECTING");
-        //
-        //eb = new EventBus('http://' + location.host + '/eventbus');
-        //
-        //eb.onopen = () => {
-        //    console.log("EVENT_BUS_RECONNECTED");
-        //    send.call(eb, address, message, headers, callback);
-        //};
-        //
-        //eb.onerror = () => {
-        //    console.log("EVENT_BUS_RECONNECT_FAILED");
-        //    window.alert("Disconnected from server. Please login again.");
-        //    location.href = Uris.toAbsoluteUri(Uris.LOGIN_URI);
-        //    callback(new Error("Invalid state error."), null);
-        //};
-
-        console.log("EVENT_BUS_RECONNECT_FAILED");
-        window.alert("Disconnected from server. Please login again.");
-        location.href = Uris.toAbsoluteUri(Uris.LOGIN_URI);
-        callback(new Error("Invalid state error."), null);
-
-        return;
+        document.dispatchEvent(event);
     }
 
-    headers = headers || {};
-    if (authSerice.isLoggedIn()) {
-        headers['authToken'] = authSerice.authToken();
-    } else {
-        location.href = Uris.toAbsoluteUri(Uris.LOGIN_URI);
+    eb.onclose = function () {
+
+        console.info("EVENT_BUS CLOSED");
+
+        var event = new Event('EVENT_BUS_DISCONNECTED');
+
+        document.dispatchEvent(event);
     }
 
-    send.call(eb, address, message, headers, callback);
+    return eb;
 }
 
-module.exports = () => eb;
+var eb = newEventBus();
+
+var reconnect = function (callback) {
+
+    callback = callback || (() => null);
+
+    console.log("EVENT_BUS_RECONNECTING");
+
+    var _closeHandler = () => {
+
+        window.document.removeEventListener('EVENT_BUS_DISCONNECTED', _closeHandler);
+
+        eb = newEventBus(() => {
+
+            handlers.forEach(reg => {
+                const {address, headers, callback} = reg;
+                eb.registerHandler(address, headers, callback);
+            });
+
+            window.setTimeout(() => {
+
+                if (eb.state !== EventBus.OPEN) {
+
+                    console.log("EVENT_BUS_RECONNECT_FAILED");
+                    window.alert("Disconnected from server. Please login again.");
+                    location.href = Uris.toAbsoluteUri(Uris.LOGIN_URI);
+
+                    return;
+                }
+
+            }, 2000);
+
+            console.log("EVENT_BUS_RECONNECTED");
+
+            callback();
+
+        });
+    };
+
+    window.document.addEventListener('EVENT_BUS_DISCONNECTED', _closeHandler);
+
+    eb.close();
+
+}
+
+var send = function (address, message, headers, callback) {
+
+    function _send() {
+        headers = headers || {};
+        if (authSerice.isLoggedIn()) {
+            headers['authToken'] = authSerice.authToken();
+        } else {
+            location.href = Uris.toAbsoluteUri(Uris.LOGIN_URI);
+        }
+
+        eb.send(address, message, headers, callback);
+    }
+
+    if (eb.state !== EventBus.OPEN) {
+
+        reconnect(() => {
+            _send();
+        });
+    }
+
+    _send();
+};
+
+/**
+ * Publish a message
+ *
+ * @param {String} address
+ * @param {Object} message
+ * @param {Object} [headers]
+ */
+var publish = function (address, message, headers) {
+
+    eb.publish(address, message, headers);
+};
+
+/**
+ * Register a new handler
+ *
+ * @param {String} address
+ * @param {Object} [headers]
+ * @param {Function} callback
+ */
+var registerHandler = function (address, headers, callback) {
+
+    handlers.push({address, headers, callback});
+
+    eb.registerHandler(address, headers, callback);
+};
+
+/**
+ * Unregister a handler
+ *
+ * @param {String} address
+ * @param {Object} [headers]
+ * @param {Function} callback
+ */
+var unregisterHandler = function (address, headers, callback) {
+
+    handlers = handlers.filter(h => !((h.address === address) && (h.headers === headers) && (h.callback === callback)));
+
+    eb.unregisterHandler(address, headers, callback);
+};
+
+/**
+ * Closes the connection to the EvenBus Bridge.
+ */
+var close = function () {
+    eb.close();
+};
+
+
+module.exports = (() => {
+    return {reconnect, send, publish, registerHandler, unregisterHandler, close};
+});

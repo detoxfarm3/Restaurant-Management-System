@@ -35,6 +35,8 @@ class Dashboard extends React.Component {
     render() {
         var $this = this;
 
+        var total = 0;
+
         return (
 
             <div className="row">
@@ -44,21 +46,28 @@ class Dashboard extends React.Component {
                         <thead>
                         <tr>
                             <th>Date</th>
-                            <th>Total Sales</th>
+                            <th style={{textAlign: 'right'}}>Total Sales</th>
                         </tr>
                         </thead>
                         <tbody>
                         {
                             $this.state.salesByDate.map((e) => {
+                                total += parseFloat(e.totalSales);
                                 return (
                                     <tr key={Math.random()}>
                                         <td>{lib.formatDate(e.date)}</td>
-                                        <td>{e.totalSales}</td>
+                                        <td style={{textAlign: 'right'}}>{e.totalSales.toFixed(2)}</td>
                                     </tr>
                                 );
                             })
                         }
                         </tbody>
+                        <tfoot>
+                        <tr>
+                            <td>Total</td>
+                            <td style={{textAlign: 'right'}}>{total.toFixed(2)}</td>
+                        </tr>
+                        </tfoot>
                     </table>
 
                 </div>

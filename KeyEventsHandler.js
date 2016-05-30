@@ -11,6 +11,10 @@ window.onkeydown = function (e) {
 };
 
 exports.addKeyDownListener = (listener) => {
+    if (keyDownListeners.indexOf(ll => ll === listener) >= 0) {
+        console.info('preventing_duplicate_key_down_listener_add');
+        return;
+    }
     keyDownListeners.push(listener);
 };
 
@@ -25,9 +29,7 @@ exports.addAllKeyDownListeners = (listenerList) => {
 
 exports.removeAllKeyDownListeners = (listenerList) => {
     listenerList = listenerList || [];
-    listenerList.forEach(ll => {
-        exports.removeKeyDownListener(ll);
-    })
+    listenerList.forEach(ll => exports.removeKeyDownListener(ll))
 };
 
 
@@ -50,3 +52,5 @@ exports.addKeyUpListener = (listener) => {
 exports.removeKeyUpListener = (listener) => {
     keyUpListeners.splice(keyUpListeners.indexOf(ll => ll === listener), 1);
 };
+
+

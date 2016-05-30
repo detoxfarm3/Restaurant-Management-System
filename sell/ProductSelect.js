@@ -8,7 +8,7 @@ var ProductSkuAutoComplete = require('../product/ProductSkuAutoComplete');
 
 var KeyEventHandlers = require('../KeyEventsHandler');
 
-var keyDownHandlers = [];
+var keyDownHandlers;
 
 class ProductSelect extends React.Component {
     constructor(props) {
@@ -17,6 +17,8 @@ class ProductSelect extends React.Component {
 
     componentDidMount() {
         var $this = this;
+
+        keyDownHandlers = [];
 
         keyDownHandlers.push(e => {
             if (e.keyCode === 120 || (e.altKey && e.keyCode === 67)) {

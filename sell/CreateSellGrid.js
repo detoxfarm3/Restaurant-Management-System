@@ -129,8 +129,10 @@ module.exports = CreateSellGrid = React.createClass({
                         ),
                         unitPrice: (
                             <input className="form-control" type="number" style={{width: '120px'}}
-                                   name="unitPrice" value={!unit.unitPrice ? null : unit.unitPrice.toFixed(2)}
-                                   readOnly={true}
+                                   name="unitPrice" value={!unit.unitPrice ? null : unit.unitPrice}
+                                   onChange={function (e) {
+                                        $this.onChange(e, unit);
+                                     }}
                                 />
                         ),
                         total: (

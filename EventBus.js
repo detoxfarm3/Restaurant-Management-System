@@ -102,6 +102,8 @@ var send = function (address, message, headers, callback) {
         reconnect(() => {
             _send();
         });
+
+        return;
     }
 
     _send();

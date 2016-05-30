@@ -233,12 +233,18 @@ module.exports = ListSells = React.createClass({
                                                                 className="caret"></span></button>
                                                         <ul className="dropdown-menu">
                                                             <li><a
-                                                                href={Uris.toAbsoluteUri(Uris.SELL.VIEW, {id: sell.id})}>View
-                                                                Order</a></li>
+                                                                href={Uris.toAbsoluteUri(Uris.SELL.VIEW, {id: sell.id})}>
+                                                                View Order</a>
+                                                            </li>
                                                             <li role="separator" className="divider"></li>
                                                             <li><a
-                                                                href={Uris.toAbsoluteUri(Uris.SELL.EDIT, {id: sell.id})}>Edit
-                                                                Order</a></li>
+                                                                href={Uris.toAbsoluteUri(Uris.SELL.EDIT, {id: sell.id})}>
+                                                                Edit Order</a>
+                                                            </li>
+                                                            <li role="separator" className="divider"></li>
+                                                            <li><a onClick={e => $this.deleteSell(sell)}>
+                                                                Delete Order</a>
+                                                            </li>
                                                         </ul>
                                                     </div>
 
@@ -263,6 +269,14 @@ module.exports = ListSells = React.createClass({
                 </div>
             </div>
         );
+    },
+    deleteSell: function (sell) {
+        var $this = this;
+        alert("This Order will be deleted.");
+        sellService.delete(sell.id).then(e => sellService.findAll())
+            .then(rsp => {
+                $this.setState({sells: rsp.data, pagination: rsp.pagination});
+            });
     },
     submitForm: function (form) {
         var $this = this;

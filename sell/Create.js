@@ -3,6 +3,7 @@ var CreateSellGrid = require('./CreateSellGrid');
 var Modal = require('../../components/Modal');
 var CreateSellHeader = require('./CreateSellHeader');
 var SellPreview = require('./SellPreview');
+var PrintView = require('./PrintView');
 var ProductSelect = require('./ProductSelect');
 
 var EventEmitter = require("events").EventEmitter;
@@ -28,7 +29,7 @@ var ee = require('../EventEmitter');
 var Events = require('../Events');
 
 var KeyEventHandlers = require('../KeyEventsHandler');
-var keyDownListeners = [];
+var keyDownListeners;
 var $ = require('jquery');
 
 var CreateSell;
@@ -63,23 +64,32 @@ module.exports = CreateSell = React.createClass({
 
         console.log("MOUNTING: SELL_CREATE");
         eeLocal.on(LocalEvents.SUBMIT_REQUESTED, function (sell) {
-            console.log(sell);
-            sellService.create(sell)
-                .then(sellService.find)
-                .then($this.showOrderSuccess)
-                .then(() => {
-                    $this.setState({
-                        sell: lib.merge2($this.state.sell, {
-                            consumerName: '',
-                            consumerMobile: '',
-                            remarks: '',
-                        }),
-                        sellUnit: {},
-                        sellUnitsByProductId: {}
-                    });
-                    $this.clearAllUnits();
-                })
-            ;
+            console.log('sub_req');
+
+            $this.setState({createButtonDisabled: true}, () => {
+
+                sellService.create(sell)
+                    .then(sellService.find)
+                    .then($this.showOrderSuccess)
+                    .then(() => {
+                        $this.setState({
+                            sell: lib.merge2($this.state.sell, {
+                                consumerName: '',
+                                consumerMobile: '',
+                                remarks: '',
+                            }),
+                            sellUnit: {},
+                            sellUnitsByProductId: {}
+                        });
+                        $this.clearAllUnits();
+                    })
+                    .finally(() => {
+                        $this.setState({createButtonDisabled: false});
+                    })
+                ;
+
+            });
+
         });
 
         var productPromise1 = productService.findAllDecomposed({forSale: true})
@@ -143,6 +153,7 @@ module.exports = CreateSell = React.createClass({
             })
         ;
 
+        keyDownListeners = [];
 
         keyDownListeners.push(e => {
             if (e.altKey && e.keyCode === 66) {
@@ -194,6 +205,7 @@ module.exports = CreateSell = React.createClass({
                                 <div className="col-md-2">
                                     <button id="create-button" className="btn btn-primary btn-block pull-right"
                                             style={{fontWeight: 'bold'}}
+                                            disabled={!!$this.createButtonDisabled}
                                             onClick={$this.submit}>
                                         Create (ALT+B)
                                     </button>
@@ -245,6 +257,7 @@ module.exports = CreateSell = React.createClass({
 
                                     <button className="btn btn-primary pull-right"
                                             style={{fontWeight: 'bold'}}
+                                            disabled={!!$this.createButtonDisabled}
                                             onClick={$this.submit}>
                                         Create (ALT+B)
                                     </button>
@@ -371,6 +384,7 @@ module.exports = CreateSell = React.createClass({
 
         sell.sellUnits = Object.keys($this.state.sellUnitsByProductId || {}).map(id => $this.state.sellUnitsByProductId[id]);
 
+        console.info('requesting_sumit');
         eeLocal.emit(LocalEvents.SUBMIT_REQUESTED, sell);
     },
     onSubmitFailed: function (e) {
@@ -423,7 +437,7 @@ module.exports = CreateSell = React.createClass({
         var req = {
             printer: () => {
                 return (
-                    <SellPreview sell={sell}/>
+                    <PrintView sell={sell}/>
                 );
             },
             callback: () => {
@@ -456,7 +470,8 @@ module.exports = CreateSell = React.createClass({
                 su.unitId = Object.keys(priceByUnitIds).reduce((unitId, id) => unitId || id, null);
             }
 
-            su.unitPrice = priceByUnitIds[su.unitId] || undefined;
+            su.unitPrice = !!((su.unitPrice === undefined) || (su.unitPrice === null))
+                ? (priceByUnitIds[su.unitId] || undefined) : su.unitPrice;
             su.total = su.quantity * su.unitPrice;
         }
 
